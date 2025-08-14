@@ -1,6 +1,7 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
+    alias(libs.plugins.kotlin.compose)
 }
 
 android {
@@ -38,9 +39,7 @@ android {
         compose = true
     }
     
-    composeOptions {
-        kotlinCompilerExtensionVersion = "1.5.8"
-    }
+    // Compose Compiler plugin handles compiler version in Kotlin 2.0+
 }
 
 dependencies {

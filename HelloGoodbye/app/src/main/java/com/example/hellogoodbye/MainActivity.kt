@@ -88,7 +88,8 @@ fun MainScreen() {
                     selectedCountries = selectedCountries + nextCountry
                 }
             },
-            canAddMore = selectedCountries.size < availableCountries.size + 5
+            canAddMore = selectedCountries.size < availableCountries.size + 5,
+            modifier = Modifier.weight(1f)
         )
         
         // Practice button section (2 parts)
@@ -147,21 +148,46 @@ fun TopBarSection(currency: Int, onSettingsClick: () -> Unit) {
 fun CentralGridSection(
     selectedCountries: List<Country>, 
     onAddFlag: () -> Unit,
-    canAddMore: Boolean
+    canAddMore: Boolean,
+    modifier: Modifier = Modifier
 ) {
-    val items = selectedCountries + (if (canAddMore) "+" else "")
-    
     LazyVerticalGrid(
         columns = GridCells.Fixed(4),
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
-            .weight(1f)
             .padding(16.dp),
         horizontalArrangement = Arrangement.spacedBy(12.dp),
         verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
-        items(items) { item ->
-            if (item == "+") {
+        items(selectedCountries) { country ->
+            // Flag item
+            Card(
+                modifier = Modifier.aspectRatio(1f),
+                colors = CardDefaults.cardColors(
+                    containerColor = MaterialTheme.colorScheme.surface
+                ),
+                shape = RoundedCornerShape(12.dp)
+            ) {
+                Column(
+                    modifier = Modifier.fillMaxSize(),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Center
+                ) {
+                    Text(
+                        text = country.flag,
+                        fontSize = 32.sp
+                    )
+                    Spacer(modifier = Modifier.height(4.dp))
+                    Text(
+                        text = country.language,
+                        fontSize = 10.sp,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                }
+            }
+        }
+        if (canAddMore) {
+            item {
                 // Plus button
                 Card(
                     modifier = Modifier
@@ -181,32 +207,6 @@ fun CentralGridSection(
                             contentDescription = "Add flag",
                             modifier = Modifier.size(32.dp),
                             tint = MaterialTheme.colorScheme.onTertiaryContainer
-                        )
-                    }
-                }
-            } else {
-                // Flag item
-                Card(
-                    modifier = Modifier.aspectRatio(1f),
-                    colors = CardDefaults.cardColors(
-                        containerColor = MaterialTheme.colorScheme.surface
-                    ),
-                    shape = RoundedCornerShape(12.dp)
-                ) {
-                    Column(
-                        modifier = Modifier.fillMaxSize(),
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                        verticalArrangement = Arrangement.Center
-                    ) {
-                        Text(
-                            text = item.flag,
-                            fontSize = 32.sp
-                        )
-                        Spacer(modifier = Modifier.height(4.dp))
-                        Text(
-                            text = item.language,
-                            fontSize = 10.sp,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
                     }
                 }
