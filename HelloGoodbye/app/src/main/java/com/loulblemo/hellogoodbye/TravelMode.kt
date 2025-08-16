@@ -6,6 +6,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -117,45 +118,28 @@ fun TravelQuestListScreen(
         modifier = Modifier
             .fillMaxWidth()
             .padding(horizontal = 24.dp),
-        verticalArrangement = Arrangement.spacedBy(0.dp)
+        verticalArrangement = Arrangement.spacedBy(24.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
+        item {
+            Text(
+                text = "Your Language Journey",
+                style = MaterialTheme.typography.headlineMedium,
+                color = MaterialTheme.colorScheme.onSurface,
+                modifier = Modifier.padding(bottom = 16.dp)
+            )
+        }
+        
         val unlockedSections = travelSections.filter { section ->
             travelState.questProgresses[section.id]?.isUnlocked == true
         }
         
-        itemsIndexed(unlockedSections) { index, section ->
-            Column {
-                TravelQuestCard(
-                    section = section,
-                    questProgress = travelState.questProgresses[section.id],
-                    onClick = { onQuestClick(section.id) }
-                )
-                
-                // Add connecting line if not the last item and current quest is completed
-                val progress = travelState.questProgresses[section.id]
-                if (index < unlockedSections.size - 1 && progress?.isCompleted == true) {
-                    Box(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(40.dp)
-                    ) {
-                        Canvas(
-                            modifier = Modifier
-                                .width(4.dp)
-                                .height(40.dp)
-                                .offset(x = 48.dp)
-                        ) {
-                            drawLine(
-                                color = Color(0xFF4CAF50),
-                                start = androidx.compose.ui.geometry.Offset(size.width / 2, 0f),
-                                end = androidx.compose.ui.geometry.Offset(size.width / 2, size.height),
-                                strokeWidth = 4.dp.toPx(),
-                                pathEffect = PathEffect.dashPathEffect(floatArrayOf(10f, 10f), 0f)
-                            )
-                        }
-                    }
-                }
-            }
+        items(unlockedSections) { section ->
+            CircleQuestBubble(
+                section = section,
+                questProgress = travelState.questProgresses[section.id],
+                onClick = { onQuestClick(section.id) }
+            )
         }
         
         // Add plus button if all sections are completed
@@ -163,15 +147,14 @@ fun TravelQuestListScreen(
             travelState.questProgresses[section.id]?.isCompleted == true
         }) {
             item {
-                Spacer(modifier = Modifier.height(16.dp))
                 Card(
                     modifier = Modifier
-                        .size(100.dp)
+                        .size(120.dp)
                         .clickable { /* TODO: Add new language selection */ },
                     colors = CardDefaults.cardColors(
                         containerColor = MaterialTheme.colorScheme.tertiaryContainer
                     ),
-                    shape = RoundedCornerShape(12.dp)
+                    shape = CircleShape
                 ) {
                     Box(
                         modifier = Modifier.fillMaxSize(),
@@ -180,13 +163,89 @@ fun TravelQuestListScreen(
                         Icon(
                             imageVector = Icons.Default.Add,
                             contentDescription = "Add new language",
-                            modifier = Modifier.size(32.dp),
+                            modifier = Modifier.size(48.dp),
                             tint = MaterialTheme.colorScheme.onTertiaryContainer
                         )
                     }
                 }
+                Text(
+                    text = "Add Language",
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    modifier = Modifier.padding(top = 8.dp)
+                )
             }
         }
+    }
+}
+
+@Composable
+fun CircleQuestBubble(
+    section: TravelSection,
+    questProgress: QuestProgress?,
+    onClick: () -> Unit
+) {
+    val isCompleted = questProgress?.isCompleted == true
+    val isUnlocked = questProgress?.isUnlocked == true
+    
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Box(
+            modifier = Modifier.size(120.dp),
+            contentAlignment = Alignment.Center
+        ) {
+            // Yellow circle background
+            Card(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .clickable(enabled = isUnlocked) { onClick() },
+                colors = CardDefaults.cardColors(
+                    containerColor = Color.White
+                ),
+                shape = CircleShape,
+                border = BorderStroke(4.dp, Color(0xFFFFD700)) // Yellow border
+            ) {
+                Box(
+                    modifier = Modifier.fillMaxSize(),
+                    contentAlignment = Alignment.Center
+                ) {
+                    // Flag emoji
+                    Text(
+                        text = section.flag,
+                        fontSize = 60.sp
+                    )
+                }
+            }
+            
+            // Green checkmark overlay when completed
+            if (isCompleted) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .clip(CircleShape)
+                        .background(Color(0xFF4CAF50).copy(alpha = 0.7f)),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        text = "✓",
+                        fontSize = 48.sp,
+                        color = Color.White,
+                        fontWeight = FontWeight.Bold
+                    )
+                }
+            }
+        }
+        
+        Spacer(modifier = Modifier.height(12.dp))
+        
+        // Language name only
+        Text(
+            text = section.name,
+            style = MaterialTheme.typography.titleMedium,
+            color = if (isUnlocked) MaterialTheme.colorScheme.onSurface else MaterialTheme.colorScheme.onSurfaceVariant,
+            fontWeight = FontWeight.Medium
+        )
     }
 }
 
