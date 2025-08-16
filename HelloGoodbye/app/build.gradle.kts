@@ -5,11 +5,11 @@ plugins {
 }
 
 android {
-    namespace = "com.example.hellogoodbye"
+    namespace = "com.loulblemo.hellogoodbye"
     compileSdk = 36
 
     defaultConfig {
-        applicationId = "com.example.hellogoodbye"
+        applicationId = "com.loulblemo.hellogoodbye"
         minSdk = 24
         targetSdk = 36
         versionCode = 1

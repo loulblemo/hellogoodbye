@@ -1,0 +1,8 @@
+googletrans==4.0.0rc1
+requests>=2.31.0
+# Optional for IPA (best-effort)
+epitran>=1.23
+phonemizer>=3.2
+tqdm>=4.66
+urllib3<2.0
+

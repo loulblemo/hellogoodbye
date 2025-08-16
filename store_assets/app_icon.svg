@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="512" height="512" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background circle -->
+  <circle cx="256" cy="256" r="240" fill="#4F46E5" stroke="#3730A3" stroke-width="8"/>
+  
+  <!-- Speech bubble for "Hello" -->
+  <path d="M 120 180 Q 120 160 140 160 L 200 160 Q 220 160 220 180 L 220 220 Q 220 240 200 240 L 140 240 Q 120 240 120 220 Z" fill="white"/>
+  <path d="M 140 240 L 160 260 L 140 260 Z" fill="white"/>
+  
+  <!-- Speech bubble for "Goodbye" -->
+  <path d="M 292 280 Q 292 260 312 260 L 372 260 Q 392 260 392 280 L 392 320 Q 392 340 372 340 L 312 340 Q 292 340 292 320 Z" fill="white"/>
+  <path d="M 372 340 L 352 360 L 372 360 Z" fill="white"/>
+  
+  <!-- Hello text -->
+  <text x="180" y="210" font-family="Arial, sans-serif" font-size="24" font-weight="bold" fill="#4F46E5" text-anchor="middle">H</text>
+  
+  <!-- Goodbye text -->
+  <text x="352" y="310" font-family="Arial, sans-serif" font-size="20" font-weight="bold" fill="#4F46E5" text-anchor="middle">G</text>
+  
+  <!-- Globe/World element in center -->
+  <circle cx="256" cy="256" r="60" fill="none" stroke="white" stroke-width="4"/>
+  <path d="M 196 256 L 316 256 M 256 196 L 256 316" stroke="white" stroke-width="3" stroke-linecap="round"/>
+  <circle cx="256" cy="256" r="40" fill="none" stroke="white" stroke-width="2"/>
+  
+  <!-- Small accent circles -->
+  <circle cx="180" cy="120" r="8" fill="#F59E0B"/>
+  <circle cx="332" cy="140" r="6" fill="#10B981"/>
+  <circle cx="140" cy="380" r="7" fill="#EF4444"/>
+  <circle cx="380" cy="360" r="5" fill="#8B5CF6"/>
+</svg>

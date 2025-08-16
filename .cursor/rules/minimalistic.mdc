@@ -1,0 +1,7 @@
+---
+description:
+globs:
+alwaysApply: yes
+---
+
+- No try except and returning None, the code should crash as default

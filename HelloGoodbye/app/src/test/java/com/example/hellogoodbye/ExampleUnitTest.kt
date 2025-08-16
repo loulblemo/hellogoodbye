@@ -1,4 +1,4 @@
-package com.example.hellogoodbye
+package com.loulblemo.hellogoodbye
 
 import org.junit.Test
 

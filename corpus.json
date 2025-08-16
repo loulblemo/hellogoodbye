@@ -1,0 +1,672 @@
+[
+  {
+    "original": "hello",
+    "en": {
+      "word": "hello",
+      "IPA": "həlˈoʊ",
+      "text": "hello",
+      "audio": "hello_en_hello.mp3"
+    },
+    "es": {
+      "word": "Hola",
+      "IPA": "ˈola",
+      "text": "Hola",
+      "audio": "hello_es_Hola.mp3"
+    },
+    "fr": {
+      "word": "Bonjour",
+      "IPA": "bɔ̃ʒˈuʁ",
+      "text": "Bonjour",
+      "audio": "hello_fr_Bonjour.mp3"
+    },
+    "de": {
+      "word": "Hallo",
+      "IPA": "hˈaloː",
+      "text": "Hallo",
+      "audio": "hello_de_Hallo.mp3"
+    },
+    "it": {
+      "word": "Ciao",
+      "IPA": "tʃˈao",
+      "text": "Ciao",
+      "audio": "hello_it_Ciao.mp3"
+    },
+    "pt": {
+      "word": "olá",
+      "IPA": "ɔlˈa",
+      "text": "olá",
+      "audio": "hello_pt_olá.mp3"
+    },
+    "ru": {
+      "word": "привет",
+      "IPA": "prʲivʲˈet",
+      "text": "привет",
+      "google_pronunciation": "privet",
+      "audio": "hello_ru_привет.mp3"
+    },
+    "ja": {
+      "word": "こんにちは",
+      "IPA": "kˌo̞nnitɕˈihä",
+      "text": "こんにちは",
+      "google_pronunciation": "Kon'nichiwa",
+      "audio": "hello_ja_こんにちは.mp3"
+    },
+    "ko": {
+      "word": "안녕하세요",
+      "IPA": "ˈɐnnjʌŋhˌɐsejˌo",
+      "text": "안녕하세요",
+      "google_pronunciation": "annyeonghaseyo",
+      "audio": "hello_ko_안녕하세요.mp3"
+    },
+    "zh-cn": {
+      "word": "你好",
+      "IPA": "ni2χˈɑu2",
+      "text": "你好",
+      "google_pronunciation": "Nǐ hǎo",
+      "audio": "hello_zh-cn_你好.mp3"
+    }
+  },
+  {
+    "original": "goodbye",
+    "en": {
+      "word": "goodbye",
+      "IPA": "ɡʊdbˈaɪ",
+      "text": "goodbye",
+      "audio": "goodbye_en_goodbye.mp3"
+    },
+    "es": {
+      "word": "adiós",
+      "IPA": "aðjˈos",
+      "text": "adiós",
+      "audio": "goodbye_es_adiós.mp3"
+    },
+    "fr": {
+      "word": "au revoir",
+      "IPA": "o ʁəvwˈaʁ",
+      "text": "au revoir",
+      "audio": "goodbye_fr_au_revoir.mp3"
+    },
+    "de": {
+      "word": "Verabschiedung",
+      "IPA": "fɛɾˈapʃˌiːdʊŋ",
+      "text": "Verabschiedung",
+      "audio": "goodbye_de_Verabschiedung.mp3"
+    },
+    "it": {
+      "word": "arrivederci",
+      "IPA": "arɾivedˈɛrtʃɪ",
+      "text": "arrivederci",
+      "audio": "goodbye_it_arrivederci.mp3"
+    },
+    "pt": {
+      "word": "adeus",
+      "IPA": "ɐdˈeʊʃ",
+      "text": "adeus",
+      "audio": "goodbye_pt_adeus.mp3"
+    },
+    "ru": {
+      "word": "до свидания",
+      "IPA": "dˈo svʲidˈɑnʲija",
+      "text": "до свидания",
+      "google_pronunciation": "do svidaniya",
+      "audio": "goodbye_ru_до_свидания.mp3"
+    },
+    "ja": {
+      "word": "さようなら",
+      "IPA": "sˌäjo̞ɯᵝnˈäɽä",
+      "text": "さようなら",
+      "google_pronunciation": "Sayōnara",
+      "audio": "goodbye_ja_さようなら.mp3"
+    },
+    "ko": {
+      "word": "안녕히 가세요",
+      "IPA": "ˈɐnnjʌŋhˌi ɡˈɐsejˌo",
+      "text": "안녕히 가세요",
+      "google_pronunciation": "annyeonghi gaseyo",
+      "audio": "goodbye_ko_안녕히_가세요.mp3"
+    },
+    "zh-cn": {
+      "word": "再见",
+      "IPA": "tsˈai5 tɕˈiɛ5n",
+      "text": "再见",
+      "google_pronunciation": "Zàijiàn",
+      "audio": "goodbye_zh-cn_再见.mp3"
+    }
+  },
+  {
+    "original": "please",
+    "en": {
+      "word": "please",
+      "IPA": "plˈiːz",
+      "text": "please",
+      "audio": "please_en_please.mp3"
+    },
+    "es": {
+      "word": "por favor",
+      "IPA": "poɾ faβˈoɾ",
+      "text": "por favor",
+      "audio": "please_es_por_favor.mp3"
+    },
+    "fr": {
+      "word": "s'il te plaît",
+      "IPA": "sil tə- plˈɛ",
+      "text": "s'il te plaît",
+      "audio": "please_fr_sil_te_plaît.mp3"
+    },
+    "de": {
+      "word": "Bitte",
+      "IPA": "bˈɪtə",
+      "text": "Bitte",
+      "audio": "please_de_Bitte.mp3"
+    },
+    "it": {
+      "word": "Per favore",
+      "IPA": "per favˈore",
+      "text": "Per favore",
+      "audio": "please_it_Per_favore.mp3"
+    },
+    "pt": {
+      "word": "por favor",
+      "IPA": "puɹ fɐvˈoɹ",
+      "text": "por favor",
+      "audio": "please_pt_por_favor.mp3"
+    },
+    "ru": {
+      "word": "пожалуйста",
+      "IPA": "pʌʒˈɑɭusta",
+      "text": "пожалуйста",
+      "google_pronunciation": "pozhaluysta",
+      "audio": "please_ru_пожалуйста.mp3"
+    },
+    "ja": {
+      "word": "お願いします",
+      "IPA": "ˈo̞ (en)tʃˈaɪniːz(ja)lˈe̞tə ˈi ɕˈi mˈä sˈɯᵝ",
+      "text": "お願いします",
+      "google_pronunciation": "Onegaishimasu",
+      "audio": "please_ja_お願いします.mp3"
+    },
+    "ko": {
+      "word": "제발",
+      "IPA": "tɕebˈɐɫ",
+      "text": "제발",
+      "google_pronunciation": "jebal",
+      "audio": "please_ko_제발.mp3"
+    },
+    "zh-cn": {
+      "word": "请",
+      "IPA": "tɕhˈi2ŋ",
+      "text": "请",
+      "google_pronunciation": "Qǐng",
+      "audio": "please_zh-cn_请.mp3"
+    }
+  },
+  {
+    "original": "thank you",
+    "en": {
+      "word": "thank you",
+      "IPA": "θˈæŋk juː",
+      "text": "thank you",
+      "audio": "thank you_en_thank_you.mp3"
+    },
+    "es": {
+      "word": "gracias",
+      "IPA": "ɡɾˈaθjas",
+      "text": "gracias",
+      "audio": "thank you_es_gracias.mp3"
+    },
+    "fr": {
+      "word": "merci",
+      "IPA": "mɛʁsˈi",
+      "text": "merci",
+      "audio": "thank you_fr_merci.mp3"
+    },
+    "de": {
+      "word": "Danke",
+      "IPA": "dˈaŋkə",
+      "text": "Danke",
+      "audio": "thank you_de_Danke.mp3"
+    },
+    "it": {
+      "word": "Grazie",
+      "IPA": "ɡrˈatsje",
+      "text": "Grazie",
+      "audio": "thank you_it_Grazie.mp3"
+    },
+    "pt": {
+      "word": "obrigado",
+      "IPA": "ˌɔbɹiɡˈadʊ",
+      "text": "obrigado",
+      "audio": "thank you_pt_obrigado.mp3"
+    },
+    "ru": {
+      "word": "Спасибо",
+      "IPA": "spasʲˈibʌ",
+      "text": "Спасибо",
+      "google_pronunciation": "Spasibo",
+      "audio": "thank you_ru_Спасибо.mp3"
+    },
+    "ja": {
+      "word": "ありがとう",
+      "IPA": "ˌäɽiɡätˈo̞ɯᵝ",
+      "text": "ありがとう",
+      "google_pronunciation": "Arigatō",
+      "audio": "thank you_ja_ありがとう.mp3"
+    },
+    "ko": {
+      "word": "감사합니다",
+      "IPA": "ɡˈɐmsɐhˌɐpnidˌɐ",
+      "text": "감사합니다",
+      "google_pronunciation": "gamsahabnida",
+      "audio": "thank you_ko_감사합니다.mp3"
+    },
+    "zh-cn": {
+      "word": "谢谢",
+      "IPA": "ɕiɛ5ɕˈiɛ1",
+      "text": "谢谢",
+      "google_pronunciation": "Xièxiè",
+      "audio": "thank you_zh-cn_谢谢.mp3"
+    }
+  },
+  {
+    "original": "excuse me",
+    "en": {
+      "word": "excuse me",
+      "IPA": "ɛkskjˈuːs mˌiː",
+      "text": "excuse me",
+      "audio": "excuse me_en_excuse_me.mp3"
+    },
+    "es": {
+      "word": "disculpe",
+      "IPA": "diskˈulpe",
+      "text": "disculpe",
+      "audio": "excuse me_es_disculpe.mp3"
+    },
+    "fr": {
+      "word": "excusez-moi",
+      "IPA": "ɛkskyzˈemwˈa",
+      "text": "excusez-moi",
+      "audio": "excuse me_fr_excusez-moi.mp3"
+    },
+    "de": {
+      "word": "Verzeihung",
+      "IPA": "fɛɾtsˈaɪhʊŋ",
+      "text": "Verzeihung",
+      "audio": "excuse me_de_Verzeihung.mp3"
+    },
+    "it": {
+      "word": "Mi scusi",
+      "IPA": "mɪ skˈuzɪ",
+      "text": "Mi scusi",
+      "audio": "excuse me_it_Mi_scusi.mp3"
+    },
+    "pt": {
+      "word": "com licença",
+      "IPA": "kˈom lˌisˈeɪŋsɐ",
+      "text": "com licença",
+      "audio": "excuse me_pt_com_licença.mp3"
+    },
+    "ru": {
+      "word": "прошу прощения",
+      "IPA": "prʌʃˈu prʌɕˈenʲija",
+      "text": "прошу прощения",
+      "google_pronunciation": "proshu proshcheniya",
+      "audio": "excuse me_ru_прошу_прощения.mp3"
+    },
+    "ja": {
+      "word": "すみません",
+      "IPA": "sˌɯᵝmimˈäse̞ɴ",
+      "text": "すみません",
+      "google_pronunciation": "Sumimasen",
+      "audio": "excuse me_ja_すみません.mp3"
+    },
+    "ko": {
+      "word": "실례합니다",
+      "IPA": "sˈiljehˌɐpnidˌɐ",
+      "text": "실례합니다",
+      "google_pronunciation": "sillyehabnida",
+      "audio": "excuse me_ko_실례합니다.mp3"
+    },
+    "zh-cn": {
+      "word": "打扰一下",
+      "IPA": "tɑ2ʐˈɑu2 jiɜɕˈiɑ5",
+      "text": "打扰一下",
+      "google_pronunciation": "Dǎrǎo yīxià",
+      "audio": "excuse me_zh-cn_打扰一下.mp3"
+    }
+  },
+  {
+    "original": "help",
+    "en": {
+      "word": "help",
+      "IPA": "hˈɛlp",
+      "text": "help",
+      "audio": "help_en_help.mp3"
+    },
+    "es": {
+      "word": "ayuda",
+      "IPA": "aʝˈuða",
+      "text": "ayuda",
+      "audio": "help_es_ayuda.mp3"
+    },
+    "fr": {
+      "word": "aide",
+      "IPA": "ˈɛd",
+      "text": "aide",
+      "audio": "help_fr_aide.mp3"
+    },
+    "de": {
+      "word": "helfen",
+      "IPA": "hˈɛlfən",
+      "text": "helfen",
+      "audio": "help_de_helfen.mp3"
+    },
+    "it": {
+      "word": "aiuto",
+      "IPA": "ajˈuto",
+      "text": "aiuto",
+      "audio": "help_it_aiuto.mp3"
+    },
+    "pt": {
+      "word": "ajuda",
+      "IPA": "ˌɐʒˈudɐ",
+      "text": "ajuda",
+      "audio": "help_pt_ajuda.mp3"
+    },
+    "ru": {
+      "word": "помощь",
+      "IPA": "pˈomʌɕ",
+      "text": "помощь",
+      "google_pronunciation": "pomoshch'",
+      "audio": "help_ru_помощь.mp3"
+    },
+    "ja": {
+      "word": "ヘルプ",
+      "IPA": "he̞ɽˈɯᵝpɯᵝ",
+      "text": "ヘルプ",
+      "google_pronunciation": "Herupu",
+      "audio": "help_ja_ヘルプ.mp3"
+    },
+    "ko": {
+      "word": "돕다",
+      "IPA": "dˈopt-ɐ",
+      "text": "돕다",
+      "google_pronunciation": "dobda",
+      "audio": "help_ko_돕다.mp3"
+    },
+    "zh-cn": {
+      "word": "帮助",
+      "IPA": "pˈɑ5ŋ ts.ˈu5",
+      "text": "帮助",
+      "google_pronunciation": "Bāngzhù",
+      "audio": "help_zh-cn_帮助.mp3"
+    }
+  },
+  {
+    "original": "sorry",
+    "en": {
+      "word": "sorry",
+      "IPA": "sˈɑːɹi",
+      "text": "sorry",
+      "audio": "sorry_en_sorry.mp3"
+    },
+    "es": {
+      "word": "Lo siento",
+      "IPA": "lo sjˈɛnto",
+      "text": "Lo siento",
+      "audio": "sorry_es_Lo_siento.mp3"
+    },
+    "fr": {
+      "word": "Désolé",
+      "IPA": "dezolˈe",
+      "text": "Désolé",
+      "audio": "sorry_fr_Désolé.mp3"
+    },
+    "de": {
+      "word": "Entschuldigung",
+      "IPA": "ɛntʃˈʊldɪɡˌʊŋ",
+      "text": "Entschuldigung",
+      "audio": "sorry_de_Entschuldigung.mp3"
+    },
+    "it": {
+      "word": "Scusa",
+      "IPA": "skˈuza",
+      "text": "Scusa",
+      "audio": "sorry_it_Scusa.mp3"
+    },
+    "pt": {
+      "word": "desculpe",
+      "IPA": "dˌɨʃkˈuwpɨ",
+      "text": "desculpe",
+      "audio": "sorry_pt_desculpe.mp3"
+    },
+    "ru": {
+      "word": "извини",
+      "IPA": "ɪzvʲinʲˈɪ",
+      "text": "извини",
+      "google_pronunciation": "izvini",
+      "audio": "sorry_ru_извини.mp3"
+    },
+    "ja": {
+      "word": "ごめん",
+      "IPA": "ɡˈo̞me̞ɴ",
+      "text": "ごめん",
+      "google_pronunciation": "Gomen",
+      "audio": "sorry_ja_ごめん.mp3"
+    },
+    "ko": {
+      "word": "죄송합니다",
+      "IPA": "tɕwesˈoŋhɐpnˌidɐ",
+      "text": "죄송합니다",
+      "google_pronunciation": "joesonghabnida",
+      "audio": "sorry_ko_죄송합니다.mp3"
+    },
+    "zh-cn": {
+      "word": "对不起",
+      "IPA": "tˌuei5pu1tɕhˈi2",
+      "text": "对不起",
+      "google_pronunciation": "Duìbùqǐ",
+      "audio": "sorry_zh-cn_对不起.mp3"
+    }
+  },
+  {
+    "original": "water",
+    "en": {
+      "word": "water",
+      "IPA": "wˈɔːɾɚ",
+      "text": "water",
+      "audio": "water_en_water.mp3"
+    },
+    "es": {
+      "word": "agua",
+      "IPA": "ˈaɣwa",
+      "text": "agua",
+      "audio": "water_es_agua.mp3"
+    },
+    "fr": {
+      "word": "eau",
+      "IPA": "ˈo",
+      "text": "eau",
+      "audio": "water_fr_eau.mp3"
+    },
+    "de": {
+      "word": "Wasser",
+      "IPA": "vˈasɜ",
+      "text": "Wasser",
+      "audio": "water_de_Wasser.mp3"
+    },
+    "it": {
+      "word": "acqua",
+      "IPA": "ˈakːwa",
+      "text": "acqua",
+      "audio": "water_it_acqua.mp3"
+    },
+    "pt": {
+      "word": "água",
+      "IPA": "ˈaɡwɐ",
+      "text": "água",
+      "audio": "water_pt_água.mp3"
+    },
+    "ru": {
+      "word": "вода",
+      "IPA": "vʌdˈɑ",
+      "text": "вода",
+      "google_pronunciation": "voda",
+      "audio": "water_ru_вода.mp3"
+    },
+    "ja": {
+      "word": "水",
+      "IPA": "(en)tʃˈaɪniːz(ja)lˈe̞tə",
+      "text": "水",
+      "google_pronunciation": "Mizu",
+      "audio": "water_ja_水.mp3"
+    },
+    "ko": {
+      "word": "물",
+      "IPA": "mˈuɫ",
+      "text": "물",
+      "google_pronunciation": "mul",
+      "audio": "water_ko_물.mp3"
+    },
+    "zh-cn": {
+      "word": "水",
+      "IPA": "s.wˈei2",
+      "text": "水",
+      "google_pronunciation": "Shuǐ",
+      "audio": "water_zh-cn_水.mp3"
+    }
+  },
+  {
+    "original": "yes",
+    "en": {
+      "word": "yes",
+      "IPA": "jˈɛs",
+      "text": "yes",
+      "audio": "yes_en_yes.mp3"
+    },
+    "es": {
+      "word": "Sí",
+      "IPA": "sˈi",
+      "text": "Sí",
+      "audio": "yes_es_Sí.mp3"
+    },
+    "fr": {
+      "word": "Oui",
+      "IPA": "wˈi",
+      "text": "Oui",
+      "audio": "yes_fr_Oui.mp3"
+    },
+    "de": {
+      "word": "Ja",
+      "IPA": "jˈɑː",
+      "text": "Ja",
+      "audio": "yes_de_Ja.mp3"
+    },
+    "it": {
+      "word": "SÌ",
+      "IPA": "sˈiː",
+      "text": "SÌ",
+      "audio": "yes_it_SÌ.mp3"
+    },
+    "pt": {
+      "word": "sim",
+      "IPA": "sˈiŋ",
+      "text": "sim",
+      "audio": "yes_pt_sim.mp3"
+    },
+    "ru": {
+      "word": "да",
+      "IPA": "dˈɑ",
+      "text": "да",
+      "google_pronunciation": "da",
+      "audio": "yes_ru_да.mp3"
+    },
+    "ja": {
+      "word": "はい",
+      "IPA": "hˈäi",
+      "text": "はい",
+      "google_pronunciation": "Hai",
+      "audio": "yes_ja_はい.mp3"
+    },
+    "ko": {
+      "word": "예",
+      "IPA": "jˈe",
+      "text": "예",
+      "google_pronunciation": "ye",
+      "audio": "yes_ko_예.mp3"
+    },
+    "zh-cn": {
+      "word": "是的",
+      "IPA": "s.ˈi.5 tˈə1",
+      "text": "是的",
+      "google_pronunciation": "Shì de",
+      "audio": "yes_zh-cn_是的.mp3"
+    }
+  },
+  {
+    "original": "no",
+    "en": {
+      "word": "no",
+      "IPA": "nˈoʊ",
+      "text": "no",
+      "audio": "no_en_no.mp3"
+    },
+    "es": {
+      "word": "No",
+      "IPA": "nˈo",
+      "text": "No",
+      "audio": "no_es_No.mp3"
+    },
+    "fr": {
+      "word": "Non",
+      "IPA": "nˈɔ̃",
+      "text": "Non",
+      "audio": "no_fr_Non.mp3"
+    },
+    "de": {
+      "word": "NEIN",
+      "IPA": "nˈaɪn",
+      "text": "NEIN",
+      "audio": "no_de_NEIN.mp3"
+    },
+    "it": {
+      "word": "NO",
+      "IPA": "nˈɔ",
+      "text": "NO",
+      "audio": "no_it_NO.mp3"
+    },
+    "pt": {
+      "word": "não",
+      "IPA": "nˈɐ̃ʊ̃",
+      "text": "não",
+      "audio": "no_pt_não.mp3"
+    },
+    "ru": {
+      "word": "нет",
+      "IPA": "nʲˈet",
+      "text": "нет",
+      "google_pronunciation": "net",
+      "audio": "no_ru_нет.mp3"
+    },
+    "ja": {
+      "word": "いいえ",
+      "IPA": "ˈiːe̞",
+      "text": "いいえ",
+      "google_pronunciation": "Īe",
+      "audio": "no_ja_いいえ.mp3"
+    },
+    "ko": {
+      "word": "아니요",
+      "IPA": "ˈɐnijˌo",
+      "text": "아니요",
+      "google_pronunciation": "aniyo",
+      "audio": "no_ko_아니요.mp3"
+    },
+    "zh-cn": {
+      "word": "不",
+      "IPA": "pˈu5",
+      "text": "不",
+      "google_pronunciation": "Bù",
+      "audio": "no_zh-cn_不.mp3"
+    }
+  }
+]
