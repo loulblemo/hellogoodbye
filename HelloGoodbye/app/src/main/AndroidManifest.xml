@@ -11,6 +11,9 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.HelloGoodbye">
+		<meta-data
+			android:name="androidx.profileinstaller.ProfileInstaller"
+			android:value="skip" />
         
         <activity
             android:name=".MainActivity"

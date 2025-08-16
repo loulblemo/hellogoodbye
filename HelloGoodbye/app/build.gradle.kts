@@ -21,9 +21,9 @@ android {
     signingConfigs {
         create("release") {
             storeFile = file("../../Key.jks")
-            storePassword = System.getenv("KEYSTORE_PASSWORD")
-            keyAlias = System.getenv("KEY_ALIAS")
-            keyPassword = System.getenv("KEY_PASSWORD")
+            storePassword = "Ultreia1988!"
+            keyAlias = "Key0"
+            keyPassword = "Ultreia1988!"
         }
     }
 
@@ -36,7 +36,14 @@ android {
             )
             signingConfig = signingConfigs.getByName("release")
         }
+        debug {
+            isDebuggable = true
+            applicationIdSuffix = ".debug"
+        }
     }
+    
+    
+
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
@@ -47,6 +54,14 @@ android {
     
     buildFeatures {
         compose = true
+    }
+    
+    packaging {
+        resources {
+            excludes += "/META-INF/{AL2.0,LGPL2.1}"
+            excludes += "/**/baseline.prof"
+            excludes += "/**/baseline.profm"
+        }
     }
     
     // Compose Compiler plugin handles compiler version in Kotlin 2.0+
