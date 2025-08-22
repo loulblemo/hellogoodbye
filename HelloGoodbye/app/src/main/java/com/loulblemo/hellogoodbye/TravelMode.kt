@@ -136,33 +136,22 @@ private fun updateTravelSectionsWithMixedLanguages(
     }
 }
 
-// Check if a locked mixed quest should be shown to the user
-private fun shouldShowLockedMixed(
-    context: Context,
+// Check if a mixed section should be visible in progression (when previous quest is completed)
+private fun isMixedSectionVisible(
     section: TravelSection,
     travelSections: List<TravelSection>,
     travelState: TravelState
 ): Boolean {
     if (!section.isMixed) return false
     
-    // For mixed quests, work like practice mode - just need the previous quest completed
-    // and at least one other language with bronze medal
-    val startLangCode = section.id.split("_")[0]
-    
-    // Check if previous quest is completed
+    // For mixed quests, show them when the previous quest is completed
     val mixedIndex = travelSections.indexOf(section)
     if (mixedIndex <= 0) return false
+    
     val previousQuest = travelSections[mixedIndex - 1]
     val isPreviousCompleted = travelState.questProgresses[previousQuest.id]?.isCompleted == true
     
-    // Check if there's at least one other language with bronze medal
-    val hasOtherLanguageWithBronze = travelSections.any { otherSection ->
-        if (otherSection.id.startsWith("${startLangCode}_")) return@any false
-        val otherLangCode = otherSection.id.split("_")[0]
-        getLanguageQuestCount(context, otherLangCode) >= 1
-    }
-    
-    return isPreviousCompleted && hasOtherLanguageWithBronze
+    return isPreviousCompleted
 }
 
 @Composable
@@ -387,9 +376,11 @@ fun TravelQuestListScreen(
             )
         }
         
+        // Show sections based on progression, but always display mixed sections when they become available
         val visibleSections = travelSections.filter { section ->
             val progress = travelState.questProgresses[section.id]
-            progress?.isUnlocked == true || (section.isMixed && shouldShowLockedMixed(context, section, travelSections, travelState))
+            // Show if unlocked OR if it's a mixed section that should be visible in progression
+            progress?.isUnlocked == true || (section.isMixed && isMixedSectionVisible(section, travelSections, travelState))
         }
         
         items(visibleSections) { section ->
@@ -589,7 +580,7 @@ fun LockedMixedQuestBubble(
         
         // Explanatory text
         Text(
-            text = "Complete at least one quest\nin another language to proceed",
+            text = "Mixed mode requires:\n• Previous quest completed\n• At least one other language\n  with bronze medal",
             style = MaterialTheme.typography.bodySmall,
             color = Color(0xFF757575),
             textAlign = TextAlign.Center,
