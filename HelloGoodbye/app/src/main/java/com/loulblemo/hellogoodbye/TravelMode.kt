@@ -21,6 +21,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.PathEffect
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
@@ -40,9 +41,14 @@ fun TravelScreen(
     }
     val questExercises = remember(travelSections) {
         travelSections.associate { section ->
-            val list = generateQuestExercisesForSection(section, 10)
-            val filtered = if (section.isMixed) list else list.filter { it.id != "audio_to_flag" && it.id != "pronunciation_to_flag" }
-            section.id to filtered
+            if (section.isCompletionBadge) {
+                // Completion badges have no exercises
+                section.id to emptyList<ExerciseType>()
+            } else {
+                val list = generateQuestExercisesForSection(section, 10)
+                val filtered = if (section.isMixed) list else list.filter { it.id != "audio_to_flag" && it.id != "pronunciation_to_flag" }
+                section.id to filtered
+            }
         }
     }
     var travelState by remember { mutableStateOf(initializeTravelState(context, travelSections, questExercises)) }
@@ -99,10 +105,7 @@ fun TravelScreen(
                         val langCodes = languages.filterNotNull()
                         trackWordsFromExercise(context, currentSection, corpus, langCodes)
                         
-                        // Track badge progress for each language involved
-                        langCodes.forEach { languageCode ->
-                            incrementLanguageExerciseCount(context, languageCode)
-                        }
+                        // Badge progress is tracked when quest is completed, not per exercise
                         
                         travelState = updateQuestProgress(
                             context,
@@ -119,6 +122,12 @@ fun TravelScreen(
                             if (currentSection.id.endsWith("_1")) {
                                 markFirstQuestCompleted(context, startLanguageCode)
                             }
+                            
+                            // Track badge progress when quest is completed
+                            langCodes.forEach { languageCode ->
+                                incrementLanguageQuestCount(context, languageCode)
+                            }
+                            
                             // Quest completed, return to list
                             travelState = travelState.copy(currentQuestId = null)
                         } else {
@@ -153,17 +162,15 @@ fun TravelScreen(
                         // Award coins for all exercises
                         repeat(allExerciseIds.size) { onAwardCoin() }
                         
-                        // Track badge progress for debug completion
+                        // Track badge progress for debug completion (quest completed)
                         val languages = if (currentSection.isMixed) {
                             currentSection.languages
                         } else {
                             listOf(languageNameToCode(currentSection.language) ?: "en")
                         }
                         val langCodes = languages.filterNotNull()
-                        repeat(allExerciseIds.size) {
-                            langCodes.forEach { languageCode ->
-                                incrementLanguageExerciseCount(context, languageCode)
-                            }
+                        langCodes.forEach { languageCode ->
+                            incrementLanguageQuestCount(context, languageCode)
                         }
                         
                         // Mark first quest completed if applicable
@@ -214,44 +221,14 @@ fun TravelQuestListScreen(
             CircleQuestBubble(
                 section = section,
                 questProgress = travelState.questProgresses[section.id],
-                onClick = { onQuestClick(section.id) }
-            )
-        }
-        
-        // Add plus button if all sections are completed
-        if (travelSections.all { section ->
-            travelState.questProgresses[section.id]?.isCompleted == true
-        }) {
-            item {
-                Card(
-                    modifier = Modifier
-                        .size(120.dp)
-                        .clickable { /* TODO: Add new language selection */ },
-                    colors = CardDefaults.cardColors(
-                        containerColor = MaterialTheme.colorScheme.tertiaryContainer
-                    ),
-                    shape = CircleShape
-                ) {
-                    Box(
-                        modifier = Modifier.fillMaxSize(),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.Add,
-                            contentDescription = "Add new language",
-                            modifier = Modifier.size(48.dp),
-                            tint = MaterialTheme.colorScheme.onTertiaryContainer
-                        )
+                onClick = { 
+                    if (!section.isCompletionBadge) {
+                        onQuestClick(section.id)
                     }
                 }
-                Text(
-                    text = "Add Language",
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    modifier = Modifier.padding(top = 8.dp)
-                )
-            }
+            )
         }
+
     }
 }
 
@@ -271,56 +248,89 @@ fun CircleQuestBubble(
             modifier = Modifier.size(120.dp),
             contentAlignment = Alignment.Center
         ) {
-            // Yellow circle background
-            Card(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .clickable(enabled = isUnlocked) { onClick() },
-                colors = CardDefaults.cardColors(
-                    containerColor = Color.White
-                ),
-                shape = CircleShape,
-                border = BorderStroke(4.dp, Color(0xFFFFD700)) // Yellow border
-            ) {
-                Box(
+            if (section.isCompletionBadge) {
+                // Special appearance for completion badge
+                Card(
                     modifier = Modifier.fillMaxSize(),
-                    contentAlignment = Alignment.Center
+                    colors = CardDefaults.cardColors(
+                        containerColor = Color(0xFFC0C0C0) // Silver background
+                    ),
+                    shape = CircleShape,
+                    border = BorderStroke(4.dp, Color(0xFF808080)) // Silver border
                 ) {
-                    // Flag emoji
-                    Text(
-                        text = section.flag,
-                        fontSize = 60.sp
-                    )
+                    Box(
+                        modifier = Modifier.fillMaxSize(),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text(
+                            text = section.flag, // 🥈 silver medal
+                            fontSize = 60.sp
+                        )
+                    }
                 }
-            }
-            
-            // Green checkmark overlay when completed
-            if (isCompleted) {
-                Box(
+            } else {
+                // Regular quest appearance
+                Card(
                     modifier = Modifier
                         .fillMaxSize()
-                        .clip(CircleShape)
-                        .background(Color(0xFF4CAF50).copy(alpha = 0.7f)),
-                    contentAlignment = Alignment.Center
+                        .clickable(enabled = isUnlocked) { onClick() },
+                    colors = CardDefaults.cardColors(
+                        containerColor = Color.White
+                    ),
+                    shape = CircleShape,
+                    border = BorderStroke(4.dp, Color(0xFFFFD700)) // Yellow border
                 ) {
-                    Text(
-                        text = "✓",
-                        fontSize = 48.sp,
-                        color = Color.White,
-                        fontWeight = FontWeight.Bold
-                    )
+                    Box(
+                        modifier = Modifier.fillMaxSize(),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        // Flag emoji
+                        Text(
+                            text = section.flag,
+                            fontSize = 60.sp
+                        )
+                    }
+                }
+                
+                // Green checkmark overlay when completed
+                if (isCompleted) {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .clip(CircleShape)
+                            .background(Color(0xFF4CAF50).copy(alpha = 0.7f)),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text(
+                            text = "✓",
+                            fontSize = 48.sp,
+                            color = Color.White,
+                            fontWeight = FontWeight.Bold
+                        )
+                    }
                 }
             }
         }
         
         Spacer(modifier = Modifier.height(12.dp))
         
-        // Language name only
+        // Text styling based on section type
         Text(
             text = section.name,
-            style = MaterialTheme.typography.titleMedium,
-            color = if (isUnlocked) MaterialTheme.colorScheme.onSurface else MaterialTheme.colorScheme.onSurfaceVariant,
-            fontWeight = FontWeight.Medium
+            style = if (section.isCompletionBadge) {
+                MaterialTheme.typography.titleSmall
+            } else {
+                MaterialTheme.typography.titleMedium
+            },
+            color = if (section.isCompletionBadge) {
+                Color(0xFF808080) // Silver text
+            } else if (isUnlocked) {
+                MaterialTheme.colorScheme.onSurface
+            } else {
+                MaterialTheme.colorScheme.onSurfaceVariant
+            },
+            fontWeight = if (section.isCompletionBadge) FontWeight.Bold else FontWeight.Medium,
+            textAlign = TextAlign.Center
         )
     }
 }

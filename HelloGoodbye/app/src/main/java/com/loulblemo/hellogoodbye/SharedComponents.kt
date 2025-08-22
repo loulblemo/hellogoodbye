@@ -97,7 +97,7 @@ fun CentralGridSection(
             val languageCode = languageNameToCode(country.language) ?: "en"
             val badgeLevel = getBadgeLevel(context, languageCode)
             
-            val exerciseCount = getLanguageExerciseCount(context, languageCode)
+            val questCount = getLanguageQuestCount(context, languageCode)
             
             Box(
                 modifier = Modifier.aspectRatio(1f)

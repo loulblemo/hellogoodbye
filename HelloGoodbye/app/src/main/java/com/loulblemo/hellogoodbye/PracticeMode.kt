@@ -31,11 +31,15 @@ fun PracticeScreen(
         if (perfect) {
             onAwardCoin()
         }
-        // Track badge progress for each language involved
-        languageCodes.forEach { languageCode ->
-            incrementLanguageExerciseCount(context, languageCode)
+        if (step < 3) {
+            step += 1 
+        } else {
+            // Practice session completed - track as quest completion for badge progress
+            languageCodes.forEach { languageCode ->
+                incrementLanguageQuestCount(context, languageCode)
+            }
+            perfectRunAwarded = true
         }
-        if (step < 3) step += 1 else perfectRunAwarded = true
     }
 
     Column(

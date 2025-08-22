@@ -17,7 +17,8 @@ data class TravelSection(
     val language: String,
     val isCompleted: Boolean = false,
     val isMixed: Boolean = false,
-    val languages: List<String> = emptyList()
+    val languages: List<String> = emptyList(),
+    val isCompletionBadge: Boolean = false
 )
 
 data class ExerciseType(
@@ -68,8 +69,8 @@ data class MatchingPair(
 
 enum class BadgeLevel {
     NONE,     // No badge - not started
-    BRONZE,   // Started - completed at least one exercise
-    SILVER    // Completed 5 exercises in the language
+    BRONZE,   // Completed at least one quest
+    SILVER    // Completed 5 quests in the language
 }
 
 data class LanguageProgress(
@@ -230,6 +231,8 @@ fun generateTravelSequenceForLanguage(startLangCode: String, allLangCodes: List<
     val startName = languageCodeToName(startLangCode) ?: "English"
     val startFlag = languageCodeToFlag(startLangCode) ?: "🇺🇸"
     val sections = mutableListOf<TravelSection>()
+    
+    // First 2 language quests
     sections.add(
         TravelSection(
             id = "${startLangCode}_1",
@@ -250,6 +253,8 @@ fun generateTravelSequenceForLanguage(startLangCode: String, allLangCodes: List<
             languages = listOf(startLangCode)
         )
     )
+    
+    // Mixed quest
     val mixedLangs = listOf(startLangCode, "en").distinct()
     sections.add(
         TravelSection(
@@ -261,6 +266,42 @@ fun generateTravelSequenceForLanguage(startLangCode: String, allLangCodes: List<
             languages = mixedLangs
         )
     )
+    
+    // Additional 2 language quests
+    sections.add(
+        TravelSection(
+            id = "${startLangCode}_3",
+            flag = startFlag,
+            name = startName,
+            language = startName,
+            isMixed = false,
+            languages = listOf(startLangCode)
+        )
+    )
+    sections.add(
+        TravelSection(
+            id = "${startLangCode}_4",
+            flag = startFlag,
+            name = startName,
+            language = startName,
+            isMixed = false,
+            languages = listOf(startLangCode)
+        )
+    )
+    
+    // Level 1 Complete badge (special section)
+    sections.add(
+        TravelSection(
+            id = "${startLangCode}_complete",
+            flag = "🥈",
+            name = "Level 1 Complete!",
+            language = "Completion",
+            isMixed = false,
+            languages = listOf(startLangCode),
+            isCompletionBadge = true
+        )
+    )
+    
     return sections
 }
 
@@ -323,8 +364,30 @@ fun initializeTravelState(context: Context, travelSections: List<TravelSection>,
         section.id to progress
     }.toMap()
     
+    // Auto-unlock and complete completion badges when all previous quests are done
+    val updatedProgresses = questProgresses.toMutableMap()
+    travelSections.forEachIndexed { index, section ->
+        if (section.isCompletionBadge) {
+            // Check if all previous quests are completed
+            val previousQuests = travelSections.subList(0, index)
+            val allPreviousCompleted = previousQuests.all { prevSection ->
+                updatedProgresses[prevSection.id]?.isCompleted == true
+            }
+            
+            if (allPreviousCompleted) {
+                // Auto-unlock and complete the completion badge
+                updatedProgresses[section.id] = QuestProgress(
+                    questId = section.id,
+                    isUnlocked = true,
+                    isCompleted = true,
+                    completedExercises = emptySet()
+                )
+            }
+        }
+    }
+    
     return TravelState(
-        questProgresses = questProgresses,
+        questProgresses = updatedProgresses,
         currentQuestId = null,
         currentExerciseIndex = 0,
         questExercises = questExercises
@@ -358,9 +421,19 @@ fun updateQuestProgress(
         val currentIndex = travelSections.indexOfFirst { it.id == questId }
         if (currentIndex >= 0 && currentIndex + 1 < travelSections.size) {
             val nextQuestId = travelSections[currentIndex + 1].id
+            val nextSection = travelSections[currentIndex + 1]
             val nextProgress = updatedProgresses[nextQuestId]
             if (nextProgress != null) {
-                updatedProgresses[nextQuestId] = nextProgress.copy(isUnlocked = true)
+                if (nextSection.isCompletionBadge) {
+                    // Auto-unlock and complete completion badges
+                    updatedProgresses[nextQuestId] = nextProgress.copy(
+                        isUnlocked = true,
+                        isCompleted = true
+                    )
+                } else {
+                    // Regular quest - just unlock
+                    updatedProgresses[nextQuestId] = nextProgress.copy(isUnlocked = true)
+                }
             }
         }
     }
@@ -460,21 +533,21 @@ fun loadQuestProgress(context: Context, questIds: List<String>): Map<String, Que
     return progressMap
 }
 
-// Badge progress tracking
-fun incrementLanguageExerciseCount(context: Context, languageCode: String) {
+// Badge progress tracking - based on completed quests
+fun incrementLanguageQuestCount(context: Context, languageCode: String) {
     val prefs = context.getSharedPreferences("hg_progress", Context.MODE_PRIVATE)
-    val key = "language_exercise_count_$languageCode"
+    val key = "language_quest_count_$languageCode"
     val currentCount = prefs.getInt(key, 0)
     prefs.edit().putInt(key, currentCount + 1).apply()
 }
 
-fun getLanguageExerciseCount(context: Context, languageCode: String): Int {
+fun getLanguageQuestCount(context: Context, languageCode: String): Int {
     val prefs = context.getSharedPreferences("hg_progress", Context.MODE_PRIVATE)
-    return prefs.getInt("language_exercise_count_$languageCode", 0)
+    return prefs.getInt("language_quest_count_$languageCode", 0)
 }
 
 fun getBadgeLevel(context: Context, languageCode: String): BadgeLevel {
-    val count = getLanguageExerciseCount(context, languageCode)
+    val count = getLanguageQuestCount(context, languageCode)
     return when {
         count >= 5 -> BadgeLevel.SILVER
         count >= 1 -> BadgeLevel.BRONZE
@@ -483,7 +556,7 @@ fun getBadgeLevel(context: Context, languageCode: String): BadgeLevel {
 }
 
 fun getLanguageProgress(context: Context, languageCode: String): LanguageProgress {
-    val count = getLanguageExerciseCount(context, languageCode)
+    val count = getLanguageQuestCount(context, languageCode)
     val badgeLevel = getBadgeLevel(context, languageCode)
     return LanguageProgress(
         languageCode = languageCode,
@@ -492,12 +565,18 @@ fun getLanguageProgress(context: Context, languageCode: String): LanguageProgres
     )
 }
 
+// Legacy function for backward compatibility - now tracks quests instead of exercises
+fun incrementLanguageExerciseCount(context: Context, languageCode: String) {
+    // This is now a no-op since we track quests, not individual exercises
+}
+
 // Debug function to reset all badge progress
 fun resetAllBadgeProgress(context: Context) {
     val prefs = context.getSharedPreferences("hg_progress", Context.MODE_PRIVATE)
     val editor = prefs.edit()
     supportedLanguageCodes().forEach { languageCode ->
         editor.remove("language_exercise_count_$languageCode")
+        editor.remove("language_quest_count_$languageCode")
     }
     editor.apply()
 }
