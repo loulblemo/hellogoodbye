@@ -174,7 +174,7 @@ fun TravelScreen(
     val context = LocalContext.current
     val corpus by remember { mutableStateOf(loadCorpusFromAssets(context)) }
     val supportedLangCodes = remember(corpus) {
-        corpus.flatMap { it.byLang.keys }.distinct()
+        corpus.flatMap { it.byLang.keys }.distinct().filter { it != "en" }
     }
     // Phase 1: Generate basic travel sections
     val basicTravelSections = remember(supportedLangCodes, startLanguageCode) {
@@ -355,9 +355,6 @@ fun TravelScreen(
                         // This ensures the practice button shows up when it should
                         
                         // Quest completed, return to list
-                        travelState = travelState.copy(currentQuestId = null)
-                    },
-                    onBack = { 
                         travelState = travelState.copy(currentQuestId = null)
                     }
                 )
@@ -723,8 +720,7 @@ fun QuestPracticeScreen(
     basicTravelSections: List<TravelSection>,
     supportedLangCodes: List<String>,
     onExerciseComplete: (String) -> Unit,
-    onDebugCompleteQuest: () -> Unit,
-    onBack: () -> Unit
+    onDebugCompleteQuest: () -> Unit
 ) {
     val context = LocalContext.current
     val corpus by remember { mutableStateOf(loadCorpusFromAssets(context)) }
@@ -782,7 +778,6 @@ fun QuestPracticeScreen(
                 }
                 // Removed exercise text for cleaner UI
             }
-            TextButton(onClick = onBack) { Text("Back") }
         }
         
         // Progress indicator - thicker, smudged angles, bright green

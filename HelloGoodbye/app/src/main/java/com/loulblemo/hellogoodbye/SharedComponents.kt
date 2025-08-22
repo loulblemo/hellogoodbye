@@ -385,15 +385,16 @@ fun MatchingExercise(
                 }
             }
         }
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 16.dp),
-            horizontalArrangement = Arrangement.SpaceBetween
-        ) {
-            Text("Remaining: $remaining")
-            Text("Mistakes: $mistakes")
-        }
+        // Hidden for cleaner UI
+        // Row(
+        //     modifier = Modifier
+        //         .fillMaxWidth()
+        //         .padding(horizontal = 16.dp),
+        //     horizontalArrangement = Arrangement.SpaceBetween
+        // ) {
+        //     Text("Remaining: $remaining")
+        //     Text("Mistakes: $mistakes")
+        // }
     }
 }
 
