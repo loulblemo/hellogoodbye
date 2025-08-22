@@ -75,6 +75,7 @@ fun TopBarSection(currency: Int, onSettingsClick: () -> Unit) {
 @Composable
 fun CentralGridSection(
     selectedCountries: List<Country>, 
+    onFlagClick: (Country) -> Unit,
     onAddFlag: () -> Unit,
     canAddMore: Boolean,
     canAffordAdd: Boolean = true,
@@ -92,7 +93,9 @@ fun CentralGridSection(
         items(selectedCountries) { country ->
             // Flag item
             Card(
-                modifier = Modifier.aspectRatio(1f),
+                modifier = Modifier
+                    .aspectRatio(1f)
+                    .clickable { onFlagClick(country) },
                 colors = CardDefaults.cardColors(
                     containerColor = MaterialTheme.colorScheme.surface
                 ),
@@ -154,14 +157,17 @@ fun CentralGridSection(
 }
 
 @Composable
-fun PracticeButtonSection(onClick: () -> Unit, modifier: Modifier = Modifier) {
+fun PracticeButtonSection(onClick: () -> Unit, modifier: Modifier = Modifier, enabled: Boolean = true) {
     Button(
         onClick = onClick,
+        enabled = enabled,
         modifier = modifier
-            .padding(end = 8.dp)
+            .fillMaxWidth()
             .height(56.dp),
         colors = ButtonDefaults.buttonColors(
-            containerColor = MaterialTheme.colorScheme.primary
+            containerColor = MaterialTheme.colorScheme.primary,
+            disabledContainerColor = MaterialTheme.colorScheme.surfaceVariant,
+            disabledContentColor = MaterialTheme.colorScheme.onSurfaceVariant
         ),
         shape = RoundedCornerShape(16.dp)
     ) {
@@ -169,40 +175,24 @@ fun PracticeButtonSection(onClick: () -> Unit, modifier: Modifier = Modifier) {
             text = "PRACTICE",
             fontSize = 18.sp,
             fontWeight = FontWeight.Bold,
-            color = MaterialTheme.colorScheme.onPrimary
+            color = if (enabled) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurfaceVariant
         )
     }
 }
 
 @Composable
-fun PracticeAndTravelButtonsSection(onPracticeClick: () -> Unit, onTravelClick: () -> Unit) {
+fun PracticeAndTravelButtonsSection(onPracticeClick: () -> Unit, onTravelClick: () -> Unit, travelEnabled: Boolean = true) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(16.dp),
-        horizontalArrangement = Arrangement.SpaceBetween
+            .padding(16.dp)
     ) {
+        // Single full-width Practice button; travel removed from main screen
         PracticeButtonSection(
             onClick = onPracticeClick,
-            modifier = Modifier.weight(1f)
+            modifier = Modifier.fillMaxWidth(),
+            enabled = travelEnabled
         )
-        Button(
-            onClick = onTravelClick,
-            modifier = Modifier
-                .weight(1f)
-                .padding(start = 8.dp),
-            colors = ButtonDefaults.buttonColors(
-                containerColor = MaterialTheme.colorScheme.secondary
-            ),
-            shape = RoundedCornerShape(16.dp)
-        ) {
-            Text(
-                text = "TRAVEL",
-                fontSize = 18.sp,
-                fontWeight = FontWeight.Bold,
-                color = MaterialTheme.colorScheme.onSecondary
-            )
-        }
     }
 }
 

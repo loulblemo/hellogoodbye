@@ -43,6 +43,7 @@ fun MainScreen() {
         )
     }
     var currentScreen by remember { mutableStateOf("home") }
+    var travelStartLang by remember { mutableStateOf<String?>(null) }
     
     val availableCountries = remember {
         listOf(
@@ -67,7 +68,10 @@ fun MainScreen() {
                 onCurrencyChange = { currency = it },
                 onCountriesChange = { selectedCountries = it },
                 onNavigateToPractice = { currentScreen = "practice" },
-                onNavigateToTravel = { currentScreen = "travel" }
+                onFlagClick = { country ->
+                    travelStartLang = languageNameToCode(country.language) ?: "en"
+                    currentScreen = "travel"
+                }
             )
         }
         "practice" -> {
@@ -78,7 +82,9 @@ fun MainScreen() {
             )
         }
         "travel" -> {
+            val startLang = travelStartLang ?: "en"
             TravelScreen(
+                startLanguageCode = startLang,
                 onExit = { currentScreen = "home" },
                 onAwardCoin = { currency += 1 }
             )
@@ -94,9 +100,10 @@ fun HomeScreen(
     onCurrencyChange: (Int) -> Unit,
     onCountriesChange: (List<Country>) -> Unit,
     onNavigateToPractice: () -> Unit,
-    onNavigateToTravel: () -> Unit
+    onFlagClick: (Country) -> Unit
 ) {
     val context = LocalContext.current
+    val practiceEnabled = countFirstQuestCompletedLanguages(context) >= 2
     
     Column(
         modifier = Modifier
@@ -112,6 +119,7 @@ fun HomeScreen(
         // Central grid section (8 parts)
         CentralGridSection(
             selectedCountries = selectedCountries,
+            onFlagClick = onFlagClick,
             onAddFlag = {
                 Toast.makeText(context, "Buying a new language costs 100 coins", Toast.LENGTH_SHORT).show()
                 val nextCountry = availableCountries.firstOrNull { candidate ->
@@ -130,10 +138,11 @@ fun HomeScreen(
             modifier = Modifier.weight(1f)
         )
 
-        // Practice and Travel buttons section (2 parts)
+        // Practice button section (full width, enabled only when two first quests are completed)
         PracticeAndTravelButtonsSection(
             onPracticeClick = onNavigateToPractice,
-            onTravelClick = onNavigateToTravel
+            onTravelClick = { /* removed */ },
+            travelEnabled = practiceEnabled
         )
     }
 }

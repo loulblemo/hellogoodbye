@@ -36,7 +36,8 @@ data class QuestProgress(
 data class TravelState(
     val questProgresses: Map<String, QuestProgress> = emptyMap(),
     val currentQuestId: String? = null,
-    val currentExerciseIndex: Int = 0
+    val currentExerciseIndex: Int = 0,
+    val questExercises: Map<String, List<ExerciseType>> = emptyMap()
 )
 
 data class WordVariant(
@@ -213,6 +214,44 @@ fun generateTravelSequence(allLangCodes: List<String>): List<TravelSection> {
     return sequence
 }
 
+fun generateTravelSequenceForLanguage(startLangCode: String, allLangCodes: List<String>): List<TravelSection> {
+    val startName = languageCodeToName(startLangCode) ?: "English"
+    val startFlag = languageCodeToFlag(startLangCode) ?: "🇺🇸"
+    val sections = mutableListOf<TravelSection>()
+    sections.add(
+        TravelSection(
+            id = "${startLangCode}_1",
+            flag = startFlag,
+            name = startName,
+            language = startName,
+            isMixed = false,
+            languages = listOf(startLangCode)
+        )
+    )
+    sections.add(
+        TravelSection(
+            id = "${startLangCode}_2",
+            flag = startFlag,
+            name = startName,
+            language = startName,
+            isMixed = false,
+            languages = listOf(startLangCode)
+        )
+    )
+    val mixedLangs = allLangCodes.distinct().ifEmpty { listOf(startLangCode, "en") }
+    sections.add(
+        TravelSection(
+            id = "${startLangCode}_mixed",
+            flag = "🌍",
+            name = "Mixed",
+            language = "Mixed",
+            isMixed = true,
+            languages = mixedLangs
+        )
+    )
+    return sections
+}
+
 fun getExerciseTypes(): List<ExerciseType> {
     return listOf(
         ExerciseType("audio_to_flag", "Match Audio to Flag", "Listen and match the audio to the correct flag"),
@@ -221,7 +260,17 @@ fun getExerciseTypes(): List<ExerciseType> {
     )
 }
 
-fun initializeTravelState(travelSections: List<TravelSection>): TravelState {
+fun generateQuestExercises(numExercises: Int): List<ExerciseType> {
+    val types = getExerciseTypes()
+    if (types.isEmpty()) return emptyList()
+    val list = mutableListOf<ExerciseType>()
+    repeat(numExercises) {
+        list.add(types.random())
+    }
+    return list
+}
+
+fun initializeTravelState(travelSections: List<TravelSection>, questExercises: Map<String, List<ExerciseType>>): TravelState {
     val questProgresses = travelSections.mapIndexed { index, section ->
         section.id to QuestProgress(
             questId = section.id,
@@ -231,7 +280,9 @@ fun initializeTravelState(travelSections: List<TravelSection>): TravelState {
     
     return TravelState(
         questProgresses = questProgresses,
-        currentQuestId = null
+        currentQuestId = null,
+        currentExerciseIndex = 0,
+        questExercises = questExercises
     )
 }
 
@@ -239,13 +290,14 @@ fun updateQuestProgress(
     travelState: TravelState,
     questId: String,
     completedExerciseId: String,
-    travelSections: List<TravelSection>
+    travelSections: List<TravelSection>,
+    questExercises: Map<String, List<ExerciseType>>
 ): TravelState {
-    val exerciseTypes = getExerciseTypes()
     val currentProgress = travelState.questProgresses[questId] ?: return travelState
     
     val newCompletedExercises = currentProgress.completedExercises + completedExerciseId
-    val isQuestCompleted = newCompletedExercises.size >= exerciseTypes.size
+    val questSize = questExercises[questId]?.size ?: 10
+    val isQuestCompleted = newCompletedExercises.size >= questSize
     
     val updatedProgress = currentProgress.copy(
         completedExercises = newCompletedExercises,
@@ -268,4 +320,23 @@ fun updateQuestProgress(
     }
     
     return travelState.copy(questProgresses = updatedProgresses)
+}
+
+// Simple persistence for tracking whether the first quest for a language was completed
+fun supportedLanguageCodes(): List<String> {
+    return listOf("en", "es", "fr", "de", "it", "pt", "ru", "ja", "ko", "zh-cn", "nl", "sv")
+}
+
+fun markFirstQuestCompleted(context: Context, languageCode: String) {
+    val prefs = context.getSharedPreferences("hg_progress", Context.MODE_PRIVATE)
+    prefs.edit().putBoolean("first_quest_completed_${'$'}languageCode", true).apply()
+}
+
+fun isFirstQuestCompleted(context: Context, languageCode: String): Boolean {
+    val prefs = context.getSharedPreferences("hg_progress", Context.MODE_PRIVATE)
+    return prefs.getBoolean("first_quest_completed_${'$'}languageCode", false)
+}
+
+fun countFirstQuestCompletedLanguages(context: Context): Int {
+    return supportedLanguageCodes().count { code -> isFirstQuestCompleted(context, code) }
 }

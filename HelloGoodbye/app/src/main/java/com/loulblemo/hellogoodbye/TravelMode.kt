@@ -26,6 +26,7 @@ import androidx.compose.ui.unit.sp
 
 @Composable
 fun TravelScreen(
+    startLanguageCode: String,
     onExit: () -> Unit,
     onAwardCoin: () -> Unit
 ) {
@@ -34,8 +35,13 @@ fun TravelScreen(
     val supportedLangCodes = remember(corpus) {
         corpus.flatMap { it.byLang.keys }.distinct()
     }
-    val travelSections = remember(supportedLangCodes) { generateTravelSequence(supportedLangCodes) }
-    var travelState by remember { mutableStateOf(initializeTravelState(travelSections)) }
+    val travelSections = remember(supportedLangCodes, startLanguageCode) {
+        generateTravelSequenceForLanguage(startLanguageCode, supportedLangCodes)
+    }
+    val questExercises = remember(travelSections) {
+        travelSections.associate { it.id to generateQuestExercises(10) }
+    }
+    var travelState by remember { mutableStateOf(initializeTravelState(travelSections, questExercises)) }
     
     Column(
         modifier = Modifier
@@ -63,6 +69,7 @@ fun TravelScreen(
             TravelQuestListScreen(
                 travelSections = travelSections,
                 travelState = travelState,
+                questExercises = questExercises,
                 onQuestClick = { questId ->
                     travelState = travelState.copy(
                         currentQuestId = questId,
@@ -77,25 +84,32 @@ fun TravelScreen(
                 QuestPracticeScreen(
                     section = currentSection,
                     travelState = travelState,
-                    onExerciseComplete = { exerciseId ->
+                    questExercises = questExercises[currentSection.id] ?: emptyList(),
+                    onExerciseComplete = { completedStepKey ->
                         travelState = updateQuestProgress(
                             travelState,
                             currentSection.id,
-                            exerciseId,
-                            travelSections
+                            completedStepKey,
+                            travelSections,
+                            questExercises
                         )
                         onAwardCoin()
                         
                         val currentProgress = travelState.questProgresses[currentSection.id]
                         if (currentProgress?.isCompleted == true) {
+                            if (currentSection.id.endsWith("_1")) {
+                                markFirstQuestCompleted(context, startLanguageCode)
+                            }
                             // Quest completed, return to list
                             travelState = travelState.copy(currentQuestId = null)
                         } else {
-                            // Move to next exercise
+                            // Move to next exercise immediately
+                            val total = questExercises[currentSection.id]?.size ?: 10
                             val nextIndex = travelState.currentExerciseIndex + 1
-                            val exerciseTypes = getExerciseTypes()
-                            if (nextIndex < exerciseTypes.size) {
-                                travelState = travelState.copy(currentExerciseIndex = nextIndex)
+                            travelState = if (nextIndex < total) {
+                                travelState.copy(currentExerciseIndex = nextIndex)
+                            } else {
+                                travelState
                             }
                         }
                     },
@@ -112,6 +126,7 @@ fun TravelScreen(
 fun TravelQuestListScreen(
     travelSections: List<TravelSection>,
     travelState: TravelState,
+    questExercises: Map<String, List<ExerciseType>>,
     onQuestClick: (String) -> Unit
 ) {
     LazyColumn(
@@ -371,12 +386,13 @@ fun TravelQuestCard(
 fun QuestPracticeScreen(
     section: TravelSection,
     travelState: TravelState,
+    questExercises: List<ExerciseType>,
     onExerciseComplete: (String) -> Unit,
     onBack: () -> Unit
 ) {
     val context = LocalContext.current
     val corpus by remember { mutableStateOf(loadCorpusFromAssets(context)) }
-    val exerciseTypes = getExerciseTypes()
+    val exerciseTypes = questExercises
     val currentProgress = travelState.questProgresses[section.id]
     val currentExerciseIndex = travelState.currentExerciseIndex
     
@@ -388,6 +404,7 @@ fun QuestPracticeScreen(
     val languageCodes = languages.filterNotNull()
     
     val currentExercise = exerciseTypes.getOrNull(currentExerciseIndex)
+    val stepKey = remember(section.id, currentExerciseIndex) { "${section.id}#${currentExerciseIndex}" }
     
     Column(
         modifier = Modifier
@@ -446,58 +463,29 @@ fun QuestPracticeScreen(
         val threeWords = remember(corpus) {
             corpus.shuffled().take(3)
         }
+        val eligibleAudioWords = remember(corpus, languageCodes) {
+            corpus.filter { entry -> languageCodes.any { code -> entry.byLang[code]?.audio != null } }
+        }
         
         // Check if current exercise is already completed
-        val isExerciseCompleted = currentProgress?.completedExercises?.contains(currentExercise.id) == true
+        val isExerciseCompleted = currentProgress?.completedExercises?.contains(stepKey) == true
         
         if (isExerciseCompleted) {
-            // Show completion message and continue button
-            Box(
-                modifier = Modifier.fillMaxSize(),
-                contentAlignment = Alignment.Center
-            ) {
-                Column(
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    Text(
-                        text = "Exercise Completed!",
-                        fontSize = 24.sp,
-                        fontWeight = FontWeight.Bold,
-                        color = Color(0xFF4CAF50)
-                    )
-                    Spacer(modifier = Modifier.height(16.dp))
-                    Button(
-                        onClick = {
-                            val nextIndex = currentExerciseIndex + 1
-                            if (nextIndex < exerciseTypes.size) {
-                                // Continue to next exercise
-                                onExerciseComplete(currentExercise.id)
-                            } else {
-                                // Quest completed
-                                onExerciseComplete(currentExercise.id)
-                            }
-                        },
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor = Color(0xFF4CAF50)
-                        )
-                    ) {
-                        Text(
-                            if (currentExerciseIndex + 1 < exerciseTypes.size) "Continue" else "Complete Quest",
-                            color = Color.White
-                        )
-                    }
-                }
+            // Already completed: parent will advance index. Keep UI minimal.
+            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                Text("Great! Moving on...")
             }
         } else {
             // Show the actual exercise
             when (currentExercise.id) {
                 "audio_to_flag" -> {
-                    val pairs = buildAudioToFlagPairs(threeWords, languageCodes)
+                    val source = (if (eligibleAudioWords.isNotEmpty()) eligibleAudioWords else corpus).shuffled().take(10)
+                    val pairs = buildAudioToFlagPairs(source, languageCodes)
                     MatchingExercise(
                         title = currentExercise.title,
                         pairs = pairs,
                         onDone = { perfect ->
-                            onExerciseComplete(currentExercise.id)
+                            onExerciseComplete(stepKey)
                         }
                     )
                 }
@@ -507,17 +495,18 @@ fun QuestPracticeScreen(
                         title = currentExercise.title,
                         pairs = pairs,
                         onDone = { perfect ->
-                            onExerciseComplete(currentExercise.id)
+                            onExerciseComplete(stepKey)
                         }
                     )
                 }
                 "audio_to_english" -> {
-                    val pairs = buildAudioToEnglishPairs(threeWords, languageCodes)
+                    val source = (if (eligibleAudioWords.isNotEmpty()) eligibleAudioWords else corpus).shuffled().take(10)
+                    val pairs = buildAudioToEnglishPairs(source, languageCodes)
                     MatchingExercise(
                         title = currentExercise.title,
                         pairs = pairs,
                         onDone = { perfect ->
-                            onExerciseComplete(currentExercise.id)
+                            onExerciseComplete(stepKey)
                         }
                     )
                 }
