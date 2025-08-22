@@ -11,6 +11,7 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.LocalIndication
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Settings
@@ -25,6 +26,17 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.graphics.StrokeCap
+import androidx.compose.ui.graphics.drawscope.DrawScope
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.collectIsPressedAsState
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
+import androidx.compose.runtime.snapshotFlow
+import androidx.compose.ui.draw.scale
+import androidx.compose.animation.animateContentSize
+import kotlinx.coroutines.delay
 import com.airbnb.lottie.compose.*
 
 @Composable
@@ -174,6 +186,143 @@ fun CentralGridSection(
                 }
             }
         }
+    }
+}
+
+@Composable
+fun ResponsiveRedCross(
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    var isPressed by remember { mutableStateOf(false) }
+    
+    Box(
+        modifier = modifier
+            .size(32.dp)
+            .clickable(
+                interactionSource = remember { MutableInteractionSource() },
+                indication = LocalIndication.current
+            ) {
+                onClick()
+            }
+            .scale(if (isPressed) 0.9f else 1f)
+            .animateContentSize(),
+        contentAlignment = Alignment.Center
+    ) {
+        // Outer cross (darker red)
+        Canvas(modifier = Modifier.fillMaxSize()) {
+            val strokeWidth = 3.dp.toPx()
+            val color = Color(0xFFB71C1C) // Darker red
+            
+            // Draw X with two lines
+            drawLine(
+                color = color,
+                start = Offset(8.dp.toPx(), 8.dp.toPx()),
+                end = Offset(24.dp.toPx(), 24.dp.toPx()),
+                strokeWidth = strokeWidth,
+                cap = StrokeCap.Round
+            )
+            drawLine(
+                color = color,
+                start = Offset(24.dp.toPx(), 8.dp.toPx()),
+                end = Offset(8.dp.toPx(), 24.dp.toPx()),
+                strokeWidth = strokeWidth,
+                cap = StrokeCap.Round
+            )
+        }
+        
+        // Inner cross (lighter red) - slightly smaller
+        Canvas(modifier = Modifier.fillMaxSize()) {
+            val strokeWidth = 2.dp.toPx()
+            val color = Color(0xFFF44336) // Lighter red
+            
+            // Draw X with two lines (slightly smaller)
+            drawLine(
+                color = color,
+                start = Offset(10.dp.toPx(), 10.dp.toPx()),
+                end = Offset(22.dp.toPx(), 22.dp.toPx()),
+                strokeWidth = strokeWidth,
+                cap = StrokeCap.Round
+            )
+            drawLine(
+                color = color,
+                start = Offset(22.dp.toPx(), 10.dp.toPx()),
+                end = Offset(10.dp.toPx(), 22.dp.toPx()),
+                strokeWidth = strokeWidth,
+                cap = StrokeCap.Round
+            )
+        }
+    }
+    
+    LaunchedEffect(Unit) {
+        // Handle press state for animation
+        snapshotFlow { isPressed }
+            .collect { pressed ->
+                if (pressed) {
+                    delay(100)
+                    isPressed = false
+                }
+            }
+    }
+}
+
+@Composable
+fun ModernCheckmark(
+    modifier: Modifier = Modifier,
+    size: Float = 48f,
+    color: Color = Color(0xFF4CAF50)
+) {
+    Canvas(modifier = modifier.size(size.dp)) {
+        val strokeWidth = this.size.minDimension * 0.08f // Proportional stroke width in px
+        val padding = this.size.minDimension * 0.15f // Proportional padding in px
+        
+        // Draw the checkmark with rounded caps
+        drawLine(
+            color = color,
+            start = Offset(padding, this.size.height / 2),
+            end = Offset(this.size.width * 0.4f, this.size.height * 0.7f),
+            strokeWidth = strokeWidth,
+            cap = StrokeCap.Round
+        )
+        drawLine(
+            color = color,
+            start = Offset(this.size.width * 0.4f, this.size.height * 0.7f),
+            end = Offset(this.size.width - padding, this.size.height * 0.3f),
+            strokeWidth = strokeWidth,
+            cap = StrokeCap.Round
+        )
+    }
+}
+
+@Composable
+fun ModernCheckmarkOverlay(
+    modifier: Modifier = Modifier,
+    size: Float = 120f
+) {
+    Box(
+        modifier = modifier
+            .size(size.dp)
+            .clip(CircleShape)
+            .background(
+                Color(0xFF4CAF50).copy(alpha = 0.95f),
+                CircleShape
+            ),
+        contentAlignment = Alignment.Center
+    ) {
+        // Add a subtle inner shadow effect
+        Box(
+            modifier = Modifier
+                .size(size.dp)
+                .clip(CircleShape)
+                .background(
+                    Color(0xFF2E7D32).copy(alpha = 0.3f),
+                    CircleShape
+                )
+        )
+        ModernCheckmark(
+            size = size * 0.4f,
+            color = Color.White
+        )
     }
 }
 

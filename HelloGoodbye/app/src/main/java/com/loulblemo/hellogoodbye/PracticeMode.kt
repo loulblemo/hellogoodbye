@@ -54,7 +54,7 @@ fun PracticeScreen(
                 fontSize = 20.sp,
                 fontWeight = FontWeight.Bold
             )
-            TextButton(onClick = onExit) { Text("Close") }
+            ResponsiveRedCross(onClick = onExit)
         }
 
         if (corpus.isEmpty() || languageCodes.isEmpty()) {

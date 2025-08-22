@@ -219,7 +219,7 @@ fun TravelScreen(
                 fontSize = 20.sp,
                 fontWeight = FontWeight.Bold
             )
-            TextButton(onClick = onExit) { Text("Close") }
+            ResponsiveRedCross(onClick = onExit)
         }
         
         if (travelState.currentQuestId == null) {
@@ -469,22 +469,11 @@ fun CircleQuestBubble(
                     }
                 }
                 
-                // Green checkmark overlay when completed
+                // Modern checkmark overlay when completed
                 if (isCompleted) {
-                    Box(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .clip(CircleShape)
-                            .background(Color(0xFF4CAF50).copy(alpha = 0.7f)),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Text(
-                            text = "✓",
-                            fontSize = 48.sp,
-                            color = Color.White,
-                            fontWeight = FontWeight.Bold
-                        )
-                    }
+                    ModernCheckmarkOverlay(
+                        size = 120f
+                    )
                 }
             }
         }
@@ -677,10 +666,8 @@ fun TravelQuestCard(
                         .background(Color(0xFF4CAF50)),
                     contentAlignment = Alignment.Center
                 ) {
-                    Text(
-                        text = "✓",
-                        fontSize = 18.sp,
-                        fontWeight = FontWeight.Bold,
+                    ModernCheckmark(
+                        size = 24f,
                         color = Color.White
                     )
                 }
