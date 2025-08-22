@@ -365,6 +365,7 @@ fun initializeTravelState(context: Context, travelSections: List<TravelSection>,
     }.toMap()
     
     // Auto-unlock and complete completion badges when all previous quests are done
+    // Also check mixed quest requirements
     val updatedProgresses = questProgresses.toMutableMap()
     travelSections.forEachIndexed { index, section ->
         if (section.isCompletionBadge) {
@@ -382,6 +383,19 @@ fun initializeTravelState(context: Context, travelSections: List<TravelSection>,
                     isCompleted = true,
                     completedExercises = emptySet()
                 )
+            }
+        } else if (section.isMixed && index > 0) {
+            // Check if mixed quest should be unlocked
+            val previousQuest = travelSections[index - 1]
+            val isPreviousCompleted = updatedProgresses[previousQuest.id]?.isCompleted == true
+            val currentLanguageCode = startLangCodeFromQuestId(section.id)
+            val hasOtherLanguageQuest = currentLanguageCode == null || hasCompletedQuestInOtherLanguage(context, currentLanguageCode)
+            
+            if (isPreviousCompleted && hasOtherLanguageQuest) {
+                val currentProgress = updatedProgresses[section.id]
+                if (currentProgress != null && !currentProgress.isUnlocked) {
+                    updatedProgresses[section.id] = currentProgress.copy(isUnlocked = true)
+                }
             }
         }
     }
@@ -430,6 +444,15 @@ fun updateQuestProgress(
                         isUnlocked = true,
                         isCompleted = true
                     )
+                } else if (nextSection.isMixed) {
+                    // Mixed quest - check if user has completed at least one quest in another language
+                    val currentLanguageCode = startLangCodeFromQuestId(questId)
+                    val canUnlockMixed = currentLanguageCode == null || hasCompletedQuestInOtherLanguage(context, currentLanguageCode)
+                    
+                    if (canUnlockMixed) {
+                        updatedProgresses[nextQuestId] = nextProgress.copy(isUnlocked = true)
+                    }
+                    // If can't unlock mixed, leave it locked (no change to progress)
                 } else {
                     // Regular quest - just unlock
                     updatedProgresses[nextQuestId] = nextProgress.copy(isUnlocked = true)
@@ -544,6 +567,18 @@ fun incrementLanguageQuestCount(context: Context, languageCode: String) {
 fun getLanguageQuestCount(context: Context, languageCode: String): Int {
     val prefs = context.getSharedPreferences("hg_progress", Context.MODE_PRIVATE)
     return prefs.getInt("language_quest_count_$languageCode", 0)
+}
+
+// Extract language code from quest ID (e.g. "de_1" -> "de", "de_mixed" -> "de")
+fun startLangCodeFromQuestId(questId: String): String? {
+    return questId.split("_").firstOrNull()
+}
+
+// Check if user has completed at least one quest in any other language
+fun hasCompletedQuestInOtherLanguage(context: Context, currentLanguageCode: String): Boolean {
+    return supportedLanguageCodes()
+        .filter { it != currentLanguageCode }
+        .any { langCode -> getLanguageQuestCount(context, langCode) > 0 }
 }
 
 fun getBadgeLevel(context: Context, languageCode: String): BadgeLevel {

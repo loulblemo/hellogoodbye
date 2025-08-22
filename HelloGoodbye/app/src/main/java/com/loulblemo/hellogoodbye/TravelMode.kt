@@ -1,5 +1,6 @@
 package com.loulblemo.hellogoodbye
 
+import android.content.Context
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
@@ -24,6 +25,49 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+
+// Helper function to get encountered words for mixed exercises
+private fun getEncounteredWordsForMixed(
+    context: Context,
+    corpus: List<WordEntry>,
+    languageCodes: List<String>
+): List<WordEntry> {
+    val encounteredWords = mutableSetOf<WordEntry>()
+    languageCodes.forEach { langCode ->
+        val encounteredWordsForLang = getEncounteredWords(context, langCode)
+        corpus.forEach { wordEntry ->
+            val variant = wordEntry.byLang[langCode]
+            if (variant != null) {
+                val word = variant.word ?: variant.text ?: wordEntry.original
+                if (encounteredWordsForLang.contains(word)) {
+                    encounteredWords.add(wordEntry)
+                }
+            }
+        }
+    }
+    return if (encounteredWords.isNotEmpty()) {
+        encounteredWords.toList()
+    } else {
+        corpus // Fallback if no encountered words
+    }
+}
+
+// Check if a locked mixed quest should be shown to the user
+private fun shouldShowLockedMixed(
+    section: TravelSection,
+    travelSections: List<TravelSection>,
+    travelState: TravelState
+): Boolean {
+    if (!section.isMixed) return false
+    
+    // Find the index of this mixed quest
+    val mixedIndex = travelSections.indexOf(section)
+    if (mixedIndex <= 0) return false
+    
+    // Check if the previous quest is completed
+    val previousQuest = travelSections[mixedIndex - 1]
+    return travelState.questProgresses[previousQuest.id]?.isCompleted == true
+}
 
 @Composable
 fun TravelScreen(
@@ -213,20 +257,32 @@ fun TravelQuestListScreen(
             )
         }
         
-        val unlockedSections = travelSections.filter { section ->
-            travelState.questProgresses[section.id]?.isUnlocked == true
+        val visibleSections = travelSections.filter { section ->
+            val progress = travelState.questProgresses[section.id]
+            progress?.isUnlocked == true || (section.isMixed && shouldShowLockedMixed(section, travelSections, travelState))
         }
         
-        items(unlockedSections) { section ->
-            CircleQuestBubble(
-                section = section,
-                questProgress = travelState.questProgresses[section.id],
-                onClick = { 
-                    if (!section.isCompletionBadge) {
-                        onQuestClick(section.id)
+        items(visibleSections) { section ->
+            val questProgress = travelState.questProgresses[section.id]
+            val isUnlocked = questProgress?.isUnlocked == true
+            
+            if (section.isMixed && !isUnlocked) {
+                // Show locked mixed quest with explanation
+                LockedMixedQuestBubble(
+                    section = section,
+                    questProgress = questProgress
+                )
+            } else {
+                CircleQuestBubble(
+                    section = section,
+                    questProgress = questProgress,
+                    onClick = { 
+                        if (!section.isCompletionBadge && isUnlocked) {
+                            onQuestClick(section.id)
+                        }
                     }
-                }
-            )
+                )
+            }
         }
 
     }
@@ -331,6 +387,83 @@ fun CircleQuestBubble(
             },
             fontWeight = if (section.isCompletionBadge) FontWeight.Bold else FontWeight.Medium,
             textAlign = TextAlign.Center
+        )
+    }
+}
+
+@Composable
+fun LockedMixedQuestBubble(
+    section: TravelSection,
+    questProgress: QuestProgress?
+) {
+    val context = LocalContext.current
+    val currentLanguageCode = startLangCodeFromQuestId(section.id) ?: ""
+    
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        modifier = Modifier.padding(vertical = 12.dp)
+    ) {
+        Box(
+            modifier = Modifier.size(120.dp),
+            contentAlignment = Alignment.Center
+        ) {
+            // Greyed out circle
+            Card(
+                modifier = Modifier.fillMaxSize(),
+                colors = CardDefaults.cardColors(
+                    containerColor = Color(0xFFE0E0E0) // Light grey background
+                ),
+                shape = CircleShape,
+                border = BorderStroke(4.dp, Color(0xFFBDBDBD)) // Grey border
+            ) {
+                Box(
+                    modifier = Modifier.fillMaxSize(),
+                    contentAlignment = Alignment.Center
+                ) {
+                    // Greyed out flag emoji
+                    Text(
+                        text = section.flag,
+                        fontSize = 60.sp,
+                        color = Color(0xFF9E9E9E) // Grey tint
+                    )
+                }
+            }
+            
+            // Lock icon overlay
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .clip(CircleShape)
+                    .background(Color(0xFF424242).copy(alpha = 0.3f)),
+                contentAlignment = Alignment.Center
+            ) {
+                Text(
+                    text = "🔒",
+                    fontSize = 36.sp
+                )
+            }
+        }
+        
+        Spacer(modifier = Modifier.height(12.dp))
+        
+        // Quest name - greyed out
+        Text(
+            text = section.name,
+            style = MaterialTheme.typography.titleMedium,
+            color = Color(0xFF9E9E9E),
+            fontWeight = FontWeight.Medium,
+            textAlign = TextAlign.Center
+        )
+        
+        Spacer(modifier = Modifier.height(8.dp))
+        
+        // Explanatory text
+        Text(
+            text = "Complete at least one quest\nin another language to proceed",
+            style = MaterialTheme.typography.bodySmall,
+            color = Color(0xFF757575),
+            textAlign = TextAlign.Center,
+            lineHeight = 16.sp
         )
     }
 }
@@ -532,14 +665,43 @@ fun QuestPracticeScreen(
             return
         }
         
-        val threeWords = remember(corpus) {
-            corpus.shuffled().take(3)
+        val encounteredLanguages = remember(corpus, section.isMixed, languageCodes) {
+            if (section.isMixed) {
+                // Get languages where user has encountered words
+                languageCodes.filter { langCode ->
+                    getEncounteredWords(context, langCode).isNotEmpty()
+                }
+            } else {
+                emptyList()
+            }
         }
-        val eligibleAudioWords = remember(corpus, languageCodes) {
-            corpus.filter { entry -> languageCodes.any { code -> entry.byLang[code]?.audio != null } }
+        
+        val threeWords = remember(corpus, section.isMixed, languageCodes) {
+            if (section.isMixed) {
+                // For mixed exercises, only use words that have been encountered before
+                getEncounteredWordsForMixed(context, corpus, languageCodes).shuffled().take(3)
+            } else {
+                // For regular (non-mixed) exercises, use any words from corpus
+                corpus.shuffled().take(3)
+            }
         }
-        val eligiblePronunciationWords = remember(corpus, languageCodes) {
-            corpus.filter { entry -> languageCodes.any { code ->
+        val eligibleAudioWords = remember(corpus, section.isMixed, languageCodes) {
+            val baseWords = if (section.isMixed) {
+                // For mixed exercises, only use words that have been encountered before
+                getEncounteredWordsForMixed(context, corpus, languageCodes)
+            } else {
+                corpus // For regular exercises, use all words
+            }
+            baseWords.filter { entry -> languageCodes.any { code -> entry.byLang[code]?.audio != null } }
+        }
+        val eligiblePronunciationWords = remember(corpus, section.isMixed, languageCodes) {
+            val baseWords = if (section.isMixed) {
+                // For mixed exercises, only use words that have been encountered before
+                getEncounteredWordsForMixed(context, corpus, languageCodes)
+            } else {
+                corpus // For regular exercises, use all words
+            }
+            baseWords.filter { entry -> languageCodes.any { code ->
                 val v = entry.byLang[code]
                 (v?.googlePronunciation ?: v?.ipa) != null && v?.audio != null
             } }
@@ -564,7 +726,12 @@ fun QuestPracticeScreen(
                 when (effectiveExerciseId) {
                     "audio_to_flag" -> {
                         val source = (if (eligibleAudioWords.isNotEmpty()) eligibleAudioWords else corpus).shuffled().take(10)
-                        val pairs = buildAudioToFlagPairs(source, languageCodes)
+                        val pairs = buildAudioToFlagPairs(
+                            source, 
+                            languageCodes,
+                            restrictToEncountered = section.isMixed,
+                            availableLanguages = encounteredLanguages
+                        )
                         MatchingExercise(
                             title = currentExercise.title,
                             pairs = pairs,
@@ -574,7 +741,12 @@ fun QuestPracticeScreen(
                         )
                     }
                     "pronunciation_to_flag" -> {
-                        val pairs = buildPronunciationToFlagPairs(threeWords, languageCodes)
+                        val pairs = buildPronunciationToFlagPairs(
+                            threeWords, 
+                            languageCodes,
+                            restrictToEncountered = section.isMixed,
+                            availableLanguages = encounteredLanguages
+                        )
                         MatchingExercise(
                             title = currentExercise.title,
                             pairs = pairs,
@@ -585,7 +757,12 @@ fun QuestPracticeScreen(
                     }
                     "audio_to_english" -> {
                         val source = (if (eligibleAudioWords.isNotEmpty()) eligibleAudioWords else corpus).shuffled().take(10)
-                        val pairs = buildAudioToEnglishPairs(source, languageCodes)
+                        val pairs = buildAudioToEnglishPairs(
+                            source, 
+                            languageCodes,
+                            restrictToEncountered = section.isMixed,
+                            availableLanguages = encounteredLanguages
+                        )
                         MatchingExercise(
                             title = currentExercise.title,
                             pairs = pairs,

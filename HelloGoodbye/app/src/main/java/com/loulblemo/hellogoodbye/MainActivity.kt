@@ -128,20 +128,20 @@ fun HomeScreen(
             selectedCountries = selectedCountries,
             onFlagClick = onFlagClick,
             onAddFlag = {
-                Toast.makeText(context, "Buying a new language costs 100 coins", Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, "Buying a new language costs 50 coins", Toast.LENGTH_SHORT).show()
                 val nextCountry = availableCountries.firstOrNull { candidate ->
                     selectedCountries.none { it.name == candidate.name && it.language == candidate.language }
                 }
-                if (nextCountry != null && currency >= 100) {
+                if (nextCountry != null && currency >= 50) {
                     onCountriesChange(selectedCountries + nextCountry)
-                    onCurrencyChange(currency - 100)
+                    onCurrencyChange(currency - 50)
                 }
             },
             canAddMore = availableCountries.any { candidate ->
                 selectedCountries.none { it.name == candidate.name && it.language == candidate.language }
             },
-            canAffordAdd = currency >= 100,
-            price = 100,
+            canAffordAdd = currency >= 50,
+            price = 50,
             modifier = Modifier.weight(1f)
         )
 

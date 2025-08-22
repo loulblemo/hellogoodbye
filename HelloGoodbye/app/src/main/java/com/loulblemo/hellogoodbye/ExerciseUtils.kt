@@ -4,11 +4,22 @@ private fun pickFivePairs(
     threeWords: List<WordEntry>,
     languageCodes: List<String>,
     buildLeft: (WordEntry, String, WordVariant) -> PairItem?,
-    buildRight: (WordEntry, String, WordVariant) -> PairItem?
+    buildRight: (WordEntry, String, WordVariant) -> PairItem?,
+    restrictToEncounteredLanguages: Boolean = false,
+    availableLanguages: List<String> = emptyList()
 ): List<MatchingPair> {
     val combos = mutableListOf<MatchingPair>()
-    val shuffledLangs = languageCodes.shuffled()
+    
+    // Use restricted languages if this is for mixed exercises with encountered words
+    val effectiveLanguageCodes = if (restrictToEncounteredLanguages && availableLanguages.isNotEmpty()) {
+        availableLanguages.intersect(languageCodes.toSet()).toList()
+    } else {
+        languageCodes
+    }
+    
+    val shuffledLangs = effectiveLanguageCodes.shuffled()
     val targets = shuffledLangs.take(if (shuffledLangs.size >= 5) 5 else shuffledLangs.size)
+    
     // Distribute three words across target languages
     var wordIdx = 0
     for (lang in targets) {
@@ -23,11 +34,17 @@ private fun pickFivePairs(
         }
         wordIdx += 1
     }
+    
     // If fewer than 5 pairs (e.g., not enough languages), try to fill with additional random combos
     if (combos.size < 5) {
-        val allLangs = languageCodes.ifEmpty { listOf("es", "fr", "de", "it", "pt", "ru", "ja", "ko", "zh-cn") }
+        val fallbackLangs = if (restrictToEncounteredLanguages && availableLanguages.isNotEmpty()) {
+            availableLanguages
+        } else {
+            effectiveLanguageCodes.ifEmpty { listOf("es", "fr", "de", "it", "pt", "ru", "ja", "ko", "zh-cn") }
+        }
+        
         val pool = mutableListOf<MatchingPair>()
-        for (lang in allLangs) {
+        for (lang in fallbackLangs) {
             threeWords.forEach { word ->
                 val variant = word.byLang[lang]
                 if (variant != null) {
@@ -49,7 +66,12 @@ private fun pickFivePairs(
     return combos.take(5)
 }
 
-fun buildAudioToFlagPairs(threeWords: List<WordEntry>, languageCodes: List<String>): List<MatchingPair> {
+fun buildAudioToFlagPairs(
+    threeWords: List<WordEntry>, 
+    languageCodes: List<String>,
+    restrictToEncountered: Boolean = false,
+    availableLanguages: List<String> = emptyList()
+): List<MatchingPair> {
     return pickFivePairs(
         threeWords,
         languageCodes,
@@ -60,11 +82,18 @@ fun buildAudioToFlagPairs(threeWords: List<WordEntry>, languageCodes: List<Strin
         buildRight = { _, lang, _ ->
             val flag = languageCodeToFlag(lang)
             PairItem(id = "R_${lang}", label = flag ?: lang.uppercase(), isAudio = false, matchKey = lang)
-        }
+        },
+        restrictToEncounteredLanguages = restrictToEncountered,
+        availableLanguages = availableLanguages
     )
 }
 
-fun buildPronunciationToFlagPairs(threeWords: List<WordEntry>, languageCodes: List<String>): List<MatchingPair> {
+fun buildPronunciationToFlagPairs(
+    threeWords: List<WordEntry>, 
+    languageCodes: List<String>,
+    restrictToEncountered: Boolean = false,
+    availableLanguages: List<String> = emptyList()
+): List<MatchingPair> {
     return pickFivePairs(
         threeWords,
         languageCodes,
@@ -75,11 +104,18 @@ fun buildPronunciationToFlagPairs(threeWords: List<WordEntry>, languageCodes: Li
         buildRight = { _, lang, _ ->
             val flag = languageCodeToFlag(lang)
             PairItem(id = "R_${lang}", label = flag ?: lang.uppercase(), isAudio = false, matchKey = lang)
-        }
+        },
+        restrictToEncounteredLanguages = restrictToEncountered,
+        availableLanguages = availableLanguages
     )
 }
 
-fun buildAudioToEnglishPairs(threeWords: List<WordEntry>, languageCodes: List<String>): List<MatchingPair> {
+fun buildAudioToEnglishPairs(
+    threeWords: List<WordEntry>, 
+    languageCodes: List<String>,
+    restrictToEncountered: Boolean = false,
+    availableLanguages: List<String> = emptyList()
+): List<MatchingPair> {
     return pickFivePairs(
         threeWords,
         languageCodes,
@@ -94,11 +130,18 @@ fun buildAudioToEnglishPairs(threeWords: List<WordEntry>, languageCodes: List<St
             val label = en ?: word.original
             val key = label.lowercase()
             PairItem(id = "R_${lang}_${word.original}", label = label, isAudio = false, matchKey = key)
-        }
+        },
+        restrictToEncounteredLanguages = restrictToEncountered,
+        availableLanguages = availableLanguages
     )
 }
 
-fun buildPronunciationToEnglishPairs(threeWords: List<WordEntry>, languageCodes: List<String>): List<MatchingPair> {
+fun buildPronunciationToEnglishPairs(
+    threeWords: List<WordEntry>, 
+    languageCodes: List<String>,
+    restrictToEncountered: Boolean = false,
+    availableLanguages: List<String> = emptyList()
+): List<MatchingPair> {
     return pickFivePairs(
         threeWords,
         languageCodes,
@@ -113,6 +156,8 @@ fun buildPronunciationToEnglishPairs(threeWords: List<WordEntry>, languageCodes:
             val label = en ?: word.original
             val key = label.lowercase()
             PairItem(id = "R_${lang}_${word.original}", label = label, isAudio = false, matchKey = key)
-        }
+        },
+        restrictToEncounteredLanguages = restrictToEncountered,
+        availableLanguages = availableLanguages
     )
 }

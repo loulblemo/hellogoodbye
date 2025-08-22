@@ -86,6 +86,12 @@ fun PracticeScreen(
             encountered.toList()
         }
         
+        val encounteredLanguages = remember(languageCodes) {
+            languageCodes.filter { langCode ->
+                getEncounteredWords(context, langCode).isNotEmpty()
+            }
+        }
+        
         val threeWords = remember(encounteredWords) {
             if (encounteredWords.isNotEmpty()) {
                 encounteredWords.shuffled().take(3)
@@ -97,22 +103,42 @@ fun PracticeScreen(
         when (step) {
             0 -> MatchingExercise(
                 title = "Match audio to flag",
-                pairs = buildAudioToFlagPairs(threeWords, languageCodes),
+                pairs = buildAudioToFlagPairs(
+                    threeWords, 
+                    languageCodes,
+                    restrictToEncountered = true,
+                    availableLanguages = encounteredLanguages
+                ),
                 onDone = onExerciseDone
             )
             1 -> MatchingExercise(
                 title = "Match pronunciation to flag",
-                pairs = buildPronunciationToFlagPairs(threeWords, languageCodes),
+                pairs = buildPronunciationToFlagPairs(
+                    threeWords, 
+                    languageCodes,
+                    restrictToEncountered = true,
+                    availableLanguages = encounteredLanguages
+                ),
                 onDone = onExerciseDone
             )
             2 -> MatchingExercise(
                 title = "Match audio to English",
-                pairs = buildAudioToEnglishPairs(threeWords, languageCodes),
+                pairs = buildAudioToEnglishPairs(
+                    threeWords, 
+                    languageCodes,
+                    restrictToEncountered = true,
+                    availableLanguages = encounteredLanguages
+                ),
                 onDone = onExerciseDone
             )
             else -> MatchingExercise(
                 title = "Match pronunciation to English",
-                pairs = buildPronunciationToEnglishPairs(threeWords, languageCodes),
+                pairs = buildPronunciationToEnglishPairs(
+                    threeWords, 
+                    languageCodes,
+                    restrictToEncountered = true,
+                    availableLanguages = encounteredLanguages
+                ),
                 onDone = onExerciseDone
             )
         }
