@@ -83,6 +83,7 @@ fun CentralGridSection(
     price: Int = 0,
     modifier: Modifier = Modifier
 ) {
+    val context = LocalContext.current
     LazyVerticalGrid(
         columns = GridCells.Fixed(4),
         modifier = modifier
@@ -92,30 +93,48 @@ fun CentralGridSection(
         verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
         items(selectedCountries) { country ->
-            // Flag item
-            Card(
-                modifier = Modifier
-                    .aspectRatio(1f)
-                    .clickable { onFlagClick(country) },
-                colors = CardDefaults.cardColors(
-                    containerColor = MaterialTheme.colorScheme.surface
-                ),
-                shape = RoundedCornerShape(12.dp)
+            // Flag item with badge overlay
+            val languageCode = languageNameToCode(country.language) ?: "en"
+            val badgeLevel = getBadgeLevel(context, languageCode)
+            
+            val exerciseCount = getLanguageExerciseCount(context, languageCode)
+            
+            Box(
+                modifier = Modifier.aspectRatio(1f)
             ) {
-                Column(
-                    modifier = Modifier.fillMaxSize(),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.Center
+                Card(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .clickable { onFlagClick(country) },
+                    colors = CardDefaults.cardColors(
+                        containerColor = MaterialTheme.colorScheme.surface
+                    ),
+                    shape = RoundedCornerShape(12.dp)
                 ) {
-                    Text(
-                        text = country.flag,
-                        fontSize = 32.sp
-                    )
-                    Spacer(modifier = Modifier.height(4.dp))
-                    Text(
-                        text = country.language,
-                        fontSize = 10.sp,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    Column(
+                        modifier = Modifier.fillMaxSize(),
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.Center
+                    ) {
+                        Text(
+                            text = country.flag,
+                            fontSize = 32.sp
+                        )
+                        Spacer(modifier = Modifier.height(4.dp))
+                        Text(
+                            text = country.language,
+                            fontSize = 10.sp,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+
+                    }
+                }
+                
+                // Badge overlay
+                if (badgeLevel != BadgeLevel.NONE) {
+                    BadgeOverlay(
+                        badgeLevel = badgeLevel,
+                        modifier = Modifier.align(Alignment.TopEnd)
                     )
                 }
             }
@@ -374,6 +393,176 @@ fun playAssetAudio(context: Context, fileName: String) {
         mediaPlayer.setOnPreparedListener { it.start() }
         mediaPlayer.setOnCompletionListener { it.release() }
         mediaPlayer.prepareAsync()
+    }
+}
+
+@Composable
+fun BadgeOverlay(
+    badgeLevel: BadgeLevel,
+    modifier: Modifier = Modifier
+) {
+    val badgeText = when (badgeLevel) {
+        BadgeLevel.BRONZE -> "🥉"
+        BadgeLevel.SILVER -> "🥈"
+        BadgeLevel.NONE -> return // Don't show anything for no badge
+    }
+    
+    val badgeColor = when (badgeLevel) {
+        BadgeLevel.BRONZE -> Color(0xFFCD7F32) // Bronze color
+        BadgeLevel.SILVER -> Color(0xFFC0C0C0) // Silver color
+        BadgeLevel.NONE -> Color.Transparent
+    }
+    
+    Card(
+        modifier = modifier
+            .size(24.dp)
+            .offset(x = (-4).dp, y = 4.dp),
+        shape = CircleShape,
+        colors = CardDefaults.cardColors(
+            containerColor = Color.White
+        ),
+        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
+    ) {
+        Box(
+            modifier = Modifier.fillMaxSize(),
+            contentAlignment = Alignment.Center
+        ) {
+            Text(
+                text = badgeText,
+                fontSize = 14.sp
+            )
+        }
+    }
+}
+
+@Composable
+fun SettingsScreen(
+    onBack: () -> Unit
+) {
+    val context = LocalContext.current
+    var showConfirmDialog by remember { mutableStateOf(false) }
+    
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(MaterialTheme.colorScheme.background)
+    ) {
+        // Header
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp, vertical = 8.dp),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                text = "Settings",
+                fontSize = 20.sp,
+                fontWeight = FontWeight.Bold
+            )
+            TextButton(onClick = onBack) { Text("Back") }
+        }
+        
+        Spacer(modifier = Modifier.height(24.dp))
+        
+        // Clear Progress Section
+        Card(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp),
+            colors = CardDefaults.cardColors(
+                containerColor = MaterialTheme.colorScheme.errorContainer
+            ),
+            shape = RoundedCornerShape(12.dp)
+        ) {
+            Column(
+                modifier = Modifier.padding(16.dp)
+            ) {
+                Text(
+                    text = "⚠️ Danger Zone",
+                    fontSize = 18.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colorScheme.onErrorContainer
+                )
+                
+                Spacer(modifier = Modifier.height(8.dp))
+                
+                Text(
+                    text = "This will clear all your progress including:",
+                    fontSize = 14.sp,
+                    color = MaterialTheme.colorScheme.onErrorContainer
+                )
+                
+                Spacer(modifier = Modifier.height(4.dp))
+                
+                Column(
+                    modifier = Modifier.padding(start = 16.dp)
+                ) {
+                    Text("• Quest progress and completions", fontSize = 12.sp, color = MaterialTheme.colorScheme.onErrorContainer)
+                    Text("• Badge progress (bronze/silver)", fontSize = 12.sp, color = MaterialTheme.colorScheme.onErrorContainer)
+                    Text("• Learned words and counters", fontSize = 12.sp, color = MaterialTheme.colorScheme.onErrorContainer)
+                    Text("• All saved data", fontSize = 12.sp, color = MaterialTheme.colorScheme.onErrorContainer)
+                }
+                
+                Spacer(modifier = Modifier.height(16.dp))
+                
+                Button(
+                    onClick = { showConfirmDialog = true },
+                    modifier = Modifier.fillMaxWidth(),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = MaterialTheme.colorScheme.error,
+                        contentColor = MaterialTheme.colorScheme.onError
+                    ),
+                    shape = RoundedCornerShape(8.dp)
+                ) {
+                    Text(
+                        text = "🗑️ Clear All Progress",
+                        fontSize = 16.sp,
+                        fontWeight = FontWeight.Bold
+                    )
+                }
+            }
+        }
+        
+        Spacer(modifier = Modifier.weight(1f))
+        
+        // App info at bottom
+        Text(
+            text = "HelloGoodbye Language Learning",
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp),
+            textAlign = TextAlign.Center,
+            fontSize = 12.sp,
+            color = MaterialTheme.colorScheme.onSurfaceVariant
+        )
+    }
+    
+    // Confirmation dialog
+    if (showConfirmDialog) {
+        AlertDialog(
+            onDismissRequest = { showConfirmDialog = false },
+            title = { Text("Clear All Progress?") },
+            text = { 
+                Text("This action cannot be undone. All your progress, badges, and learned words will be permanently deleted.")
+            },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        clearAllProgress(context)
+                        showConfirmDialog = false
+                        onBack()
+                    }
+                ) {
+                    Text("Clear", color = MaterialTheme.colorScheme.error)
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { showConfirmDialog = false }) {
+                    Text("Cancel")
+                }
+            }
+        )
     }
 }
 

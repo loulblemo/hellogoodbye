@@ -99,6 +99,11 @@ fun TravelScreen(
                         val langCodes = languages.filterNotNull()
                         trackWordsFromExercise(context, currentSection, corpus, langCodes)
                         
+                        // Track badge progress for each language involved
+                        langCodes.forEach { languageCode ->
+                            incrementLanguageExerciseCount(context, languageCode)
+                        }
+                        
                         travelState = updateQuestProgress(
                             context,
                             travelState,
@@ -126,6 +131,48 @@ fun TravelScreen(
                                 travelState
                             }
                         }
+                    },
+                    onDebugCompleteQuest = {
+                        // Debug: Complete all exercises in this quest
+                        val allExerciseIds = questExercises[currentSection.id]?.mapIndexed { index, _ ->
+                            "${currentSection.id}#${index}"
+                        } ?: emptyList()
+                        
+                        // Mark all exercises as completed
+                        allExerciseIds.forEach { exerciseId ->
+                            travelState = updateQuestProgress(
+                                context,
+                                travelState,
+                                currentSection.id,
+                                exerciseId,
+                                travelSections,
+                                questExercises
+                            )
+                        }
+                        
+                        // Award coins for all exercises
+                        repeat(allExerciseIds.size) { onAwardCoin() }
+                        
+                        // Track badge progress for debug completion
+                        val languages = if (currentSection.isMixed) {
+                            currentSection.languages
+                        } else {
+                            listOf(languageNameToCode(currentSection.language) ?: "en")
+                        }
+                        val langCodes = languages.filterNotNull()
+                        repeat(allExerciseIds.size) {
+                            langCodes.forEach { languageCode ->
+                                incrementLanguageExerciseCount(context, languageCode)
+                            }
+                        }
+                        
+                        // Mark first quest completed if applicable
+                        if (currentSection.id.endsWith("_1")) {
+                            markFirstQuestCompleted(context, startLanguageCode)
+                        }
+                        
+                        // Quest completed, return to list
+                        travelState = travelState.copy(currentQuestId = null)
                     },
                     onBack = { 
                         travelState = travelState.copy(currentQuestId = null)
@@ -402,6 +449,7 @@ fun QuestPracticeScreen(
     travelState: TravelState,
     questExercises: List<ExerciseType>,
     onExerciseComplete: (String) -> Unit,
+    onDebugCompleteQuest: () -> Unit,
     onBack: () -> Unit
 ) {
     val context = LocalContext.current
@@ -490,74 +538,98 @@ fun QuestPracticeScreen(
         // Check if current exercise is already completed
         val isExerciseCompleted = currentProgress?.completedExercises?.contains(stepKey) == true
         
-        if (isExerciseCompleted) {
-            // Already completed: parent will advance index. Keep UI minimal.
-            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                Text("Great! Moving on...")
+        // Exercise content with debug button at bottom
+        Box(modifier = Modifier.fillMaxSize()) {
+            // Main exercise content
+            if (isExerciseCompleted) {
+                // Already completed: parent will advance index. Keep UI minimal.
+                Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                    Text("Great! Moving on...")
+                }
+            } else {
+                // Show the actual exercise
+                val effectiveExerciseId = if (!section.isMixed && currentExercise.id == "audio_to_flag") {
+                    "pronunciation_audio_to_english"
+                } else currentExercise.id
+                when (effectiveExerciseId) {
+                    "audio_to_flag" -> {
+                        val source = (if (eligibleAudioWords.isNotEmpty()) eligibleAudioWords else corpus).shuffled().take(10)
+                        val pairs = buildAudioToFlagPairs(source, languageCodes)
+                        MatchingExercise(
+                            title = currentExercise.title,
+                            pairs = pairs,
+                            onDone = { perfect ->
+                                onExerciseComplete(stepKey)
+                            }
+                        )
+                    }
+                    "pronunciation_to_flag" -> {
+                        val pairs = buildPronunciationToFlagPairs(threeWords, languageCodes)
+                        MatchingExercise(
+                            title = currentExercise.title,
+                            pairs = pairs,
+                            onDone = { perfect ->
+                                onExerciseComplete(stepKey)
+                            }
+                        )
+                    }
+                    "audio_to_english" -> {
+                        val source = (if (eligibleAudioWords.isNotEmpty()) eligibleAudioWords else corpus).shuffled().take(10)
+                        val pairs = buildAudioToEnglishPairs(source, languageCodes)
+                        MatchingExercise(
+                            title = currentExercise.title,
+                            pairs = pairs,
+                            onDone = { perfect ->
+                                onExerciseComplete(stepKey)
+                            }
+                        )
+                    }
+                    "pronunciation_audio_to_english" -> {
+                        val pool = if (eligiblePronunciationWords.isNotEmpty()) eligiblePronunciationWords else corpus
+                        // pick one word and build 5 options
+                        val chosen = pool.random()
+                        val code = languageCodes.firstOrNull { chosen.byLang[it]?.audio != null && ((chosen.byLang[it]?.googlePronunciation ?: chosen.byLang[it]?.ipa) != null) } ?: languageCodes.first()
+                        val variant = chosen.byLang[code]
+                        val pronunciation = (variant?.googlePronunciation ?: variant?.ipa) ?: ""
+                        val correctEnglish = chosen.byLang["en"]?.word ?: chosen.original
+                        val distractors = pool.filter { it !== chosen }
+                            .mapNotNull { it.byLang["en"]?.word ?: it.original }
+                            .shuffled()
+                            .distinct()
+                            .take(4)
+                        val options = (distractors + correctEnglish).shuffled()
+                        PronunciationAudioToEnglishExercise(
+                            title = currentExercise.title,
+                            pronunciation = pronunciation,
+                            audioFile = variant?.audio,
+                            options = options,
+                            correctOption = correctEnglish,
+                            onDone = { _ ->
+                                onExerciseComplete(stepKey)
+                            }
+                        )
+                    }
+                }
             }
-        } else {
-            // Show the actual exercise
-            val effectiveExerciseId = if (!section.isMixed && currentExercise.id == "audio_to_flag") {
-                "pronunciation_audio_to_english"
-            } else currentExercise.id
-            when (effectiveExerciseId) {
-                "audio_to_flag" -> {
-                    val source = (if (eligibleAudioWords.isNotEmpty()) eligibleAudioWords else corpus).shuffled().take(10)
-                    val pairs = buildAudioToFlagPairs(source, languageCodes)
-                    MatchingExercise(
-                        title = currentExercise.title,
-                        pairs = pairs,
-                        onDone = { perfect ->
-                            onExerciseComplete(stepKey)
-                        }
-                    )
-                }
-                "pronunciation_to_flag" -> {
-                    val pairs = buildPronunciationToFlagPairs(threeWords, languageCodes)
-                    MatchingExercise(
-                        title = currentExercise.title,
-                        pairs = pairs,
-                        onDone = { perfect ->
-                            onExerciseComplete(stepKey)
-                        }
-                    )
-                }
-                "audio_to_english" -> {
-                    val source = (if (eligibleAudioWords.isNotEmpty()) eligibleAudioWords else corpus).shuffled().take(10)
-                    val pairs = buildAudioToEnglishPairs(source, languageCodes)
-                    MatchingExercise(
-                        title = currentExercise.title,
-                        pairs = pairs,
-                        onDone = { perfect ->
-                            onExerciseComplete(stepKey)
-                        }
-                    )
-                }
-                "pronunciation_audio_to_english" -> {
-                    val pool = if (eligiblePronunciationWords.isNotEmpty()) eligiblePronunciationWords else corpus
-                    // pick one word and build 5 options
-                    val chosen = pool.random()
-                    val code = languageCodes.firstOrNull { chosen.byLang[it]?.audio != null && ((chosen.byLang[it]?.googlePronunciation ?: chosen.byLang[it]?.ipa) != null) } ?: languageCodes.first()
-                    val variant = chosen.byLang[code]
-                    val pronunciation = (variant?.googlePronunciation ?: variant?.ipa) ?: ""
-                    val correctEnglish = chosen.byLang["en"]?.word ?: chosen.original
-                    val distractors = pool.filter { it !== chosen }
-                        .mapNotNull { it.byLang["en"]?.word ?: it.original }
-                        .shuffled()
-                        .distinct()
-                        .take(4)
-                    val options = (distractors + correctEnglish).shuffled()
-                    PronunciationAudioToEnglishExercise(
-                        title = currentExercise.title,
-                        pronunciation = pronunciation,
-                        audioFile = variant?.audio,
-                        options = options,
-                        correctOption = correctEnglish,
-                        onDone = { _ ->
-                            onExerciseComplete(stepKey)
-                        }
-                    )
-                }
+            
+            // Debug button at bottom
+            Button(
+                onClick = onDebugCompleteQuest,
+                modifier = Modifier
+                    .align(Alignment.BottomCenter)
+                    .fillMaxWidth()
+                    .padding(16.dp),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = Color.Red,
+                    contentColor = Color.White
+                ),
+                shape = RoundedCornerShape(8.dp)
+            ) {
+                Text(
+                    text = "🐛 DEBUG: Complete Quest",
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight.Bold
+                )
             }
         }
     }

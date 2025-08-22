@@ -68,6 +68,7 @@ fun MainScreen() {
                 onCurrencyChange = { currency = it },
                 onCountriesChange = { selectedCountries = it },
                 onNavigateToPractice = { currentScreen = "practice" },
+                onNavigateToSettings = { currentScreen = "settings" },
                 onFlagClick = { country ->
                     travelStartLang = languageNameToCode(country.language) ?: "en"
                     currentScreen = "travel"
@@ -89,6 +90,11 @@ fun MainScreen() {
                 onAwardCoin = { currency += 1 }
             )
         }
+        "settings" -> {
+            SettingsScreen(
+                onBack = { currentScreen = "home" }
+            )
+        }
     }
 }
 
@@ -100,6 +106,7 @@ fun HomeScreen(
     onCurrencyChange: (Int) -> Unit,
     onCountriesChange: (List<Country>) -> Unit,
     onNavigateToPractice: () -> Unit,
+    onNavigateToSettings: () -> Unit,
     onFlagClick: (Country) -> Unit
 ) {
     val context = LocalContext.current
@@ -113,7 +120,7 @@ fun HomeScreen(
         // Top bar section (1 part)
         TopBarSection(
             currency = currency,
-            onSettingsClick = { /* TODO: Navigate to settings */ }
+            onSettingsClick = onNavigateToSettings
         )
 
         // Central grid section (8 parts)

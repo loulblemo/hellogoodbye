@@ -66,6 +66,18 @@ data class MatchingPair(
     val right: PairItem
 )
 
+enum class BadgeLevel {
+    NONE,     // No badge - not started
+    BRONZE,   // Started - completed at least one exercise
+    SILVER    // Completed 5 exercises in the language
+}
+
+data class LanguageProgress(
+    val languageCode: String,
+    val completedExercisesCount: Int = 0,
+    val badgeLevel: BadgeLevel = BadgeLevel.NONE
+)
+
 fun loadCorpusFromAssets(context: Context): List<WordEntry> {
     return runCatching {
         val jsonString = context.assets.open("corpus.json").bufferedReader().use { it.readText() }
@@ -238,7 +250,7 @@ fun generateTravelSequenceForLanguage(startLangCode: String, allLangCodes: List<
             languages = listOf(startLangCode)
         )
     )
-    val mixedLangs = allLangCodes.distinct().ifEmpty { listOf(startLangCode, "en") }
+    val mixedLangs = listOf(startLangCode, "en").distinct()
     sections.add(
         TravelSection(
             id = "${startLangCode}_mixed",
@@ -380,18 +392,26 @@ fun countFirstQuestCompletedLanguages(context: Context): Int {
     return supportedLanguageCodes().count { code -> isFirstQuestCompleted(context, code) }
 }
 
-// Encountered words tracking
+// Encountered words tracking - now using counters
 fun addEncounteredWord(context: Context, languageCode: String, word: String) {
     val prefs = context.getSharedPreferences("hg_progress", Context.MODE_PRIVATE)
-    val key = "encountered_words_$languageCode"
-    val existing = prefs.getStringSet(key, emptySet()) ?: emptySet()
-    val updated = existing + word
-    prefs.edit().putStringSet(key, updated).apply()
+    val key = "word_count_${languageCode}_$word"
+    val currentCount = prefs.getInt(key, 0)
+    prefs.edit().putInt(key, currentCount + 1).apply()
 }
 
 fun getEncounteredWords(context: Context, languageCode: String): Set<String> {
     val prefs = context.getSharedPreferences("hg_progress", Context.MODE_PRIVATE)
-    return prefs.getStringSet("encountered_words_$languageCode", emptySet()) ?: emptySet()
+    val allKeys = prefs.all.keys
+    val prefix = "word_count_${languageCode}_"
+    return allKeys.filter { it.startsWith(prefix) }
+        .map { it.removePrefix(prefix) }
+        .toSet()
+}
+
+fun getWordExerciseCount(context: Context, languageCode: String, word: String): Int {
+    val prefs = context.getSharedPreferences("hg_progress", Context.MODE_PRIVATE)
+    return prefs.getInt("word_count_${languageCode}_$word", 0)
 }
 
 fun getEncounteredWordsCount(context: Context, languageCode: String): Int {
@@ -438,4 +458,52 @@ fun loadQuestProgress(context: Context, questIds: List<String>): Map<String, Que
     }
     
     return progressMap
+}
+
+// Badge progress tracking
+fun incrementLanguageExerciseCount(context: Context, languageCode: String) {
+    val prefs = context.getSharedPreferences("hg_progress", Context.MODE_PRIVATE)
+    val key = "language_exercise_count_$languageCode"
+    val currentCount = prefs.getInt(key, 0)
+    prefs.edit().putInt(key, currentCount + 1).apply()
+}
+
+fun getLanguageExerciseCount(context: Context, languageCode: String): Int {
+    val prefs = context.getSharedPreferences("hg_progress", Context.MODE_PRIVATE)
+    return prefs.getInt("language_exercise_count_$languageCode", 0)
+}
+
+fun getBadgeLevel(context: Context, languageCode: String): BadgeLevel {
+    val count = getLanguageExerciseCount(context, languageCode)
+    return when {
+        count >= 5 -> BadgeLevel.SILVER
+        count >= 1 -> BadgeLevel.BRONZE
+        else -> BadgeLevel.NONE
+    }
+}
+
+fun getLanguageProgress(context: Context, languageCode: String): LanguageProgress {
+    val count = getLanguageExerciseCount(context, languageCode)
+    val badgeLevel = getBadgeLevel(context, languageCode)
+    return LanguageProgress(
+        languageCode = languageCode,
+        completedExercisesCount = count,
+        badgeLevel = badgeLevel
+    )
+}
+
+// Debug function to reset all badge progress
+fun resetAllBadgeProgress(context: Context) {
+    val prefs = context.getSharedPreferences("hg_progress", Context.MODE_PRIVATE)
+    val editor = prefs.edit()
+    supportedLanguageCodes().forEach { languageCode ->
+        editor.remove("language_exercise_count_$languageCode")
+    }
+    editor.apply()
+}
+
+// Clear all progress function for settings
+fun clearAllProgress(context: Context) {
+    val prefs = context.getSharedPreferences("hg_progress", Context.MODE_PRIVATE)
+    prefs.edit().clear().apply()
 }

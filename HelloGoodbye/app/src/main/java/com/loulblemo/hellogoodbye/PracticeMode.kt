@@ -31,6 +31,10 @@ fun PracticeScreen(
         if (perfect) {
             onAwardCoin()
         }
+        // Track badge progress for each language involved
+        languageCodes.forEach { languageCode ->
+            incrementLanguageExerciseCount(context, languageCode)
+        }
         if (step < 3) step += 1 else perfectRunAwarded = true
     }
 
