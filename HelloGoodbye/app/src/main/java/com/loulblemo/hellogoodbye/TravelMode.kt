@@ -601,6 +601,18 @@ fun QuestPracticeScreen(
     val currentProgress = travelState.questProgresses[section.id]
     val currentExerciseIndex = travelState.currentExerciseIndex
     
+    // State for showing completion animation
+    var showCompletionAnimation by remember { mutableStateOf(false) }
+    var pendingCompletionStepKey by remember { mutableStateOf<String?>(null) }
+    
+    // Helper function to trigger completion animation
+    val triggerCompletion = { stepKey: String ->
+        if (!showCompletionAnimation) { // Prevent multiple triggers
+            pendingCompletionStepKey = stepKey
+            showCompletionAnimation = true
+        }
+    }
+    
     val languages = if (section.isMixed) {
         section.languages
     } else {
@@ -710,8 +722,21 @@ fun QuestPracticeScreen(
         // Check if current exercise is already completed
         val isExerciseCompleted = currentProgress?.completedExercises?.contains(stepKey) == true
         
-        // Exercise content with debug button at bottom
-        Box(modifier = Modifier.fillMaxSize()) {
+        // Show completion animation or exercise content
+        if (showCompletionAnimation) {
+            ExerciseCompletionScreen(
+                onContinue = {
+                    showCompletionAnimation = false
+                    // Process the pending completion: advance exercise
+                    pendingCompletionStepKey?.let { stepKey ->
+                        onExerciseComplete(stepKey)
+                        pendingCompletionStepKey = null
+                    }
+                }
+            )
+        } else {
+            // Exercise content with debug button at bottom
+            Box(modifier = Modifier.fillMaxSize()) {
             // Main exercise content
             if (isExerciseCompleted) {
                 // Already completed: parent will advance index. Keep UI minimal.
@@ -736,7 +761,7 @@ fun QuestPracticeScreen(
                             title = currentExercise.title,
                             pairs = pairs,
                             onDone = { perfect ->
-                                onExerciseComplete(stepKey)
+                                triggerCompletion(stepKey)
                             }
                         )
                     }
@@ -751,7 +776,7 @@ fun QuestPracticeScreen(
                             title = currentExercise.title,
                             pairs = pairs,
                             onDone = { perfect ->
-                                onExerciseComplete(stepKey)
+                                triggerCompletion(stepKey)
                             }
                         )
                     }
@@ -767,7 +792,7 @@ fun QuestPracticeScreen(
                             title = currentExercise.title,
                             pairs = pairs,
                             onDone = { perfect ->
-                                onExerciseComplete(stepKey)
+                                triggerCompletion(stepKey)
                             }
                         )
                     }
@@ -792,7 +817,7 @@ fun QuestPracticeScreen(
                             options = options,
                             correctOption = correctEnglish,
                             onDone = { _ ->
-                                onExerciseComplete(stepKey)
+                                triggerCompletion(stepKey)
                             }
                         )
                     }
@@ -820,4 +845,5 @@ fun QuestPracticeScreen(
             }
         }
     }
+        }
 }

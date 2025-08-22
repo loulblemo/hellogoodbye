@@ -25,6 +25,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.airbnb.lottie.compose.*
 
 @Composable
 fun TopBarSection(currency: Int, onSettingsClick: () -> Unit) {
@@ -228,6 +229,57 @@ fun PracticeAndTravelButtonsSection(onPracticeClick: () -> Unit, onTravelClick: 
 }
 
 @Composable
+fun ExerciseCompletionScreen(
+    onContinue: () -> Unit
+) {
+    val composition by rememberLottieComposition(LottieCompositionSpec.Asset("Confirmed_Tick.json"))
+    val progress by animateLottieCompositionAsState(
+        composition = composition,
+        isPlaying = true,
+        iterations = 1,
+        speed = 1.0f
+    )
+    
+    // Simple flow: allow immediate continue without extra states
+    
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Color.White)
+            .padding(32.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
+    ) {
+        // Lottie Animation
+        LottieAnimation(
+            composition = composition,
+            progress = { progress },
+            modifier = Modifier.size(200.dp)
+        )
+        
+        Spacer(modifier = Modifier.height(48.dp))
+        
+        // Continue Button - immediate advance, no special states/colors
+        Button(
+            onClick = onContinue,
+            colors = ButtonDefaults.buttonColors(
+                containerColor = Color(0xFF4CAF50)
+            ),
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(56.dp)
+        ) {
+            Text(
+                text = "Continue",
+                fontSize = 18.sp,
+                fontWeight = FontWeight.Bold,
+                color = Color.White
+            )
+        }
+    }
+}
+
+@Composable
 fun MatchingExercise(
     title: String,
     pairs: List<MatchingPair>,
@@ -280,14 +332,6 @@ fun MatchingExercise(
         }
     }
     
-    // Debug effect to track completion
-    LaunchedEffect(remaining, completed) {
-        if (remaining == 0 && !completed && pairs.isNotEmpty()) {
-            completed = true
-            onDone(mistakes == 0)
-        }
-    }
-
     Column(modifier = Modifier.fillMaxSize()) {
         Text(
             text = title,

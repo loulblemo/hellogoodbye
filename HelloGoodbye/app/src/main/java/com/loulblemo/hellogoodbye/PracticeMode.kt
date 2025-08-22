@@ -26,19 +26,14 @@ fun PracticeScreen(
     }
     var step by remember { mutableStateOf(0) } // 0..3
     var perfectRunAwarded by remember { mutableStateOf(false) }
+    var showCompletionAnimation by remember { mutableStateOf(false) }
 
     val onExerciseDone: (Boolean) -> Unit = { perfect ->
         if (perfect) {
             onAwardCoin()
         }
-        if (step < 3) {
-            step += 1 
-        } else {
-            // Practice session completed - track as quest completion for badge progress
-            languageCodes.forEach { languageCode ->
-                incrementLanguageQuestCount(context, languageCode)
-            }
-            perfectRunAwarded = true
+        if (!showCompletionAnimation) { // Prevent multiple triggers
+            showCompletionAnimation = true
         }
     }
 
@@ -100,52 +95,69 @@ fun PracticeScreen(
             }
         }
 
-        when (step) {
-            0 -> MatchingExercise(
-                title = "Match audio to flag",
-                pairs = buildAudioToFlagPairs(
-                    threeWords, 
-                    languageCodes,
-                    restrictToEncountered = true,
-                    availableLanguages = encounteredLanguages
-                ),
-                onDone = onExerciseDone
+        if (showCompletionAnimation) {
+            ExerciseCompletionScreen(
+                onContinue = {
+                    showCompletionAnimation = false
+                    if (step < 3) {
+                        step += 1 
+                    } else {
+                        // Practice session completed - track as quest completion for badge progress
+                        languageCodes.forEach { languageCode ->
+                            incrementLanguageQuestCount(context, languageCode)
+                        }
+                        perfectRunAwarded = true
+                    }
+                }
             )
-            1 -> MatchingExercise(
-                title = "Match pronunciation to flag",
-                pairs = buildPronunciationToFlagPairs(
-                    threeWords, 
-                    languageCodes,
-                    restrictToEncountered = true,
-                    availableLanguages = encounteredLanguages
-                ),
-                onDone = onExerciseDone
-            )
-            2 -> MatchingExercise(
-                title = "Match audio to English",
-                pairs = buildAudioToEnglishPairs(
-                    threeWords, 
-                    languageCodes,
-                    restrictToEncountered = true,
-                    availableLanguages = encounteredLanguages
-                ),
-                onDone = onExerciseDone
-            )
-            else -> MatchingExercise(
-                title = "Match pronunciation to English",
-                pairs = buildPronunciationToEnglishPairs(
-                    threeWords, 
-                    languageCodes,
-                    restrictToEncountered = true,
-                    availableLanguages = encounteredLanguages
-                ),
-                onDone = onExerciseDone
-            )
-        }
+        } else {
+            when (step) {
+                0 -> MatchingExercise(
+                    title = "Match audio to flag",
+                    pairs = buildAudioToFlagPairs(
+                        threeWords, 
+                        languageCodes,
+                        restrictToEncountered = true,
+                        availableLanguages = encounteredLanguages
+                    ),
+                    onDone = onExerciseDone
+                )
+                1 -> MatchingExercise(
+                    title = "Match pronunciation to flag",
+                    pairs = buildPronunciationToFlagPairs(
+                        threeWords, 
+                        languageCodes,
+                        restrictToEncountered = true,
+                        availableLanguages = encounteredLanguages
+                    ),
+                    onDone = onExerciseDone
+                )
+                2 -> MatchingExercise(
+                    title = "Match audio to English",
+                    pairs = buildAudioToEnglishPairs(
+                        threeWords, 
+                        languageCodes,
+                        restrictToEncountered = true,
+                        availableLanguages = encounteredLanguages
+                    ),
+                    onDone = onExerciseDone
+                )
+                else -> MatchingExercise(
+                    title = "Match pronunciation to English",
+                    pairs = buildPronunciationToEnglishPairs(
+                        threeWords, 
+                        languageCodes,
+                        restrictToEncountered = true,
+                        availableLanguages = encounteredLanguages
+                    ),
+                    onDone = onExerciseDone
+                )
+            }
 
-        if (perfectRunAwarded) {
-            Box(modifier = Modifier.fillMaxWidth().padding(16.dp), contentAlignment = Alignment.Center) {
-                Button(onClick = { onExit() }) { Text("Back to Home") }
+            if (perfectRunAwarded) {
+                Box(modifier = Modifier.fillMaxWidth().padding(16.dp), contentAlignment = Alignment.Center) {
+                    Button(onClick = { onExit() }) { Text("Back to Home") }
+                }
             }
         }
     }
