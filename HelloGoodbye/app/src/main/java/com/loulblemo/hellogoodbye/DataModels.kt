@@ -254,14 +254,35 @@ fun generateTravelSequenceForLanguage(startLangCode: String, allLangCodes: List<
 
 fun getExerciseTypes(): List<ExerciseType> {
     return listOf(
-        ExerciseType("audio_to_flag", "Match Audio to Flag", "Listen and match the audio to the correct flag"),
-        ExerciseType("pronunciation_to_flag", "Match Pronunciation to Flag", "Match written pronunciation to the correct flag"),
-        ExerciseType("audio_to_english", "Match Audio to English", "Listen and match the audio to the English translation")
+        ExerciseType("audio_to_english", "Match Audio to English", "Listen and match the audio to the English translation"),
+        ExerciseType("pronunciation_audio_to_english", "Pronunciation + Audio to English", "See pronunciation, hear audio, choose the English meaning")
     )
 }
 
 fun generateQuestExercises(numExercises: Int): List<ExerciseType> {
     val types = getExerciseTypes()
+    if (types.isEmpty()) return emptyList()
+    val list = mutableListOf<ExerciseType>()
+    repeat(numExercises) {
+        list.add(types.random())
+    }
+    return list
+}
+
+fun getExerciseTypesForSection(section: TravelSection): List<ExerciseType> {
+    val base = getExerciseTypes()
+    return if (section.isMixed) {
+        base + listOf(
+            ExerciseType("audio_to_flag", "Match Audio to Flag", "Listen and match the audio to the correct flag"),
+            ExerciseType("pronunciation_to_flag", "Match Pronunciation to Flag", "Match written pronunciation to the correct flag")
+        )
+    } else {
+        base
+    }
+}
+
+fun generateQuestExercisesForSection(section: TravelSection, numExercises: Int): List<ExerciseType> {
+    val types = getExerciseTypesForSection(section)
     if (types.isEmpty()) return emptyList()
     val list = mutableListOf<ExerciseType>()
     repeat(numExercises) {

@@ -39,7 +39,11 @@ fun TravelScreen(
         generateTravelSequenceForLanguage(startLanguageCode, supportedLangCodes)
     }
     val questExercises = remember(travelSections) {
-        travelSections.associate { it.id to generateQuestExercises(10) }
+        travelSections.associate { section ->
+            val list = generateQuestExercisesForSection(section, 10)
+            val filtered = if (section.isMixed) list else list.filter { it.id != "audio_to_flag" && it.id != "pronunciation_to_flag" }
+            section.id to filtered
+        }
     }
     var travelState by remember { mutableStateOf(initializeTravelState(travelSections, questExercises)) }
     
@@ -270,7 +274,7 @@ fun TravelQuestCard(
     questProgress: QuestProgress?,
     onClick: () -> Unit
 ) {
-    val exerciseTypes = getExerciseTypes()
+    val exerciseTypes = getExerciseTypesForSection(section)
     val completedCount = questProgress?.completedExercises?.size ?: 0
     val isCompleted = questProgress?.isCompleted == true
     val isUnlocked = questProgress?.isUnlocked == true
@@ -466,6 +470,12 @@ fun QuestPracticeScreen(
         val eligibleAudioWords = remember(corpus, languageCodes) {
             corpus.filter { entry -> languageCodes.any { code -> entry.byLang[code]?.audio != null } }
         }
+        val eligiblePronunciationWords = remember(corpus, languageCodes) {
+            corpus.filter { entry -> languageCodes.any { code ->
+                val v = entry.byLang[code]
+                (v?.googlePronunciation ?: v?.ipa) != null && v?.audio != null
+            } }
+        }
         
         // Check if current exercise is already completed
         val isExerciseCompleted = currentProgress?.completedExercises?.contains(stepKey) == true
@@ -477,7 +487,10 @@ fun QuestPracticeScreen(
             }
         } else {
             // Show the actual exercise
-            when (currentExercise.id) {
+            val effectiveExerciseId = if (!section.isMixed && currentExercise.id == "audio_to_flag") {
+                "pronunciation_audio_to_english"
+            } else currentExercise.id
+            when (effectiveExerciseId) {
                 "audio_to_flag" -> {
                     val source = (if (eligibleAudioWords.isNotEmpty()) eligibleAudioWords else corpus).shuffled().take(10)
                     val pairs = buildAudioToFlagPairs(source, languageCodes)
@@ -506,6 +519,31 @@ fun QuestPracticeScreen(
                         title = currentExercise.title,
                         pairs = pairs,
                         onDone = { perfect ->
+                            onExerciseComplete(stepKey)
+                        }
+                    )
+                }
+                "pronunciation_audio_to_english" -> {
+                    val pool = if (eligiblePronunciationWords.isNotEmpty()) eligiblePronunciationWords else corpus
+                    // pick one word and build 5 options
+                    val chosen = pool.random()
+                    val code = languageCodes.firstOrNull { chosen.byLang[it]?.audio != null && ((chosen.byLang[it]?.googlePronunciation ?: chosen.byLang[it]?.ipa) != null) } ?: languageCodes.first()
+                    val variant = chosen.byLang[code]
+                    val pronunciation = (variant?.googlePronunciation ?: variant?.ipa) ?: ""
+                    val correctEnglish = chosen.byLang["en"]?.word ?: chosen.original
+                    val distractors = pool.filter { it !== chosen }
+                        .mapNotNull { it.byLang["en"]?.word ?: it.original }
+                        .shuffled()
+                        .distinct()
+                        .take(4)
+                    val options = (distractors + correctEnglish).shuffled()
+                    PronunciationAudioToEnglishExercise(
+                        title = currentExercise.title,
+                        pronunciation = pronunciation,
+                        audioFile = variant?.audio,
+                        options = options,
+                        correctOption = correctEnglish,
+                        onDone = { _ ->
                             onExerciseComplete(stepKey)
                         }
                     )

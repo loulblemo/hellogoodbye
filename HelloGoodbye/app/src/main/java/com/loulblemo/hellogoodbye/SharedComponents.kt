@@ -372,3 +372,77 @@ fun HelloGoodbyeTheme(content: @Composable () -> Unit) {
         content = content
     )
 }
+
+@Composable
+fun PronunciationAudioToEnglishExercise(
+    title: String,
+    pronunciation: String,
+    audioFile: String?,
+    options: List<String>,
+    correctOption: String,
+    onDone: (Boolean) -> Unit
+) {
+    val context = LocalContext.current
+    var selected by remember(options) { mutableStateOf<String?>(null) }
+    var completed by remember(options) { mutableStateOf(false) }
+
+    // Auto-play audio once when the exercise appears
+    LaunchedEffect(audioFile) {
+        if (audioFile != null) {
+            playAssetAudio(context, audioFile)
+        }
+    }
+
+    Column(modifier = Modifier.fillMaxSize()) {
+        Text(
+            text = title,
+            modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
+            fontSize = 16.sp,
+            fontWeight = FontWeight.SemiBold
+        )
+
+        // Pronunciation display; tap to replay audio
+        Card(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp)
+                .height(80.dp)
+                .clickable { if (audioFile != null) playAssetAudio(context, audioFile) },
+            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.tertiaryContainer),
+            shape = RoundedCornerShape(16.dp)
+        ) {
+            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                Text(
+                    text = pronunciation,
+                    fontSize = 20.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colorScheme.onTertiaryContainer
+                )
+            }
+        }
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp),
+            verticalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            options.forEach { option ->
+                val isSelected = selected == option
+                PracticeBubble(
+                    label = option,
+                    selected = isSelected,
+                    solved = completed && option == correctOption,
+                    onClick = {
+                        if (completed) return@PracticeBubble
+                        selected = option
+                        completed = true
+                        onDone(option == correctOption)
+                    }
+                )
+            }
+        }
+    }
+}
