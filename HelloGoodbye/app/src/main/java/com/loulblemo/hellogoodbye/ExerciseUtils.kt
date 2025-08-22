@@ -121,13 +121,16 @@ fun buildAudioToEnglishPairs(
         languageCodes,
         buildLeft = { word, lang, variant ->
             val audio = variant.audio ?: return@pickFivePairs null
-            val en = word.byLang["en"]?.text ?: word.byLang["en"]?.word ?: word.original
-            val key = (en ?: word.original).lowercase()
+            // Use the first available language for the label, fallback to original
+            val labelLang = if (availableLanguages.isNotEmpty()) availableLanguages.first() else languageCodes.first()
+            val label = word.byLang[labelLang]?.text ?: word.byLang[labelLang]?.word ?: word.original
+            val key = label.lowercase()
             PairItem(id = "L_${lang}_${word.original}", label = "▶︎", isAudio = true, audioFile = audio, matchKey = key)
         },
         buildRight = { word, lang, _ ->
-            val en = word.byLang["en"]?.text ?: word.byLang["en"]?.word ?: word.original
-            val label = en ?: word.original
+            // Use the first available language for the label, fallback to original
+            val labelLang = if (availableLanguages.isNotEmpty()) availableLanguages.first() else languageCodes.first()
+            val label = word.byLang[labelLang]?.text ?: word.byLang[labelLang]?.word ?: word.original
             val key = label.lowercase()
             PairItem(id = "R_${lang}_${word.original}", label = label, isAudio = false, matchKey = key)
         },
@@ -147,13 +150,16 @@ fun buildPronunciationToEnglishPairs(
         languageCodes,
         buildLeft = { word, lang, variant ->
             val text = variant.googlePronunciation ?: variant.word ?: variant.text ?: return@pickFivePairs null
-            val en = word.byLang["en"]?.text ?: word.byLang["en"]?.word ?: word.original
-            val key = (en ?: word.original).lowercase()
+            // Use the first available language for the label, fallback to original
+            val labelLang = if (availableLanguages.isNotEmpty()) availableLanguages.first() else languageCodes.first()
+            val label = word.byLang[labelLang]?.text ?: word.byLang[labelLang]?.word ?: word.original
+            val key = label.lowercase()
             PairItem(id = "L_${lang}_${word.original}_$text", label = text, isAudio = false, matchKey = key)
         },
         buildRight = { word, lang, _ ->
-            val en = word.byLang["en"]?.text ?: word.byLang["en"]?.word ?: word.original
-            val label = en ?: word.original
+            // Use the first available language for the label, fallback to original
+            val labelLang = if (availableLanguages.isNotEmpty()) availableLanguages.first() else languageCodes.first()
+            val label = word.byLang[labelLang]?.text ?: word.byLang[labelLang]?.word ?: word.original
             val key = label.lowercase()
             PairItem(id = "R_${lang}_${word.original}", label = label, isAudio = false, matchKey = key)
         },

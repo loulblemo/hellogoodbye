@@ -95,7 +95,7 @@ fun CentralGridSection(
     ) {
         items(selectedCountries) { country ->
             // Flag item with badge overlay
-            val languageCode = languageNameToCode(country.language) ?: "en"
+            val languageCode = languageNameToCode(country.language) ?: "es"
             val badgeLevel = getBadgeLevel(context, languageCode)
             
             val questCount = getLanguageQuestCount(context, languageCode)
@@ -333,12 +333,7 @@ fun MatchingExercise(
     }
     
     Column(modifier = Modifier.fillMaxSize()) {
-        Text(
-            text = title,
-            modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
-            fontSize = 16.sp,
-            fontWeight = FontWeight.SemiBold
-        )
+        // Removed title for cleaner UI
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -639,12 +634,7 @@ fun PronunciationAudioToEnglishExercise(
     }
 
     Column(modifier = Modifier.fillMaxSize()) {
-        Text(
-            text = title,
-            modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
-            fontSize = 16.sp,
-            fontWeight = FontWeight.SemiBold
-        )
+        // Removed title for cleaner UI
 
         // Pronunciation display; tap to replay audio
         Card(

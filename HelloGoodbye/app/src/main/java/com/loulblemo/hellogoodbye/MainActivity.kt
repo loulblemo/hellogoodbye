@@ -10,6 +10,12 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import com.airbnb.lottie.compose.*
+import kotlinx.coroutines.delay
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -21,9 +27,63 @@ class MainActivity : ComponentActivity() {
                         .fillMaxSize()
                         .windowInsetsPadding(WindowInsets.systemBars)
                 ) {
-                    MainScreen()
+                    var showSplash by remember { mutableStateOf(true) }
+                    
+                    LaunchedEffect(Unit) {
+                        delay(2750) // Wait for animation to complete (~1.75s) + 1s pause on last frame
+                        showSplash = false
+                    }
+                    
+                    if (showSplash) {
+                        SplashScreen()
+                    } else {
+                        MainScreen()
+                    }
                 }
             }
+        }
+    }
+}
+
+@Composable
+fun SplashScreen() {
+    val composition by rememberLottieComposition(
+        LottieCompositionSpec.Asset("Passport - Travel - Hospitality.json")
+    )
+    val progress by animateLottieCompositionAsState(
+        composition = composition,
+        isPlaying = true,
+        iterations = 1 // Play only once
+    )
+    
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(MaterialTheme.colorScheme.background),
+        contentAlignment = Alignment.Center
+    ) {
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
+        ) {
+            // Lottie animation
+            LottieAnimation(
+                composition = composition,
+                progress = { progress },
+                modifier = Modifier.size(300.dp)
+            )
+            
+            Spacer(modifier = Modifier.height(40.dp))
+            
+            // Text underneath
+            Text(
+                text = "...where are you travelling today?",
+                fontSize = 26.sp,
+                fontWeight = FontWeight.Normal,
+                color = MaterialTheme.colorScheme.onBackground,
+                modifier = Modifier.padding(horizontal = 40.dp),
+                textAlign = androidx.compose.ui.text.style.TextAlign.Center
+            )
         }
     }
 }
@@ -70,7 +130,7 @@ fun MainScreen() {
                 onNavigateToPractice = { currentScreen = "practice" },
                 onNavigateToSettings = { currentScreen = "settings" },
                 onFlagClick = { country ->
-                    travelStartLang = languageNameToCode(country.language) ?: "en"
+                    travelStartLang = languageNameToCode(country.language) ?: "es"
                     currentScreen = "travel"
                 }
             )
@@ -83,7 +143,7 @@ fun MainScreen() {
             )
         }
         "travel" -> {
-            val startLang = travelStartLang ?: "en"
+            val startLang = travelStartLang ?: "es"
             TravelScreen(
                 startLanguageCode = startLang,
                 onExit = { currentScreen = "home" },

@@ -254,8 +254,11 @@ fun generateTravelSequenceForLanguage(startLangCode: String, allLangCodes: List<
         )
     )
     
-    // Mixed quest
-    val mixedLangs = listOf(startLangCode, "en").distinct()
+    // Mixed quest - basic structure, languages will be dynamically selected later
+    val mixedLangs = listOf(startLangCode)
+    
+    val secondLangName = "Mixed"
+    
     sections.add(
         TravelSection(
             id = "${startLangCode}_mixed",
@@ -307,8 +310,8 @@ fun generateTravelSequenceForLanguage(startLangCode: String, allLangCodes: List<
 
 fun getExerciseTypes(): List<ExerciseType> {
     return listOf(
-        ExerciseType("audio_to_english", "Match Audio to English", "Listen and match the audio to the English translation"),
-        ExerciseType("pronunciation_audio_to_english", "Pronunciation + Audio to English", "See pronunciation, hear audio, choose the English meaning")
+        ExerciseType("audio_to_english", "Match Audio to Translation", "Listen and match the audio to the correct translation"),
+        ExerciseType("pronunciation_audio_to_english", "Pronunciation + Audio to Translation", "See pronunciation, hear audio, choose the correct meaning")
     )
 }
 
@@ -323,14 +326,17 @@ fun generateQuestExercises(numExercises: Int): List<ExerciseType> {
 }
 
 fun getExerciseTypesForSection(section: TravelSection): List<ExerciseType> {
-    val base = getExerciseTypes()
     return if (section.isMixed) {
-        base + listOf(
+        // Mixed sections only contain mixed exercises (like practice mode)
+        listOf(
             ExerciseType("audio_to_flag", "Match Audio to Flag", "Listen and match the audio to the correct flag"),
-            ExerciseType("pronunciation_to_flag", "Match Pronunciation to Flag", "Match written pronunciation to the correct flag")
+            ExerciseType("pronunciation_to_flag", "Match Pronunciation to Flag", "Match written pronunciation to the correct flag"),
+            ExerciseType("audio_to_english", "Match Audio to Translation", "Listen and match the audio to the correct translation"),
+            ExerciseType("pronunciation_audio_to_english", "Pronunciation + Audio to Translation", "See pronunciation, hear audio, choose the correct meaning")
         )
     } else {
-        base
+        // Regular sections contain only the basic exercises
+        getExerciseTypes()
     }
 }
 
@@ -515,10 +521,11 @@ fun getEncounteredWordsCount(context: Context, languageCode: String): Int {
 }
 
 fun canUnlockPractice(context: Context): Boolean {
-    val languagesWithEnoughWords = supportedLanguageCodes().count { code ->
-        getEncounteredWordsCount(context, code) >= 5
+    // Practice is unlocked when user has completed at least one quest in 2 different languages
+    val languagesWithCompletedQuests = supportedLanguageCodes().count { code ->
+        getLanguageQuestCount(context, code) >= 1
     }
-    return languagesWithEnoughWords >= 2
+    return languagesWithCompletedQuests >= 2
 }
 
 // Quest progress persistence
