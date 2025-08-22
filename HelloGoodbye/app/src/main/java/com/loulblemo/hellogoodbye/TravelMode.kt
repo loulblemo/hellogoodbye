@@ -45,7 +45,7 @@ fun TravelScreen(
             section.id to filtered
         }
     }
-    var travelState by remember { mutableStateOf(initializeTravelState(travelSections, questExercises)) }
+    var travelState by remember { mutableStateOf(initializeTravelState(context, travelSections, questExercises)) }
     
     Column(
         modifier = Modifier
@@ -90,7 +90,17 @@ fun TravelScreen(
                     travelState = travelState,
                     questExercises = questExercises[currentSection.id] ?: emptyList(),
                     onExerciseComplete = { completedStepKey ->
+                        // Track encountered words from this exercise
+                        val languages = if (currentSection.isMixed) {
+                            currentSection.languages
+                        } else {
+                            listOf(languageNameToCode(currentSection.language) ?: "en")
+                        }
+                        val langCodes = languages.filterNotNull()
+                        trackWordsFromExercise(context, currentSection, corpus, langCodes)
+                        
                         travelState = updateQuestProgress(
+                            context,
                             travelState,
                             currentSection.id,
                             completedStepKey,

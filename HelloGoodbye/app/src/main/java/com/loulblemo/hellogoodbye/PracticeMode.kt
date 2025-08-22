@@ -61,8 +61,29 @@ fun PracticeScreen(
             return
         }
 
-        val threeWords = remember(corpus) {
-            corpus.shuffled().take(3)
+        val encounteredWords = remember(corpus, languageCodes) {
+            val encountered = mutableSetOf<WordEntry>()
+            languageCodes.forEach { langCode ->
+                val encounteredWordsForLang = getEncounteredWords(context, langCode)
+                corpus.forEach { wordEntry ->
+                    val variant = wordEntry.byLang[langCode]
+                    if (variant != null) {
+                        val word = variant.word ?: variant.text ?: wordEntry.original
+                        if (encounteredWordsForLang.contains(word)) {
+                            encountered.add(wordEntry)
+                        }
+                    }
+                }
+            }
+            encountered.toList()
+        }
+        
+        val threeWords = remember(encounteredWords) {
+            if (encounteredWords.isNotEmpty()) {
+                encounteredWords.shuffled().take(3)
+            } else {
+                corpus.shuffled().take(3) // Fallback if no encountered words
+            }
         }
 
         when (step) {

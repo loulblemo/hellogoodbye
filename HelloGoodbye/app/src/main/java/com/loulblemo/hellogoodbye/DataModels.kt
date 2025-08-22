@@ -291,12 +291,24 @@ fun generateQuestExercisesForSection(section: TravelSection, numExercises: Int):
     return list
 }
 
-fun initializeTravelState(travelSections: List<TravelSection>, questExercises: Map<String, List<ExerciseType>>): TravelState {
+fun initializeTravelState(context: Context, travelSections: List<TravelSection>, questExercises: Map<String, List<ExerciseType>>): TravelState {
+    val questIds = travelSections.map { it.id }
+    val loadedProgresses = loadQuestProgress(context, questIds)
+    
+    // Ensure first quest is always unlocked, merge with loaded progress
     val questProgresses = travelSections.mapIndexed { index, section ->
-        section.id to QuestProgress(
-            questId = section.id,
-            isUnlocked = index == 0 // Only first quest is unlocked initially
-        )
+        val loaded = loadedProgresses[section.id]
+        val progress = if (loaded != null) {
+            // Use loaded progress but ensure first quest is unlocked
+            if (index == 0) loaded.copy(isUnlocked = true) else loaded
+        } else {
+            // Create new progress with first quest unlocked
+            QuestProgress(
+                questId = section.id,
+                isUnlocked = index == 0
+            )
+        }
+        section.id to progress
     }.toMap()
     
     return TravelState(
@@ -308,6 +320,7 @@ fun initializeTravelState(travelSections: List<TravelSection>, questExercises: M
 }
 
 fun updateQuestProgress(
+    context: Context,
     travelState: TravelState,
     questId: String,
     completedExerciseId: String,
@@ -340,7 +353,12 @@ fun updateQuestProgress(
         }
     }
     
-    return travelState.copy(questProgresses = updatedProgresses)
+    val newTravelState = travelState.copy(questProgresses = updatedProgresses)
+    
+    // Save quest progress to persistence
+    saveQuestProgress(context, updatedProgresses)
+    
+    return newTravelState
 }
 
 // Simple persistence for tracking whether the first quest for a language was completed
@@ -360,4 +378,64 @@ fun isFirstQuestCompleted(context: Context, languageCode: String): Boolean {
 
 fun countFirstQuestCompletedLanguages(context: Context): Int {
     return supportedLanguageCodes().count { code -> isFirstQuestCompleted(context, code) }
+}
+
+// Encountered words tracking
+fun addEncounteredWord(context: Context, languageCode: String, word: String) {
+    val prefs = context.getSharedPreferences("hg_progress", Context.MODE_PRIVATE)
+    val key = "encountered_words_$languageCode"
+    val existing = prefs.getStringSet(key, emptySet()) ?: emptySet()
+    val updated = existing + word
+    prefs.edit().putStringSet(key, updated).apply()
+}
+
+fun getEncounteredWords(context: Context, languageCode: String): Set<String> {
+    val prefs = context.getSharedPreferences("hg_progress", Context.MODE_PRIVATE)
+    return prefs.getStringSet("encountered_words_$languageCode", emptySet()) ?: emptySet()
+}
+
+fun getEncounteredWordsCount(context: Context, languageCode: String): Int {
+    return getEncounteredWords(context, languageCode).size
+}
+
+fun canUnlockPractice(context: Context): Boolean {
+    val languagesWithEnoughWords = supportedLanguageCodes().count { code ->
+        getEncounteredWordsCount(context, code) >= 5
+    }
+    return languagesWithEnoughWords >= 2
+}
+
+// Quest progress persistence
+fun saveQuestProgress(context: Context, questProgress: Map<String, QuestProgress>) {
+    val prefs = context.getSharedPreferences("hg_progress", Context.MODE_PRIVATE)
+    val editor = prefs.edit()
+    
+    questProgress.forEach { (questId, progress) ->
+        // Save completed exercises as a string set
+        editor.putStringSet("quest_${questId}_completed", progress.completedExercises)
+        editor.putBoolean("quest_${questId}_unlocked", progress.isUnlocked)
+        editor.putBoolean("quest_${questId}_completed_flag", progress.isCompleted)
+    }
+    
+    editor.apply()
+}
+
+fun loadQuestProgress(context: Context, questIds: List<String>): Map<String, QuestProgress> {
+    val prefs = context.getSharedPreferences("hg_progress", Context.MODE_PRIVATE)
+    val progressMap = mutableMapOf<String, QuestProgress>()
+    
+    questIds.forEach { questId ->
+        val completedExercises = prefs.getStringSet("quest_${questId}_completed", emptySet()) ?: emptySet()
+        val isUnlocked = prefs.getBoolean("quest_${questId}_unlocked", false)
+        val isCompleted = prefs.getBoolean("quest_${questId}_completed_flag", false)
+        
+        progressMap[questId] = QuestProgress(
+            questId = questId,
+            completedExercises = completedExercises,
+            isUnlocked = isUnlocked,
+            isCompleted = isCompleted
+        )
+    }
+    
+    return progressMap
 }

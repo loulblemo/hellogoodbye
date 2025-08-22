@@ -22,6 +22,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
@@ -182,7 +183,7 @@ fun PracticeButtonSection(onClick: () -> Unit, modifier: Modifier = Modifier, en
 
 @Composable
 fun PracticeAndTravelButtonsSection(onPracticeClick: () -> Unit, onTravelClick: () -> Unit, travelEnabled: Boolean = true) {
-    Row(
+    Column(
         modifier = Modifier
             .fillMaxWidth()
             .padding(16.dp)
@@ -193,6 +194,17 @@ fun PracticeAndTravelButtonsSection(onPracticeClick: () -> Unit, onTravelClick: 
             modifier = Modifier.fillMaxWidth(),
             enabled = travelEnabled
         )
+        
+        if (!travelEnabled) {
+            Spacer(modifier = Modifier.height(8.dp))
+            Text(
+                text = "Study a few languages to enable practice",
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                modifier = Modifier.fillMaxWidth(),
+                textAlign = TextAlign.Center
+            )
+        }
     }
 }
 

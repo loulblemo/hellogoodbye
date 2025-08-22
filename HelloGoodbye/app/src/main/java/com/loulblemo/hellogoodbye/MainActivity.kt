@@ -103,7 +103,7 @@ fun HomeScreen(
     onFlagClick: (Country) -> Unit
 ) {
     val context = LocalContext.current
-    val practiceEnabled = countFirstQuestCompletedLanguages(context) >= 2
+    val practiceEnabled = canUnlockPractice(context)
     
     Column(
         modifier = Modifier
