@@ -38,6 +38,26 @@ import androidx.compose.ui.draw.scale
 import androidx.compose.animation.animateContentSize
 import kotlinx.coroutines.delay
 import com.airbnb.lottie.compose.*
+import coil.compose.AsyncImage
+import coil.request.ImageRequest
+import coil.decode.SvgDecoder
+import coil.ImageLoader
+import androidx.compose.foundation.border
+import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.geometry.CornerRadius
+
+fun assetFlagPathForLanguage(code: String): String? {
+    return when (code) {
+        // Provided 4x3 assets
+        "es" -> "flags/4x3/es.svg"
+        "fr" -> "flags/4x3/fr.svg"
+        "de" -> "flags/4x3/de.svg"
+        "it" -> "flags/4x3/it.svg"
+        "ja" -> "flags/4x3/jp.svg"
+        else -> null
+    }
+}
 
 @Composable
 fun TopBarSection(currency: Int, onSettingsClick: () -> Unit) {
@@ -129,17 +149,52 @@ fun CentralGridSection(
                         horizontalAlignment = Alignment.CenterHorizontally,
                         verticalArrangement = Arrangement.Center
                     ) {
-                        Text(
-                            text = country.flag,
-                            fontSize = 32.sp
-                        )
-                        Spacer(modifier = Modifier.height(4.dp))
-                        Text(
-                            text = country.language,
-                            fontSize = 10.sp,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
-                        )
-
+                        val flagAsset = assetFlagPathForLanguage(languageCode)
+                        val imageLoader = remember(context) {
+                            ImageLoader.Builder(context)
+                                .components { add(SvgDecoder.Factory()) }
+                                .build()
+                        }
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth(0.86f)
+                                .aspectRatio(4f / 3f)
+                                .clip(RoundedCornerShape(12.dp))
+                                .drawBehind {
+                                    // Subtle corner smudge: light translucent strokes with rounded corners
+                                    val baseRadius = 12.dp.toPx()
+                                    val outlineSize = androidx.compose.ui.geometry.Size(size.width, size.height)
+                                    drawRoundRect(
+                                        color = Color.Black.copy(alpha = 0.06f),
+                                        size = outlineSize,
+                                        style = Stroke(width = 4.dp.toPx()),
+                                        cornerRadius = CornerRadius(baseRadius + 2.dp.toPx(), baseRadius + 2.dp.toPx())
+                                    )
+                                    drawRoundRect(
+                                        color = Color.White.copy(alpha = 0.05f),
+                                        size = outlineSize,
+                                        style = Stroke(width = 2.dp.toPx()),
+                                        cornerRadius = CornerRadius(baseRadius, baseRadius)
+                                    )
+                                },
+                            contentAlignment = Alignment.Center
+                        ) {
+                            if (flagAsset != null) {
+                                AsyncImage(
+                                    model = ImageRequest.Builder(context)
+                                        .data("file:///android_asset/${flagAsset}")
+                                        .build(),
+                                    contentDescription = "${country.language} flag",
+                                    imageLoader = imageLoader,
+                                    modifier = Modifier.fillMaxSize()
+                                )
+                            } else {
+                                Text(
+                                    text = country.flag,
+                                    fontSize = 64.sp
+                                )
+                            }
+                        }
                     }
                 }
                 
@@ -590,37 +645,40 @@ fun BadgeOverlay(
     badgeLevel: BadgeLevel,
     modifier: Modifier = Modifier
 ) {
-    val badgeText = when (badgeLevel) {
-        BadgeLevel.BRONZE -> "🥉"
-        BadgeLevel.SILVER -> "🥈"
+    val context = LocalContext.current
+    val imageLoader = remember(context) {
+        ImageLoader.Builder(context)
+            .components { add(SvgDecoder.Factory()) }
+            .build()
+    }
+    val assetPath = when (badgeLevel) {
+        // Map SILVER enum to plain green badge (1 quest)
+        BadgeLevel.SILVER -> "badges/badge_plain_green.svg"
+        // Map BRONZE enum to plain bronze badge (5 quests)
+        BadgeLevel.BRONZE -> "badges/badge_plain_bronze.svg"
         BadgeLevel.NONE -> return // Don't show anything for no badge
     }
-    
-    val badgeColor = when (badgeLevel) {
-        BadgeLevel.BRONZE -> Color(0xFFCD7F32) // Bronze color
-        BadgeLevel.SILVER -> Color(0xFFC0C0C0) // Silver color
-        BadgeLevel.NONE -> Color.Transparent
-    }
-    
+
     Card(
         modifier = modifier
-            .size(24.dp)
-            .offset(x = (-4).dp, y = 4.dp),
+            .size(20.dp)
+            .offset(x = (-6).dp, y = 6.dp),
         shape = CircleShape,
         colors = CardDefaults.cardColors(
             containerColor = Color.White
         ),
-        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
+        elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
     ) {
-        Box(
-            modifier = Modifier.fillMaxSize(),
-            contentAlignment = Alignment.Center
-        ) {
-            Text(
-                text = badgeText,
-                fontSize = 14.sp
-            )
-        }
+        AsyncImage(
+            model = ImageRequest.Builder(context)
+                .data("file:///android_asset/${assetPath}")
+                .build(),
+            contentDescription = "Badge",
+            imageLoader = imageLoader,
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(1.dp)
+        )
     }
 }
 

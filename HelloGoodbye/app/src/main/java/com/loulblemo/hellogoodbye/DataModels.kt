@@ -591,8 +591,10 @@ fun hasCompletedQuestInOtherLanguage(context: Context, currentLanguageCode: Stri
 fun getBadgeLevel(context: Context, languageCode: String): BadgeLevel {
     val count = getLanguageQuestCount(context, languageCode)
     return when {
-        count >= 5 -> BadgeLevel.SILVER
-        count >= 1 -> BadgeLevel.BRONZE
+        // For now: 1 quest = green badge, 5 quests = bronze badge
+        // Map GREEN -> SILVER enum, BRONZE -> BRONZE enum
+        count >= 5 -> BadgeLevel.BRONZE
+        count >= 1 -> BadgeLevel.SILVER
         else -> BadgeLevel.NONE
     }
 }

@@ -87,6 +87,10 @@ dependencies {
     // Lottie animation
     implementation("com.airbnb.android:lottie-compose:6.1.0")
     
+    // Image loading (SVG badges)
+    implementation("io.coil-kt:coil-compose:2.6.0")
+    implementation("io.coil-kt:coil-svg:2.6.0")
+    
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
