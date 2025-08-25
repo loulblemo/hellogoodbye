@@ -336,10 +336,11 @@ fun ResponsiveRedCross(
 fun ModernCheckmark(
     modifier: Modifier = Modifier,
     size: Float = 48f,
-    color: Color = Color(0xFF4CAF50)
+    color: Color = Color(0xFF4CAF50),
+    strokeWidthFactor: Float = 0.08f
 ) {
     Canvas(modifier = modifier.size(size.dp)) {
-        val strokeWidth = this.size.minDimension * 0.08f // Proportional stroke width in px
+        val strokeWidth = this.size.minDimension * strokeWidthFactor // Proportional stroke width in px
         val padding = this.size.minDimension * 0.15f // Proportional padding in px
         
         // Draw the checkmark with rounded caps
@@ -363,14 +364,17 @@ fun ModernCheckmark(
 @Composable
 fun ModernCheckmarkOverlay(
     modifier: Modifier = Modifier,
-    size: Float = 120f
+    size: Float = 120f,
+    overlayAlpha: Float = 0.95f,
+    checkScale: Float = 0.4f,
+    strokeWidthFactor: Float = 0.08f
 ) {
     Box(
         modifier = modifier
             .size(size.dp)
             .clip(CircleShape)
             .background(
-                Color(0xFF4CAF50).copy(alpha = 0.95f),
+                Color(0xFF4CAF50).copy(alpha = overlayAlpha),
                 CircleShape
             ),
         contentAlignment = Alignment.Center
@@ -386,8 +390,9 @@ fun ModernCheckmarkOverlay(
                 )
         )
         ModernCheckmark(
-            size = size * 0.4f,
-            color = Color.White
+            size = size * checkScale,
+            color = Color.White,
+            strokeWidthFactor = strokeWidthFactor
         )
     }
 }

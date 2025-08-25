@@ -535,7 +535,10 @@ fun CircleQuestBubble(
                         containerColor = Color.White
                     ),
                     shape = CircleShape,
-                    border = BorderStroke(4.dp, MaterialTheme.colorScheme.primary)
+                    border = BorderStroke(
+                        width = if (isCompleted) 8.dp else 4.dp,
+                        color = if (isCompleted) Color(0xFF4CAF50) else MaterialTheme.colorScheme.primary
+                    )
                 ) {
                     Box(
                         modifier = Modifier.fillMaxSize(),
@@ -549,7 +552,10 @@ fun CircleQuestBubble(
                 // Modern checkmark overlay when completed
                 if (isCompleted) {
                     ModernCheckmarkOverlay(
-                        size = 120f
+                        size = 120f,
+                        overlayAlpha = 0.6f, // Softer green overlay
+                        checkScale = 0.55f,  // Bigger check
+                        strokeWidthFactor = 0.12f // Thicker check stroke
                     )
                 }
                 // Bottom flag badge overlay
