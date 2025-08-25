@@ -18,13 +18,21 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.PathEffect
+import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.foundation.border
+import androidx.compose.ui.geometry.CornerRadius
+import coil.compose.AsyncImage
+import coil.request.ImageRequest
+import coil.decode.SvgDecoder
+import coil.ImageLoader
 
 // Helper function to get encountered words for mixed exercises
 private fun getEncounteredWordsForMixed(
@@ -410,6 +418,78 @@ fun TravelQuestListScreen(
 }
 
 @Composable
+private fun RandomTravelIcon(
+    modifier: Modifier = Modifier,
+    sizeDp: Int = 64
+) {
+    val context = LocalContext.current
+    val iconFiles = remember {
+        context.assets.list("travel_icons")?.filter { it.endsWith(".png") }?.toList().orEmpty()
+    }
+    // Pick once per composition
+    val chosen = remember(iconFiles) { iconFiles.randomOrNull() }
+    if (chosen != null) {
+        AsyncImage(
+            model = ImageRequest.Builder(context)
+                .data("file:///android_asset/travel_icons/$chosen")
+                .build(),
+            contentDescription = "Travel icon",
+            modifier = modifier.size(sizeDp.dp)
+        )
+    }
+}
+
+@Composable
+private fun BottomFlagBadge(
+    languageCode: String?,
+    modifier: Modifier = Modifier
+) {
+    if (languageCode == null) return
+    val context = LocalContext.current
+    val assetPath = getLanguageFlagAssetFromMetadata(context, languageCode)
+    if (assetPath == null) return
+    val imageLoader = remember(context) {
+        ImageLoader.Builder(context)
+            .components { add(SvgDecoder.Factory()) }
+            .build()
+    }
+    Box(modifier = modifier) {
+        Box(
+            modifier = Modifier
+                .width(48.dp)
+                .height(36.dp)
+                .clip(RoundedCornerShape(8.dp))
+                .drawBehind {
+                    val baseRadius = 8.dp.toPx()
+                    val outlineSize = androidx.compose.ui.geometry.Size(size.width, size.height)
+                    drawRoundRect(
+                        color = Color.Black.copy(alpha = 0.06f),
+                        size = outlineSize,
+                        style = Stroke(width = 3.dp.toPx()),
+                        cornerRadius = CornerRadius(baseRadius + 1.5.dp.toPx(), baseRadius + 1.5.dp.toPx())
+                    )
+                    drawRoundRect(
+                        color = Color.White.copy(alpha = 0.05f),
+                        size = outlineSize,
+                        style = Stroke(width = 1.5.dp.toPx()),
+                        cornerRadius = CornerRadius(baseRadius, baseRadius)
+                    )
+                }
+                .border(2.dp, MaterialTheme.colorScheme.primary.copy(alpha = 0.7f), RoundedCornerShape(8.dp))
+        ) {
+            AsyncImage(
+                model = ImageRequest.Builder(context)
+                    .data("file:///android_asset/$assetPath")
+                    .build(),
+                contentDescription = "Flag badge",
+                imageLoader = imageLoader,
+                modifier = Modifier.fillMaxSize()
+            )
+        }
+    }
+}
+
+@Composable
 fun CircleQuestBubble(
     section: TravelSection,
     questProgress: QuestProgress?,
@@ -461,11 +541,15 @@ fun CircleQuestBubble(
                         modifier = Modifier.fillMaxSize(),
                         contentAlignment = Alignment.Center
                     ) {
-                        // Flag emoji
-                        Text(
-                            text = section.flag,
-                            fontSize = 60.sp
-                        )
+                        // Centered icon: random travel icon for regular, world icon for mixed
+                        if (section.isMixed) {
+                            Text(
+                                text = "🌍",
+                                fontSize = 60.sp
+                            )
+                        } else {
+                            RandomTravelIcon(sizeDp = 60)
+                        }
                     }
                 }
                 
@@ -475,6 +559,18 @@ fun CircleQuestBubble(
                         size = 120f
                     )
                 }
+                // Bottom flag badge overlay
+                val badgeCode = if (section.isMixed) {
+                    startLangCodeFromQuestId(section.id)
+                } else {
+                    languageNameToCode(section.language)
+                }
+                BottomFlagBadge(
+                    languageCode = badgeCode,
+                    modifier = Modifier
+                        .align(Alignment.BottomCenter)
+                        .offset(y = 6.dp)
+                )
             }
         }
         
@@ -530,9 +626,9 @@ fun LockedMixedQuestBubble(
                     modifier = Modifier.fillMaxSize(),
                     contentAlignment = Alignment.Center
                 ) {
-                    // Greyed out flag emoji
+                    // World icon in center for mixed
                     Text(
-                        text = section.flag,
+                        text = "🌍",
                         fontSize = 60.sp,
                         color = Color(0xFF9E9E9E) // Grey tint
                     )
@@ -552,6 +648,13 @@ fun LockedMixedQuestBubble(
                     fontSize = 36.sp
                 )
             }
+            // Bottom flag badge (start language)
+            BottomFlagBadge(
+                languageCode = startLangCodeFromQuestId(section.id),
+                modifier = Modifier
+                    .align(Alignment.BottomCenter)
+                    .offset(y = 6.dp)
+            )
         }
         
         Spacer(modifier = Modifier.height(12.dp))
