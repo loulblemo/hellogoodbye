@@ -106,6 +106,19 @@ fun loadCorpusFromAssets(context: Context): List<WordEntry> {
     }.getOrElse { emptyList() }
 }
 
+// Language metadata for flags and names
+private var languageMetadata: JSONObject? = null
+
+fun loadLanguageMetadata(context: Context): JSONObject? {
+    if (languageMetadata == null) {
+        languageMetadata = runCatching {
+            val jsonString = context.assets.open("language_metadata.json").bufferedReader().use { it.readText() }
+            JSONObject(jsonString)
+        }.getOrElse { null }
+    }
+    return languageMetadata
+}
+
 fun languageNameToCode(name: String): String? {
     return when (name.lowercase()) {
         "english" -> "en"
@@ -125,6 +138,8 @@ fun languageNameToCode(name: String): String? {
 }
 
 fun languageCodeToFlag(code: String): String? {
+    // This function is now deprecated in favor of getLanguageMetadata
+    // Keeping for backward compatibility
     return when (code) {
         "en" -> "🇺🇸"
         "es" -> "🇪🇸"

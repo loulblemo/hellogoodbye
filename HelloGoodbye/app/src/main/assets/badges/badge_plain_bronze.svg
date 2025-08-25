@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 256 256">
+  <defs>
+    <radialGradient id="gCoin" cx="35%" cy="30%" r="80%">
+      <stop offset="0%" stop-color="#ffd2b8"/>
+      <stop offset="45%" stop-color="#d68a67"/>
+      <stop offset="100%" stop-color="#b26346"/>
+    </radialGradient>
+    <radialGradient id="gHighlight" cx="30%" cy="25%" r="60%">
+      <stop offset="0%" stop-color="#ffffff" stop-opacity="0.55"/>
+      <stop offset="100%" stop-color="#ffffff" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="gRing" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#f7c2a2"/>
+      <stop offset="100%" stop-color="#9a5036"/>
+    </linearGradient>
+  </defs>
+
+  <g>
+    <circle cx="128" cy="128" r="95" fill="url(#gCoin)"/>
+    <circle cx="128" cy="128" r="86" fill="none" stroke="url(#gRing)" stroke-width="8"/>
+    <circle cx="128" cy="128" r="95" fill="url(#gHighlight)"/>
+  </g>
+</svg>
+
+
