@@ -16,6 +16,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.airbnb.lottie.compose.*
 import kotlinx.coroutines.delay
+import com.loulblemo.hellogoodbye.LanguageSelectionDialog
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -96,32 +97,32 @@ fun MainScreen() {
         assertCorpusAndMetadataAligned(context)
     }
     var currency by remember { mutableStateOf(loadCurrency(context)) }
-    var selectedCountries by remember {
-        mutableStateOf(
-            listOf(
-                Country("🇪🇸", "Spain", "Spanish"),
-                Country("🇫🇷", "France", "French"),
-                Country("🇩🇪", "Germany", "German"),
-                Country("🇮🇹", "Italy", "Italian"),
-                Country("🇯🇵", "Japan", "Japanese")
-            )
-        )
-    }
+    var selectedCountries by remember { mutableStateOf(loadSelectedLanguages(context)) }
     var currentScreen by remember { mutableStateOf("home") }
     var travelStartLang by remember { mutableStateOf<String?>(null) }
     
-    val availableCountries = remember {
-        listOf(
+    val availableCountries = remember(selectedCountries) {
+        val allLanguages = listOf(
+            Country("🇪🇸", "Spain", "Spanish"),
+            Country("🇫🇷", "France", "French"),
+            Country("🇩🇪", "Germany", "German"),
+            Country("🇮🇹", "Italy", "Italian"),
             Country("🇯🇵", "Japan", "Japanese"),
             Country("🇰🇷", "South Korea", "Korean"),
             Country("🇨🇳", "China", "Chinese"),
-            Country("🇮🇹", "Italy", "Italian"),
             Country("🇧🇷", "Brazil", "Portuguese"),
             Country("🇷🇺", "Russia", "Russian"),
             Country("🇳🇱", "Netherlands", "Dutch"),
             Country("🇸🇪", "Sweden", "Swedish"),
             Country("🇵🇹", "Portugal", "Portuguese")
         )
+        
+        // Filter out already selected languages
+        allLanguages.filter { candidate ->
+            selectedCountries.none { selected -> 
+                selected.language == candidate.language
+            }
+        }
     }
     
     when (currentScreen) {
@@ -134,7 +135,10 @@ fun MainScreen() {
                     currency = newCurrency
                     saveCurrency(context, newCurrency)
                 },
-                onCountriesChange = { selectedCountries = it },
+                onCountriesChange = { 
+                    selectedCountries = it
+                    saveSelectedLanguages(context, it)
+                },
                 onNavigateToPractice = { currentScreen = "practice" },
                 onNavigateToSettings = { currentScreen = "settings" },
                 onFlagClick = { country ->
@@ -168,7 +172,12 @@ fun MainScreen() {
         }
         "settings" -> {
             SettingsScreen(
-                onBack = { currentScreen = "home" }
+                onBack = { currentScreen = "home" },
+                onProgressCleared = {
+                    // Refresh currency and selected languages after clearing progress
+                    currency = loadCurrency(context)
+                    selectedCountries = loadSelectedLanguages(context)
+                }
             )
         }
     }
@@ -187,6 +196,7 @@ fun HomeScreen(
 ) {
     val context = LocalContext.current
     val practiceEnabled = canUnlockPractice(context)
+    var showLanguageDialog by remember { mutableStateOf(false) }
     
     Column(
         modifier = Modifier
@@ -204,19 +214,15 @@ fun HomeScreen(
             selectedCountries = selectedCountries,
             onFlagClick = onFlagClick,
             onAddFlag = {
-                Toast.makeText(context, "Buying a new language costs 50 coins", Toast.LENGTH_SHORT).show()
-                val nextCountry = availableCountries.firstOrNull { candidate ->
-                    selectedCountries.none { it.name == candidate.name && it.language == candidate.language }
+                if (currency >= 50) {
+                    showLanguageDialog = true
                 }
-                if (nextCountry != null && currency >= 50) {
-                    onCountriesChange(selectedCountries + nextCountry)
-                    onCurrencyChange(currency - 50)
-                }
+                // Removed popup message about needing 50 points - will handle later
             },
             canAddMore = availableCountries.any { candidate ->
                 selectedCountries.none { it.name == candidate.name && it.language == candidate.language }
             },
-            canAffordAdd = currency >= 50,
+            canAffordAdd = true, // Always allow clicking to show cost info
             price = 50,
             modifier = Modifier.weight(1f)
         )
@@ -226,6 +232,24 @@ fun HomeScreen(
             onPracticeClick = onNavigateToPractice,
             onTravelClick = { /* removed */ },
             travelEnabled = practiceEnabled
+        )
+    }
+    
+    // Language selection dialog
+    if (showLanguageDialog) {
+        val selectedLanguageNames = selectedCountries.map { it.language }
+        LanguageSelectionDialog(
+            selectedLanguages = selectedLanguageNames,
+            onLanguageSelected = { languageName ->
+                // Find the country from availableCountries that matches the selected language
+                val selectedCountry = availableCountries.find { it.language == languageName }
+                if (selectedCountry != null && currency >= 50) {
+                    onCountriesChange(selectedCountries + selectedCountry)
+                    onCurrencyChange(currency - 50)
+                    Toast.makeText(context, "Added ${languageName} to your study list!", Toast.LENGTH_SHORT).show()
+                }
+            },
+            onDismiss = { showLanguageDialog = false }
         )
     }
 }

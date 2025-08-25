@@ -690,10 +690,85 @@ fun resetAllBadgeProgress(context: Context) {
 // Clear all progress function for settings
 fun clearAllProgress(context: Context) {
     val prefs = context.getSharedPreferences("hg_progress", Context.MODE_PRIVATE)
-    prefs.edit().clear().apply()
+    val editor = prefs.edit()
     
-    // Reset currency to 50 points after clearing progress
-    saveCurrency(context, 50)
+    // Clear all progress-related keys but preserve currency and selected languages
+    val allKeys = prefs.all.keys
+    allKeys.forEach { key ->
+        if (!key.startsWith("user_currency") && !key.startsWith("selected_language")) {
+            editor.remove(key)
+        }
+    }
+    
+    // Reset currency to 50 points
+    editor.putInt("user_currency", 50)
+    
+    // Reset selected languages to default 5
+    editor.putInt("selected_languages_count", 5)
+    editor.putString("selected_language_0_flag", "🇪🇸")
+    editor.putString("selected_language_0_name", "Spain")
+    editor.putString("selected_language_0_language", "Spanish")
+    editor.putString("selected_language_1_flag", "🇫🇷")
+    editor.putString("selected_language_1_name", "France")
+    editor.putString("selected_language_1_language", "French")
+    editor.putString("selected_language_2_flag", "🇩🇪")
+    editor.putString("selected_language_2_name", "Germany")
+    editor.putString("selected_language_2_language", "German")
+    editor.putString("selected_language_3_flag", "🇮🇹")
+    editor.putString("selected_language_3_name", "Italy")
+    editor.putString("selected_language_3_language", "Italian")
+    editor.putString("selected_language_4_flag", "🇯🇵")
+    editor.putString("selected_language_4_name", "Japan")
+    editor.putString("selected_language_4_language", "Japanese")
+    
+    editor.apply()
+}
+
+// Selected languages persistence functions
+fun saveSelectedLanguages(context: Context, languages: List<Country>) {
+    val prefs = context.getSharedPreferences("hg_progress", Context.MODE_PRIVATE)
+    val editor = prefs.edit()
+    
+    // Save the count
+    editor.putInt("selected_languages_count", languages.size)
+    
+    // Save each language
+    languages.forEachIndexed { index, country ->
+        editor.putString("selected_language_${index}_flag", country.flag)
+        editor.putString("selected_language_${index}_name", country.name)
+        editor.putString("selected_language_${index}_language", country.language)
+    }
+    
+    editor.apply()
+}
+
+fun loadSelectedLanguages(context: Context): List<Country> {
+    val prefs = context.getSharedPreferences("hg_progress", Context.MODE_PRIVATE)
+    val count = prefs.getInt("selected_languages_count", 0)
+    
+    if (count == 0) {
+        // Return default languages if none saved
+        return listOf(
+            Country("🇪🇸", "Spain", "Spanish"),
+            Country("🇫🇷", "France", "French"),
+            Country("🇩🇪", "Germany", "German"),
+            Country("🇮🇹", "Italy", "Italian"),
+            Country("🇯🇵", "Japan", "Japanese")
+        )
+    }
+    
+    val languages = mutableListOf<Country>()
+    for (i in 0 until count) {
+        val flag = prefs.getString("selected_language_${i}_flag", "") ?: ""
+        val name = prefs.getString("selected_language_${i}_name", "") ?: ""
+        val language = prefs.getString("selected_language_${i}_language", "") ?: ""
+        
+        if (flag.isNotEmpty() && name.isNotEmpty() && language.isNotEmpty()) {
+            languages.add(Country(flag, name, language))
+        }
+    }
+    
+    return languages
 }
 
 // Currency persistence functions

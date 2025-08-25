@@ -695,7 +695,8 @@ fun BadgeOverlay(
 
 @Composable
 fun SettingsScreen(
-    onBack: () -> Unit
+    onBack: () -> Unit,
+    onProgressCleared: () -> Unit = {}
 ) {
     val context = LocalContext.current
     var showConfirmDialog by remember { mutableStateOf(false) }
@@ -809,6 +810,7 @@ fun SettingsScreen(
                     onClick = {
                         clearAllProgress(context)
                         showConfirmDialog = false
+                        onProgressCleared()
                         onBack()
                     }
                 ) {
