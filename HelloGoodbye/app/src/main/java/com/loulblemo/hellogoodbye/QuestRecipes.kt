@@ -41,7 +41,9 @@ fun defaultQuestRecipes(): List<QuestRecipe> {
         languageCount = 1,
         exerciseOrder = listOf(
             "audio_to_english_multi",
-            "pronunciation_audio_to_english"
+            "pronunciation_audio_to_english",
+            "pronunciation_audio_to_type_english"
+
         ).let { base -> List(10) { base[it % base.size] } },
         randomOrder = true,
         newWordsFromMain = 0
