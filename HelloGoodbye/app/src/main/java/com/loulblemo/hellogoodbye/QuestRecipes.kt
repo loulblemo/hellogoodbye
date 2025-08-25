@@ -162,6 +162,21 @@ fun mapExerciseIdToType(section: TravelSection, id: String): ExerciseType {
             title = "Pronunciation + Audio to Translation",
             description = "See pronunciation, hear audio, choose the correct meaning"
         )
+        "pronunciation_audio_to_type_english" -> ExerciseType(
+            id = id,
+            title = "Type the Translation",
+            description = "See pronunciation, hear audio, type the correct English meaning"
+        )
+        "pronunciation_to_english" -> ExerciseType(
+            id = id,
+            title = "Pronunciation to Translation",
+            description = "See pronunciation and match to the correct meaning"
+        )
+        "pronunciation_to_english_multi" -> ExerciseType(
+            id = id,
+            title = "Pronunciation to Translation (5 pairs)",
+            description = "See pronunciation, hear audio, match to the correct meaning"
+        )
         else -> ExerciseType(
             id = id,
             title = "Pronunciation + Audio to Translation",

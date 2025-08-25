@@ -202,7 +202,7 @@ fun TravelScreen(
                     if (recipe.randomOrder) base.shuffled() else base
                 } else {
                     // Fallback if recipe not found
-                    if (section.isMixed) listOf("audio_to_flag", "pronunciation_to_flag", "audio_to_english", "pronunciation_audio_to_english") else listOf("audio_to_english", "pronunciation_audio_to_english")
+                    if (section.isMixed) listOf("audio_to_flag", "pronunciation_to_flag", "audio_to_english", "pronunciation_to_english_multi", "pronunciation_audio_to_english", "pronunciation_audio_to_type_english") else listOf("audio_to_english", "pronunciation_to_english_multi", "pronunciation_audio_to_english", "pronunciation_audio_to_type_english")
                 }
                 val types = ids.map { id -> mapExerciseIdToType(section, id) }
                 section.id to types
@@ -1046,6 +1046,24 @@ fun QuestPracticeScreen(
                             }
                         )
                     }
+                    "pronunciation_to_english_multi" -> {
+                        val pool = (if (eligiblePronunciationWords.isNotEmpty()) eligiblePronunciationWords else corpus)
+                        val shuffled = pool.shuffled()
+                        val words = if (section.isMixed) shuffled else shuffled.take(20)
+                        val pairs = buildPronunciationToEnglishPairsMulti(
+                            words,
+                            languageCodes,
+                            restrictToEncountered = section.isMixed,
+                            availableLanguages = encounteredLanguages
+                        )
+                        MatchingExercise(
+                            title = currentExercise.title,
+                            pairs = pairs,
+                            onDone = { perfect ->
+                                triggerCompletion(stepKey)
+                            }
+                        )
+                    }
                     "audio_to_english" -> {
                         val sourceBase = (if (eligibleAudioWords.isNotEmpty()) eligibleAudioWords else corpus).shuffled()
                         val source = if (section.isMixed) sourceBase else sourceBase.take(10)
@@ -1091,6 +1109,26 @@ fun QuestPracticeScreen(
                             audioFile = variant?.audio,
                             options = options,
                             correctOption = correctAnswer,
+                            onDone = { _ ->
+                                triggerCompletion(stepKey)
+                            }
+                        )
+                    }
+                    "pronunciation_audio_to_type_english" -> {
+                        val pool = if (eligiblePronunciationWords.isNotEmpty()) eligiblePronunciationWords else corpus
+                        val chosen = pool.random()
+                        val code = languageCodes.firstOrNull {
+                            val v = chosen.byLang[it]
+                            v?.audio != null && (v.googlePronunciation != null || v.word != null)
+                        } ?: languageCodes.first()
+                        val variant = chosen.byLang[code]
+                        val pronunciation = variant?.googlePronunciation ?: (variant?.word ?: "")
+                        val correctAnswer = chosen.byLang["en"]?.text ?: chosen.byLang["en"]?.word ?: chosen.original
+                        PronunciationAudioToTypeEnglishExercise(
+                            title = currentExercise.title,
+                            pronunciation = pronunciation,
+                            audioFile = variant?.audio,
+                            correctAnswer = correctAnswer,
                             onDone = { _ ->
                                 triggerCompletion(stepKey)
                             }

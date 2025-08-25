@@ -215,3 +215,29 @@ fun buildPronunciationToEnglishPairs(
         availableLanguages = availableLanguages
     )
 }
+
+fun buildPronunciationToEnglishPairsMulti(
+    words: List<WordEntry>,
+    languageCodes: List<String>,
+    restrictToEncountered: Boolean = false,
+    availableLanguages: List<String> = emptyList()
+): List<MatchingPair> {
+    return pickFivePairs(
+        words,
+        languageCodes,
+        buildLeft = { word, lang, variant ->
+            val text = variant.googlePronunciation ?: variant.word ?: variant.text ?: return@pickFivePairs null
+            val audio = variant.audio ?: return@pickFivePairs null
+            val englishLabel = word.byLang["en"]?.text ?: word.byLang["en"]?.word ?: word.original
+            val key = englishLabel.lowercase()
+            PairItem(id = "L_${lang}_${word.original}_$text", label = text, isAudio = true, audioFile = audio, matchKey = key)
+        },
+        buildRight = { word, _, _ ->
+            val englishLabel = word.byLang["en"]?.text ?: word.byLang["en"]?.word ?: word.original
+            val key = englishLabel.lowercase()
+            PairItem(id = "R_en_${word.original}", label = englishLabel, isAudio = false, matchKey = key)
+        },
+        restrictToEncounteredLanguages = restrictToEncountered,
+        availableLanguages = availableLanguages
+    )
+}

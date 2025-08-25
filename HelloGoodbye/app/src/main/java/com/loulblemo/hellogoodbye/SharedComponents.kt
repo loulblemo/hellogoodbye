@@ -972,3 +972,74 @@ fun PronunciationAudioToEnglishExercise(
         }
     }
 }
+
+@Composable
+fun PronunciationAudioToTypeEnglishExercise(
+    title: String,
+    pronunciation: String,
+    audioFile: String?,
+    correctAnswer: String,
+    onDone: (Boolean) -> Unit
+) {
+    val context = LocalContext.current
+    var input by remember(correctAnswer) { mutableStateOf("") }
+    var completed by remember(correctAnswer) { mutableStateOf(false) }
+
+    LaunchedEffect(audioFile) {
+        if (audioFile != null) {
+            playAssetAudio(context, audioFile)
+        }
+    }
+
+    Column(modifier = Modifier.fillMaxSize()) {
+        Card(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp)
+                .height(80.dp)
+                .clickable { if (audioFile != null) playAssetAudio(context, audioFile) },
+            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.tertiaryContainer),
+            shape = RoundedCornerShape(16.dp)
+        ) {
+            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                Text(
+                    text = pronunciation,
+                    fontSize = 20.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colorScheme.onTertiaryContainer
+                )
+            }
+        }
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp),
+            verticalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            OutlinedTextField(
+                value = input,
+                onValueChange = { if (!completed) input = it },
+                modifier = Modifier.fillMaxWidth(),
+                label = { Text("Type the English translation") },
+                singleLine = true
+            )
+
+            Button(
+                onClick = {
+                    if (completed) return@Button
+                    completed = true
+                    val normalizedInput = input.trim().lowercase()
+                    val normalizedAnswer = correctAnswer.trim().lowercase()
+                    onDone(normalizedInput == normalizedAnswer)
+                },
+                modifier = Modifier.fillMaxWidth(),
+                shape = RoundedCornerShape(12.dp)
+            ) {
+                Text("Check")
+            }
+        }
+    }
+}
