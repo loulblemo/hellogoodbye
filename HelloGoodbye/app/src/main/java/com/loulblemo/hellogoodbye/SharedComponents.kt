@@ -147,7 +147,7 @@ fun CentralGridSection(
                         .fillMaxSize()
                         .clickable { onFlagClick(country) },
                     colors = CardDefaults.cardColors(
-                        containerColor = MaterialTheme.colorScheme.surface
+                        containerColor = MaterialTheme.colorScheme.background
                     ),
                     shape = RoundedCornerShape(12.dp)
                 ) {
@@ -899,7 +899,10 @@ fun SettingsScreen(
 @Composable
 fun HelloGoodbyeTheme(content: @Composable () -> Unit) {
     MaterialTheme(
-        colorScheme = lightColorScheme(),
+        colorScheme = lightColorScheme(
+            // Subtle purple background across the app
+            background = Color(0xFFF5F0FF)
+        ),
         content = content
     )
 }

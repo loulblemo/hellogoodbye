@@ -12,6 +12,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.airbnb.lottie.compose.*
@@ -78,10 +79,12 @@ fun SplashScreen() {
             
             // Text underneath
             Text(
-                text = "...where are you travelling today?",
-                fontSize = 26.sp,
-                fontWeight = FontWeight.Normal,
+                text = "Where to today?",
+                fontSize = 30.sp,
+                fontWeight = FontWeight.SemiBold,
                 color = MaterialTheme.colorScheme.onBackground,
+                fontFamily = FontFamily.Cursive,
+                letterSpacing = 0.5.sp,
                 modifier = Modifier.padding(horizontal = 40.dp),
                 textAlign = androidx.compose.ui.text.style.TextAlign.Center
             )
