@@ -90,6 +90,11 @@ fun SplashScreen() {
 
 @Composable
 fun MainScreen() {
+    val context = LocalContext.current
+    LaunchedEffect(Unit) {
+        // Developer safety: ensure metadata and corpus stay aligned
+        assertCorpusAndMetadataAligned(context)
+    }
     var currency by remember { mutableStateOf(10) }
     var selectedCountries by remember {
         mutableStateOf(

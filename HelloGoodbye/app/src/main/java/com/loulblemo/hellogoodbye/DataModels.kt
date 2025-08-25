@@ -192,7 +192,8 @@ fun getLanguageFlagFromMetadata(context: Context, code: String): String? {
 }
 
 fun getLanguageFlagAssetFromMetadata(context: Context, code: String): String? {
-    return getLanguageMetadata(context, code)?.optString("flagAsset")
+    val raw = getLanguageMetadata(context, code)?.optString("flagAsset")
+    return if (raw.isNullOrBlank()) null else raw
 }
 
 fun generateTravelSequence(allLangCodes: List<String>): List<TravelSection> {
@@ -520,6 +521,25 @@ fun supportedLanguageCodes(): List<String> {
 fun getSupportedLanguageCodesFromMetadata(context: Context): List<String> {
     val metadata = loadLanguageMetadata(context)
     return metadata?.optJSONObject("languages")?.keys()?.asSequence()?.toList() ?: emptyList()
+}
+
+// Derive canonical set of language codes from the corpus (single source of truth)
+fun getLanguageCodesFromCorpus(context: Context): List<String> {
+    val entries = loadCorpusFromAssets(context)
+    val codes = mutableSetOf<String>()
+    entries.forEach { entry ->
+        entry.byLang.keys.forEach { code -> codes.add(code) }
+    }
+    return codes.toList()
+}
+
+// Assert that metadata languages align with corpus languages on startup
+fun assertCorpusAndMetadataAligned(context: Context) {
+    val corpus = getLanguageCodesFromCorpus(context).toSet()
+    val meta = getSupportedLanguageCodesFromMetadata(context).toSet()
+    require(corpus == meta) {
+        "Language metadata mismatch with corpus. corpus=$corpus meta=$meta"
+    }
 }
 
 fun markFirstQuestCompleted(context: Context, languageCode: String) {
