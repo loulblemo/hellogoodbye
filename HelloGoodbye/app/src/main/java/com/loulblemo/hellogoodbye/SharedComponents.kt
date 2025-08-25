@@ -26,6 +26,11 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.toSize
+import androidx.compose.ui.platform.LocalDensity
+import kotlin.math.PI
+import kotlin.math.sin
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.geometry.Offset
@@ -412,12 +417,90 @@ fun PracticeButtonSection(onClick: () -> Unit, modifier: Modifier = Modifier, en
 }
 
 @Composable
+fun TravelIconTicker(
+    modifier: Modifier = Modifier,
+    intervalMillis: Long = 6000L,
+    travelDurationMs: Long = 2800L,
+    iconSizeDp: Dp = 40.dp
+) {
+    val context = LocalContext.current
+    val density = LocalDensity.current
+    val iconFiles = remember {
+        // Load available PNGs from assets/travel_icons once
+        context.assets.list("travel_icons")?.filter { it.endsWith(".png") }?.toList().orEmpty()
+    }
+
+    BoxWithConstraints(
+        modifier = modifier
+            .fillMaxWidth()
+            .height(iconSizeDp * 1.6f) // lane height
+    ) {
+        val laneWidth = this.maxWidth
+        var currentIcon by remember { mutableStateOf<String?>(null) }
+        var xOffset by remember { mutableStateOf((-iconSizeDp)) }
+        var yOffset by remember { mutableStateOf(0.dp) }
+
+        LaunchedEffect(iconFiles, laneWidth, intervalMillis, travelDurationMs) {
+            while (true) {
+                if (iconFiles.isNotEmpty()) {
+                    currentIcon = iconFiles.random()
+                    val steps = 120
+                    val stepDelay = (travelDurationMs / steps).coerceAtLeast(8)
+                    val amplitudePx = with(density) { 5.dp.toPx() } // gentle vertical oscillation
+                    for (i in 0..steps) {
+                        val t = i / steps.toFloat()
+                        val base = (-iconSizeDp) + (laneWidth + iconSizeDp) * t
+                        xOffset = base
+                        val phase = 2f * PI.toFloat() * (t * 1.5f) // ~1.5 vertical waves across
+                        val yPx = sin(phase) * amplitudePx
+                        yOffset = with(density) { yPx.toDp() }
+                        delay(stepDelay)
+                    }
+                    // Immediately hide after finishing the travel to avoid lingering at the edge
+                    currentIcon = null
+                    xOffset = -iconSizeDp
+                    yOffset = 0.dp
+                }
+                delay(intervalMillis)
+            }
+        }
+
+        if (currentIcon != null) {
+            // Simple shadow-ish background pill
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(iconSizeDp)
+                    .padding(horizontal = 0.dp),
+                contentAlignment = Alignment.CenterStart
+            ) {
+                AsyncImage(
+                    model = ImageRequest.Builder(context)
+                        .data("file:///android_asset/travel_icons/" + currentIcon!!)
+                        .build(),
+                    contentDescription = "Travel icon",
+                    modifier = Modifier
+                        .size(iconSizeDp)
+                        .offset(x = xOffset, y = yOffset),
+                )
+            }
+        }
+    }
+}
+
+@Composable
 fun PracticeAndTravelButtonsSection(onPracticeClick: () -> Unit, onTravelClick: () -> Unit, travelEnabled: Boolean = true) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
             .padding(16.dp)
     ) {
+        // Animated travel icon ticker just above the Practice button
+        TravelIconTicker(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(bottom = 8.dp)
+        )
         // Single full-width Practice button; travel removed from main screen
         PracticeButtonSection(
             onClick = onPracticeClick,
