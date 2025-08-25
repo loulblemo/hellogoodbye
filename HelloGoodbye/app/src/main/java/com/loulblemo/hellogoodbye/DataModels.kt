@@ -691,4 +691,18 @@ fun resetAllBadgeProgress(context: Context) {
 fun clearAllProgress(context: Context) {
     val prefs = context.getSharedPreferences("hg_progress", Context.MODE_PRIVATE)
     prefs.edit().clear().apply()
+    
+    // Reset currency to 50 points after clearing progress
+    saveCurrency(context, 50)
+}
+
+// Currency persistence functions
+fun saveCurrency(context: Context, currency: Int) {
+    val prefs = context.getSharedPreferences("hg_progress", Context.MODE_PRIVATE)
+    prefs.edit().putInt("user_currency", currency).apply()
+}
+
+fun loadCurrency(context: Context): Int {
+    val prefs = context.getSharedPreferences("hg_progress", Context.MODE_PRIVATE)
+    return prefs.getInt("user_currency", 50) // Default to 50 points
 }

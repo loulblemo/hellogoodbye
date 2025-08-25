@@ -95,7 +95,7 @@ fun MainScreen() {
         // Developer safety: ensure metadata and corpus stay aligned
         assertCorpusAndMetadataAligned(context)
     }
-    var currency by remember { mutableStateOf(10) }
+    var currency by remember { mutableStateOf(loadCurrency(context)) }
     var selectedCountries by remember {
         mutableStateOf(
             listOf(
@@ -130,7 +130,10 @@ fun MainScreen() {
                 currency = currency,
                 selectedCountries = selectedCountries,
                 availableCountries = availableCountries,
-                onCurrencyChange = { currency = it },
+                onCurrencyChange = { newCurrency -> 
+                    currency = newCurrency
+                    saveCurrency(context, newCurrency)
+                },
                 onCountriesChange = { selectedCountries = it },
                 onNavigateToPractice = { currentScreen = "practice" },
                 onNavigateToSettings = { currentScreen = "settings" },
@@ -144,7 +147,11 @@ fun MainScreen() {
             PracticeScreen(
                 selectedCountries = selectedCountries,
                 onExit = { currentScreen = "home" },
-                onAwardCoin = { currency += 1 }
+                onAwardCoin = { 
+                    val newCurrency = currency + 1
+                    currency = newCurrency
+                    saveCurrency(context, newCurrency)
+                }
             )
         }
         "travel" -> {
@@ -152,7 +159,11 @@ fun MainScreen() {
             TravelScreen(
                 startLanguageCode = startLang,
                 onExit = { currentScreen = "home" },
-                onAwardCoin = { currency += 1 }
+                onAwardCoin = { 
+                    val newCurrency = currency + 1
+                    currency = newCurrency
+                    saveCurrency(context, newCurrency)
+                }
             )
         }
         "settings" -> {
