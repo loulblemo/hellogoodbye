@@ -261,10 +261,13 @@ fun ResponsiveRedCross(
     modifier: Modifier = Modifier
 ) {
     var isPressed by remember { mutableStateOf(false) }
-    
+
     Box(
         modifier = modifier
-            .size(32.dp)
+            // Round outline like the settings cog (same circular style)
+            .size(48.dp)
+            .clip(CircleShape)
+            .background(MaterialTheme.colorScheme.secondaryContainer)
             .clickable(
                 interactionSource = remember { MutableInteractionSource() },
                 indication = LocalIndication.current
@@ -275,51 +278,30 @@ fun ResponsiveRedCross(
             .animateContentSize(),
         contentAlignment = Alignment.Center
     ) {
-        // Outer cross (darker red)
+        // Purple X with rounded stroke caps
+        val xColor = MaterialTheme.colorScheme.onSecondaryContainer
         Canvas(modifier = Modifier.fillMaxSize()) {
-            val strokeWidth = 3.dp.toPx()
-            val color = Color(0xFFB71C1C) // Darker red
-            
+            val strokeWidth = size.minDimension * 0.09f
+            val padding = size.minDimension * 0.30f
+
             // Draw X with two lines
             drawLine(
-                color = color,
-                start = Offset(8.dp.toPx(), 8.dp.toPx()),
-                end = Offset(24.dp.toPx(), 24.dp.toPx()),
+                color = xColor,
+                start = Offset(padding, padding),
+                end = Offset(size.width - padding, size.height - padding),
                 strokeWidth = strokeWidth,
                 cap = StrokeCap.Round
             )
             drawLine(
-                color = color,
-                start = Offset(24.dp.toPx(), 8.dp.toPx()),
-                end = Offset(8.dp.toPx(), 24.dp.toPx()),
-                strokeWidth = strokeWidth,
-                cap = StrokeCap.Round
-            )
-        }
-        
-        // Inner cross (lighter red) - slightly smaller
-        Canvas(modifier = Modifier.fillMaxSize()) {
-            val strokeWidth = 2.dp.toPx()
-            val color = Color(0xFFF44336) // Lighter red
-            
-            // Draw X with two lines (slightly smaller)
-            drawLine(
-                color = color,
-                start = Offset(10.dp.toPx(), 10.dp.toPx()),
-                end = Offset(22.dp.toPx(), 22.dp.toPx()),
-                strokeWidth = strokeWidth,
-                cap = StrokeCap.Round
-            )
-            drawLine(
-                color = color,
-                start = Offset(22.dp.toPx(), 10.dp.toPx()),
-                end = Offset(10.dp.toPx(), 22.dp.toPx()),
+                color = xColor,
+                start = Offset(size.width - padding, padding),
+                end = Offset(padding, size.height - padding),
                 strokeWidth = strokeWidth,
                 cap = StrokeCap.Round
             )
         }
     }
-    
+
     LaunchedEffect(Unit) {
         // Handle press state for animation
         snapshotFlow { isPressed }

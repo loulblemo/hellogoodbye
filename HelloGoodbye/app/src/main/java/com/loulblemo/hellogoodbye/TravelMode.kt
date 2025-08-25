@@ -917,7 +917,8 @@ fun QuestPracticeScreen(
             }
             baseWords.filter { entry -> languageCodes.any { code ->
                 val v = entry.byLang[code]
-                (v?.googlePronunciation ?: v?.ipa) != null && v?.audio != null
+                // Require audio, and accept Google pronunciation or fallback to main word
+                v?.audio != null && ((v.googlePronunciation != null) || (v.word != null))
             } }
         }
         
@@ -1002,16 +1003,20 @@ fun QuestPracticeScreen(
                         val pool = if (eligiblePronunciationWords.isNotEmpty()) eligiblePronunciationWords else corpus
                         // pick one word and build 5 options
                         val chosen = pool.random()
-                        val code = languageCodes.firstOrNull { chosen.byLang[it]?.audio != null && ((chosen.byLang[it]?.googlePronunciation ?: chosen.byLang[it]?.ipa) != null) } ?: languageCodes.first()
+                        // Choose a language variant that has audio and either Google pronunciation or main word
+                        val code = languageCodes.firstOrNull {
+                            val v = chosen.byLang[it]
+                            v?.audio != null && (v.googlePronunciation != null || v.word != null)
+                        } ?: languageCodes.first()
                         val variant = chosen.byLang[code]
-                        val pronunciation = (variant?.googlePronunciation ?: variant?.ipa) ?: ""
+                        // Use Google pronunciation, fallback to the main word
+                        val pronunciation = variant?.googlePronunciation ?: (variant?.word ?: "")
                         
-                        // Use the first available language for the label, fallback to original
-                        val labelLang = if (encounteredLanguages.isNotEmpty()) encounteredLanguages.first() else languageCodes.first()
-                        val correctAnswer = chosen.byLang[labelLang]?.word ?: chosen.byLang[labelLang]?.text ?: chosen.original
+                        // Always match to English translation (fallback to original)
+                        val correctAnswer = chosen.byLang["en"]?.text ?: chosen.byLang["en"]?.word ?: chosen.original
                         
                         val distractors = pool.filter { it !== chosen }
-                            .mapNotNull { it.byLang[labelLang]?.word ?: it.byLang[labelLang]?.text ?: it.original }
+                            .mapNotNull { it.byLang["en"]?.text ?: it.byLang["en"]?.word ?: it.original }
                             .shuffled()
                             .distinct()
                             .take(4)
