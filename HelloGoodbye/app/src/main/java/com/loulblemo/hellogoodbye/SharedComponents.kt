@@ -176,7 +176,8 @@ fun CentralGridSection(
                                         style = Stroke(width = 2.dp.toPx()),
                                         cornerRadius = CornerRadius(baseRadius, baseRadius)
                                     )
-                                },
+                                }
+                                .border(3.dp, MaterialTheme.colorScheme.primary.copy(alpha = 0.7f), RoundedCornerShape(12.dp)),
                             contentAlignment = Alignment.Center
                         ) {
                             if (flagAsset != null) {
