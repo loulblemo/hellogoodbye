@@ -535,21 +535,14 @@ fun CircleQuestBubble(
                         containerColor = Color.White
                     ),
                     shape = CircleShape,
-                    border = BorderStroke(4.dp, Color(0xFFFFD700)) // Yellow border
+                    border = BorderStroke(4.dp, MaterialTheme.colorScheme.primary)
                 ) {
                     Box(
                         modifier = Modifier.fillMaxSize(),
                         contentAlignment = Alignment.Center
                     ) {
-                        // Centered icon: random travel icon for regular, world icon for mixed
-                        if (section.isMixed) {
-                            Text(
-                                text = "🌍",
-                                fontSize = 60.sp
-                            )
-                        } else {
-                            RandomTravelIcon(sizeDp = 60)
-                        }
+                        // Centered icon: random travel icon for both regular and mixed
+                        RandomTravelIcon(sizeDp = 60)
                     }
                 }
                 
@@ -560,17 +553,15 @@ fun CircleQuestBubble(
                     )
                 }
                 // Bottom flag badge overlay
-                val badgeCode = if (section.isMixed) {
-                    startLangCodeFromQuestId(section.id)
-                } else {
-                    languageNameToCode(section.language)
+                val badgeCode = if (!section.isMixed) languageNameToCode(section.language) else null
+                if (badgeCode != null) {
+                    BottomFlagBadge(
+                        languageCode = badgeCode,
+                        modifier = Modifier
+                            .align(Alignment.BottomCenter)
+                            .offset(y = 6.dp)
+                    )
                 }
-                BottomFlagBadge(
-                    languageCode = badgeCode,
-                    modifier = Modifier
-                        .align(Alignment.BottomCenter)
-                        .offset(y = 6.dp)
-                )
             }
         }
         
