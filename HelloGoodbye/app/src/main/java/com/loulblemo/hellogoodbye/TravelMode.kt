@@ -76,8 +76,8 @@ private fun getEncounteredWordsForMixed(
         }
         
         // Combine words from both languages, ensuring we have representation from both
-        encounteredWords.addAll(wordsFromLanguage1.take(5)) // Take up to 5 from first language
-        encounteredWords.addAll(wordsFromLanguage2.take(5)) // Take up to 5 from second language
+        encounteredWords.addAll(wordsFromLanguage1)
+        encounteredWords.addAll(wordsFromLanguage2)
     } else {
         // Fallback to single language logic
         languageCodes.forEach { langCode ->
@@ -173,9 +173,11 @@ fun TravelScreen(
     val supportedLangCodes = remember(corpus) {
         corpus.flatMap { it.byLang.keys }.distinct().filter { it != "en" }
     }
+    // Quest recipes define type, language count, exercise order, randomization, and new words to seed
+    val questRecipes = remember { defaultQuestRecipes() }
     // Phase 1: Generate basic travel sections
     val basicTravelSections = remember(supportedLangCodes, startLanguageCode) {
-        generateTravelSequenceForLanguage(startLanguageCode, supportedLangCodes)
+        generateTravelSectionsFromRecipes(startLanguageCode, questRecipes)
     }
     
     // Initialize travel state with basic sections
@@ -194,9 +196,16 @@ fun TravelScreen(
                 // Completion badges have no exercises
                 section.id to emptyList<ExerciseType>()
             } else {
-                val list = generateQuestExercisesForSection(section, 10)
-                val filtered = if (section.isMixed) list else list.filter { it.id != "audio_to_flag" && it.id != "pronunciation_to_flag" }
-                section.id to filtered
+                val recipe = recipeForQuestId(questRecipes, section.id)
+                val ids = if (recipe != null) {
+                    val base = recipe.exerciseOrder
+                    if (recipe.randomOrder) base.shuffled() else base
+                } else {
+                    // Fallback if recipe not found
+                    if (section.isMixed) listOf("audio_to_flag", "pronunciation_to_flag", "audio_to_english", "pronunciation_audio_to_english") else listOf("audio_to_english", "pronunciation_audio_to_english")
+                }
+                val types = ids.map { id -> mapExerciseIdToType(section, id) }
+                section.id to types
             }
         }
     }
@@ -356,6 +365,22 @@ fun TravelScreen(
                     }
                 )
             }
+        }
+    }
+
+    // Seed new words for main language when a quest starts, based on its recipe
+    val seededQuestIds = remember { mutableStateOf(mutableSetOf<String>()) }
+    LaunchedEffect(travelState.currentQuestId) {
+        val questId = travelState.currentQuestId
+        if (questId != null && !seededQuestIds.value.contains(questId)) {
+            val recipe = recipeForQuestId(questRecipes, questId)
+            if (recipe != null) {
+                val mainLang = startLangCodeFromQuestId(questId) ?: startLanguageCode
+                if (recipe.newWordsFromMain > 0) {
+                    seedNewWordsForQuest(context, corpus, mainLang, recipe.newWordsFromMain)
+                }
+            }
+            seededQuestIds.value.add(questId)
         }
     }
 }
@@ -893,7 +918,7 @@ fun QuestPracticeScreen(
         val threeWords = remember(corpus, section.isMixed, languageCodes) {
             if (section.isMixed) {
                 // For mixed exercises, only use words that have been encountered before
-                getEncounteredWordsForMixed(context, corpus, languageCodes).shuffled().take(3)
+                getEncounteredWordsForMixed(context, corpus, languageCodes).shuffled()
             } else {
                 // For regular (non-mixed) exercises, use any words from corpus
                 corpus.shuffled().take(3)
@@ -948,14 +973,34 @@ fun QuestPracticeScreen(
                 }
             } else {
                 // Show the actual exercise
-                val effectiveExerciseId = if (!section.isMixed && currentExercise.id == "audio_to_flag") {
+                val normalized = currentExercise.id.removeSuffix("_multi")
+                val effectiveExerciseId = if (!section.isMixed && normalized == "audio_to_flag") {
                     "pronunciation_audio_to_english"
-                } else currentExercise.id
+                } else normalized
                 when (effectiveExerciseId) {
                     "audio_to_flag" -> {
-                        val source = (if (eligibleAudioWords.isNotEmpty()) eligibleAudioWords else corpus).shuffled().take(10)
+                        val sourceBase = (if (eligibleAudioWords.isNotEmpty()) eligibleAudioWords else corpus).shuffled()
+                        val source = if (section.isMixed) sourceBase else sourceBase.take(10)
                         val pairs = buildAudioToFlagPairs(
                             source, 
+                            languageCodes,
+                            restrictToEncountered = section.isMixed,
+                            availableLanguages = encounteredLanguages
+                        )
+                        MatchingExercise(
+                            title = currentExercise.title,
+                            pairs = pairs,
+                            onDone = { perfect ->
+                                triggerCompletion(stepKey)
+                            }
+                        )
+                    }
+                    "audio_to_flag_multi" -> {
+                        val pool = (if (eligibleAudioWords.isNotEmpty()) eligibleAudioWords else corpus)
+                        val shuffled = pool.shuffled()
+                        val words = if (section.isMixed) shuffled else shuffled.take(20)
+                        val pairs = buildAudioToFlagPairsMulti(
+                            words,
                             languageCodes,
                             restrictToEncountered = section.isMixed,
                             availableLanguages = encounteredLanguages
@@ -983,8 +1028,27 @@ fun QuestPracticeScreen(
                             }
                         )
                     }
+                    "pronunciation_to_flag_multi" -> {
+                        val pool = (if (eligiblePronunciationWords.isNotEmpty()) eligiblePronunciationWords else corpus)
+                        val shuffled = pool.shuffled()
+                        val words = if (section.isMixed) shuffled else shuffled.take(20)
+                        val pairs = buildPronunciationToFlagPairsMulti(
+                            words,
+                            languageCodes,
+                            restrictToEncountered = section.isMixed,
+                            availableLanguages = encounteredLanguages
+                        )
+                        MatchingExercise(
+                            title = currentExercise.title,
+                            pairs = pairs,
+                            onDone = { perfect ->
+                                triggerCompletion(stepKey)
+                            }
+                        )
+                    }
                     "audio_to_english" -> {
-                        val source = (if (eligibleAudioWords.isNotEmpty()) eligibleAudioWords else corpus).shuffled().take(10)
+                        val sourceBase = (if (eligibleAudioWords.isNotEmpty()) eligibleAudioWords else corpus).shuffled()
+                        val source = if (section.isMixed) sourceBase else sourceBase.take(10)
                         val pairs = buildAudioToEnglishPairs(
                             source, 
                             languageCodes,

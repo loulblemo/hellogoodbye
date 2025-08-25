@@ -79,9 +79,35 @@ fun buildAudioToFlagPairs(
             val audio = variant.audio ?: return@pickFivePairs null
             PairItem(id = "L_${lang}_$audio", label = "▶︎", isAudio = true, audioFile = audio, matchKey = lang)
         },
-        buildRight = { _, lang, _ ->
+        buildRight = { word, lang, _ ->
             val flag = languageCodeToFlag(lang)
-            PairItem(id = "R_${lang}", label = flag ?: lang.uppercase(), isAudio = false, matchKey = lang)
+            // Use unique right ID per word to allow multiple pairs per language
+            val key = "${lang}_${word.original}"
+            PairItem(id = "R_${key}", label = flag ?: lang.uppercase(), isAudio = false, matchKey = lang)
+        },
+        restrictToEncounteredLanguages = restrictToEncountered,
+        availableLanguages = availableLanguages
+    )
+}
+
+fun buildAudioToFlagPairsMulti(
+    words: List<WordEntry>,
+    languageCodes: List<String>,
+    restrictToEncountered: Boolean = false,
+    availableLanguages: List<String> = emptyList()
+): List<MatchingPair> {
+    return pickFivePairs(
+        words,
+        languageCodes,
+        buildLeft = { word, lang, variant ->
+            val audio = variant.audio ?: return@pickFivePairs null
+            val key = "${lang}_${word.original}"
+            PairItem(id = "L_${key}", label = "▶︎", isAudio = true, audioFile = audio, matchKey = key)
+        },
+        buildRight = { word, lang, _ ->
+            val flag = languageCodeToFlag(lang)
+            val key = "${lang}_${word.original}"
+            PairItem(id = "R_${key}", label = flag ?: lang.uppercase(), isAudio = false, matchKey = key)
         },
         restrictToEncounteredLanguages = restrictToEncountered,
         availableLanguages = availableLanguages
@@ -101,9 +127,35 @@ fun buildPronunciationToFlagPairs(
             val text = variant.googlePronunciation ?: variant.word ?: variant.text ?: return@pickFivePairs null
             PairItem(id = "L_${lang}_$text", label = text, isAudio = false, matchKey = lang)
         },
-        buildRight = { _, lang, _ ->
+        buildRight = { word, lang, _ ->
             val flag = languageCodeToFlag(lang)
-            PairItem(id = "R_${lang}", label = flag ?: lang.uppercase(), isAudio = false, matchKey = lang)
+            // Use unique right ID per word to allow multiple pairs per language
+            val key = "${lang}_${word.original}"
+            PairItem(id = "R_${key}", label = flag ?: lang.uppercase(), isAudio = false, matchKey = lang)
+        },
+        restrictToEncounteredLanguages = restrictToEncountered,
+        availableLanguages = availableLanguages
+    )
+}
+
+fun buildPronunciationToFlagPairsMulti(
+    words: List<WordEntry>,
+    languageCodes: List<String>,
+    restrictToEncountered: Boolean = false,
+    availableLanguages: List<String> = emptyList()
+): List<MatchingPair> {
+    return pickFivePairs(
+        words,
+        languageCodes,
+        buildLeft = { word, lang, variant ->
+            val text = variant.googlePronunciation ?: variant.word ?: variant.text ?: return@pickFivePairs null
+            val key = "${lang}_${word.original}"
+            PairItem(id = "L_${key}", label = text, isAudio = false, matchKey = key)
+        },
+        buildRight = { word, lang, _ ->
+            val flag = languageCodeToFlag(lang)
+            val key = "${lang}_${word.original}"
+            PairItem(id = "R_${key}", label = flag ?: lang.uppercase(), isAudio = false, matchKey = key)
         },
         restrictToEncounteredLanguages = restrictToEncountered,
         availableLanguages = availableLanguages
