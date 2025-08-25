@@ -48,6 +48,8 @@ import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.geometry.CornerRadius
 
 fun assetFlagPathForLanguage(code: String): String? {
+    // This function is now deprecated in favor of getLanguageFlagAssetFromMetadata
+    // Keeping for backward compatibility
     return when (code) {
         // Provided 4x3 assets
         "es" -> "flags/4x3/es.svg"
@@ -149,7 +151,7 @@ fun CentralGridSection(
                         horizontalAlignment = Alignment.CenterHorizontally,
                         verticalArrangement = Arrangement.Center
                     ) {
-                        val flagAsset = assetFlagPathForLanguage(languageCode)
+                        val flagAsset = getLanguageFlagAssetFromMetadata(context, languageCode)
                         val imageLoader = remember(context) {
                             ImageLoader.Builder(context)
                                 .components { add(SvgDecoder.Factory()) }
@@ -203,7 +205,10 @@ fun CentralGridSection(
                 if (badgeLevel != BadgeLevel.NONE) {
                     BadgeOverlay(
                         badgeLevel = badgeLevel,
-                        modifier = Modifier.align(Alignment.TopEnd)
+                        modifier = Modifier
+                            .size(30.dp)
+                            .align(Alignment.TopEnd)
+                            .offset(x = 4.dp, y = 2.dp) // Minimal offset to align with flag edge
                     )
                 }
             }
@@ -660,16 +665,22 @@ fun BadgeOverlay(
         BadgeLevel.NONE -> return // Don't show anything for no badge
     }
 
-    Card(
+    Box(
         modifier = modifier
-            .size(20.dp)
-            .offset(x = (-6).dp, y = 6.dp),
-        shape = CircleShape,
-        colors = CardDefaults.cardColors(
-            containerColor = Color.White
-        ),
-        elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
+            .size(24.dp),
+        contentAlignment = Alignment.Center
     ) {
+        // White circle background
+        Box(
+            modifier = Modifier
+                .size(24.dp)
+                .background(
+                    color = Color.White,
+                    shape = CircleShape
+                )
+        )
+        
+        // Badge image centered within the white circle
         AsyncImage(
             model = ImageRequest.Builder(context)
                 .data("file:///android_asset/${assetPath}")
@@ -677,8 +688,7 @@ fun BadgeOverlay(
             contentDescription = "Badge",
             imageLoader = imageLoader,
             modifier = Modifier
-                .fillMaxSize()
-                .padding(1.dp)
+                .size(22.dp) // Slightly smaller than the white circle to ensure perfect centering
         )
     }
 }

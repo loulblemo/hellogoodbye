@@ -158,6 +158,8 @@ fun languageCodeToFlag(code: String): String? {
 }
 
 fun languageCodeToName(code: String): String? {
+    // This function is now deprecated in favor of getLanguageMetadata
+    // Keeping for backward compatibility
     return when (code) {
         "en" -> "English"
         "es" -> "Spanish"
@@ -173,6 +175,24 @@ fun languageCodeToName(code: String): String? {
         "sv" -> "Swedish"
         else -> null
     }
+}
+
+// New data-driven functions using metadata
+fun getLanguageMetadata(context: Context, code: String): JSONObject? {
+    val metadata = loadLanguageMetadata(context)
+    return metadata?.optJSONObject("languages")?.optJSONObject(code)
+}
+
+fun getLanguageNameFromMetadata(context: Context, code: String): String? {
+    return getLanguageMetadata(context, code)?.optString("name")
+}
+
+fun getLanguageFlagFromMetadata(context: Context, code: String): String? {
+    return getLanguageMetadata(context, code)?.optString("flag")
+}
+
+fun getLanguageFlagAssetFromMetadata(context: Context, code: String): String? {
+    return getLanguageMetadata(context, code)?.optString("flagAsset")
 }
 
 fun generateTravelSequence(allLangCodes: List<String>): List<TravelSection> {
@@ -492,7 +512,14 @@ fun updateQuestProgress(
 
 // Simple persistence for tracking whether the first quest for a language was completed
 fun supportedLanguageCodes(): List<String> {
+    // This function is now deprecated in favor of getSupportedLanguageCodesFromMetadata
+    // Keeping for backward compatibility
     return listOf("en", "es", "fr", "de", "it", "pt", "ru", "ja", "ko", "zh-cn", "nl", "sv")
+}
+
+fun getSupportedLanguageCodesFromMetadata(context: Context): List<String> {
+    val metadata = loadLanguageMetadata(context)
+    return metadata?.optJSONObject("languages")?.keys()?.asSequence()?.toList() ?: emptyList()
 }
 
 fun markFirstQuestCompleted(context: Context, languageCode: String) {
@@ -506,7 +533,7 @@ fun isFirstQuestCompleted(context: Context, languageCode: String): Boolean {
 }
 
 fun countFirstQuestCompletedLanguages(context: Context): Int {
-    return supportedLanguageCodes().count { code -> isFirstQuestCompleted(context, code) }
+    return getSupportedLanguageCodesFromMetadata(context).count { code -> isFirstQuestCompleted(context, code) }
 }
 
 // Encountered words tracking - now using counters
@@ -537,7 +564,7 @@ fun getEncounteredWordsCount(context: Context, languageCode: String): Int {
 
 fun canUnlockPractice(context: Context): Boolean {
     // Practice is unlocked when user has completed at least one quest in 2 different languages
-    val languagesWithCompletedQuests = supportedLanguageCodes().count { code ->
+    val languagesWithCompletedQuests = getSupportedLanguageCodesFromMetadata(context).count { code ->
         getLanguageQuestCount(context, code) >= 1
     }
     return languagesWithCompletedQuests >= 2
@@ -598,7 +625,7 @@ fun startLangCodeFromQuestId(questId: String): String? {
 
 // Check if user has completed at least one quest in any other language
 fun hasCompletedQuestInOtherLanguage(context: Context, currentLanguageCode: String): Boolean {
-    return supportedLanguageCodes()
+    return getSupportedLanguageCodesFromMetadata(context)
         .filter { it != currentLanguageCode }
         .any { langCode -> getLanguageQuestCount(context, langCode) > 0 }
 }
@@ -633,7 +660,7 @@ fun incrementLanguageExerciseCount(context: Context, languageCode: String) {
 fun resetAllBadgeProgress(context: Context) {
     val prefs = context.getSharedPreferences("hg_progress", Context.MODE_PRIVATE)
     val editor = prefs.edit()
-    supportedLanguageCodes().forEach { languageCode ->
+    getSupportedLanguageCodesFromMetadata(context).forEach { languageCode ->
         editor.remove("language_exercise_count_$languageCode")
         editor.remove("language_quest_count_$languageCode")
     }
