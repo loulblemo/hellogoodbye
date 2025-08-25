@@ -1,0 +1,54 @@
+{
+  "languages": {
+    "en": {
+      "name": "English",
+      "flag": "🇺🇸",
+      "flagAsset": "flags/4x3/us.svg"
+    },
+    "es": {
+      "name": "Spanish",
+      "flag": "🇪🇸",
+      "flagAsset": "flags/4x3/es.svg"
+    },
+    "fr": {
+      "name": "French",
+      "flag": "🇫🇷",
+      "flagAsset": "flags/4x3/fr.svg"
+    },
+    "de": {
+      "name": "German",
+      "flag": "🇩🇪",
+      "flagAsset": "flags/4x3/de.svg"
+    },
+    "it": {
+      "name": "Italian",
+      "flag": "🇮🇹",
+      "flagAsset": "flags/4x3/it.svg"
+    },
+    "pt": {
+      "name": "Portuguese",
+      "flag": "🇧🇷",
+      "flagAsset": "flags/4x3/pt.svg"
+    },
+    "ru": {
+      "name": "Russian",
+      "flag": "🇷🇺",
+      "flagAsset": "flags/4x3/ru.svg"
+    },
+    "ja": {
+      "name": "Japanese",
+      "flag": "🇯🇵",
+      "flagAsset": "flags/4x3/jp.svg"
+    },
+    "ko": {
+      "name": "Korean",
+      "flag": "🇰🇷",
+      "flagAsset": "flags/4x3/kr.svg"
+    },
+    "zh-cn": {
+      "name": "Chinese",
+      "flag": "🇨🇳",
+      "flagAsset": "flags/4x3/cn.svg"
+    }
+  }
+}
