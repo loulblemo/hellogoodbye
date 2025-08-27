@@ -224,9 +224,10 @@ fun CentralGridSection(
                 Card(
                     modifier = Modifier
                         .aspectRatio(1f)
-                        .clickable(enabled = canAffordAdd) { onAddFlag() },
+                        .clickable(enabled = true) { onAddFlag() },
                     colors = CardDefaults.cardColors(
-                        containerColor = if (canAffordAdd) MaterialTheme.colorScheme.tertiaryContainer else MaterialTheme.colorScheme.surfaceVariant
+                        // Dark purple tile matching app style
+                        containerColor = MaterialTheme.colorScheme.primary
                     ),
                     shape = RoundedCornerShape(12.dp)
                 ) {
@@ -238,14 +239,8 @@ fun CentralGridSection(
                             Icon(
                                 imageVector = Icons.Default.Add,
                                 contentDescription = "Add flag",
-                                modifier = Modifier.size(32.dp),
-                                tint = if (canAffordAdd) MaterialTheme.colorScheme.onTertiaryContainer else MaterialTheme.colorScheme.onSurfaceVariant
-                            )
-                            Spacer(modifier = Modifier.height(4.dp))
-                            Text(
-                                text = if (price > 0) "$price" else "",
-                                fontSize = 10.sp,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                                modifier = Modifier.size(36.dp),
+                                tint = MaterialTheme.colorScheme.onPrimary
                             )
                         }
                     }

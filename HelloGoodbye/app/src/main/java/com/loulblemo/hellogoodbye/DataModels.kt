@@ -328,11 +328,11 @@ fun generateTravelSequenceForLanguage(startLangCode: String, allLangCodes: List<
         )
     )
     
-    // Level 1 Complete badge (special section)
+    // Level 1 Complete badge (special section) — bronze
     sections.add(
         TravelSection(
             id = "${startLangCode}_complete",
-            flag = "🥈",
+            flag = "🥉",
             name = "Level 1 Complete!",
             language = "Completion",
             isMixed = false,

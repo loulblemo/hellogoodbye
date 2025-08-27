@@ -444,6 +444,7 @@ fun TravelQuestListScreen(
 
 @Composable
 private fun RandomTravelIcon(
+    questId: String,
     modifier: Modifier = Modifier,
     sizeDp: Int = 64
 ) {
@@ -451,8 +452,21 @@ private fun RandomTravelIcon(
     val iconFiles = remember {
         context.assets.list("travel_icons")?.filter { it.endsWith(".png") }?.toList().orEmpty()
     }
-    // Pick once per composition
-    val chosen = remember(iconFiles) { iconFiles.randomOrNull() }
+    // Persist one icon per quest the first time we need it
+    val chosen = remember(questId, iconFiles) {
+        val prefs = context.getSharedPreferences("hg_progress", Context.MODE_PRIVATE)
+        val key = "quest_icon_" + questId
+        val existing = prefs.getString(key, null)
+        if (!existing.isNullOrBlank()) {
+            existing
+        } else {
+            val first = iconFiles.randomOrNull()
+            if (first != null) {
+                prefs.edit().putString(key, first).apply()
+            }
+            first
+        }
+    }
     if (chosen != null) {
         AsyncImage(
             model = ImageRequest.Builder(context)
@@ -531,21 +545,21 @@ fun CircleQuestBubble(
             contentAlignment = Alignment.Center
         ) {
             if (section.isCompletionBadge) {
-                // Special appearance for completion badge
+                // Special appearance for completion badge (bronze)
                 Card(
                     modifier = Modifier.fillMaxSize(),
                     colors = CardDefaults.cardColors(
-                        containerColor = Color(0xFFC0C0C0) // Silver background
+                        containerColor = Color(0xFFF4D3A2) // Bronze background
                     ),
                     shape = CircleShape,
-                    border = BorderStroke(4.dp, Color(0xFF808080)) // Silver border
+                    border = BorderStroke(4.dp, Color(0xFFCD7F32)) // Bronze border
                 ) {
                     Box(
                         modifier = Modifier.fillMaxSize(),
                         contentAlignment = Alignment.Center
                     ) {
                         Text(
-                            text = section.flag, // 🥈 silver medal
+                            text = section.flag, // 🥉 bronze medal
                             fontSize = 60.sp
                         )
                     }
@@ -569,8 +583,8 @@ fun CircleQuestBubble(
                         modifier = Modifier.fillMaxSize(),
                         contentAlignment = Alignment.Center
                     ) {
-                        // Centered icon: random travel icon for both regular and mixed
-                        RandomTravelIcon(sizeDp = 60)
+                        // Centered icon: persist one random travel icon per quest
+                        RandomTravelIcon(questId = section.id, sizeDp = 60)
                     }
                 }
                 

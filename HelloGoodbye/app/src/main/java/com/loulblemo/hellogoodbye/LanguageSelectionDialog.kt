@@ -27,6 +27,7 @@ import coil.ImageLoader
 @Composable
 fun LanguageSelectionDialog(
     selectedLanguages: List<String>,
+    canAffordAdd: Boolean = true,
     onLanguageSelected: (String) -> Unit,
     onDismiss: () -> Unit
 ) {
@@ -64,12 +65,23 @@ fun LanguageSelectionDialog(
                 
                 Spacer(modifier = Modifier.height(8.dp))
                 
-                Text(
-                    text = "Select a language to add to your study list",
-                    fontSize = 16.sp,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    textAlign = TextAlign.Center
-                )
+                if (!canAffordAdd) {
+                    // Affordability notice
+                    Text(
+                        text = "Need 50 to buy a new language",
+                        fontSize = 14.sp,
+                        color = MaterialTheme.colorScheme.error,
+                        textAlign = TextAlign.Center
+                    )
+                    Spacer(modifier = Modifier.height(4.dp))
+                } else {
+                    Text(
+                        text = "Select a language to add to your study list",
+                        fontSize = 16.sp,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        textAlign = TextAlign.Center
+                    )
+                }
                 
                 Spacer(modifier = Modifier.height(24.dp))
                 
@@ -83,6 +95,7 @@ fun LanguageSelectionDialog(
                     items(remainingLanguages) { languageCode ->
                         LanguageFlagItem(
                             languageCode = languageCode,
+                            enabled = canAffordAdd,
                             onClick = {
                                 val languageName = getLanguageMetadata(context, languageCode)?.optString("name")
                                 if (languageName != null) {
@@ -115,6 +128,7 @@ fun LanguageSelectionDialog(
 @Composable
 private fun LanguageFlagItem(
     languageCode: String,
+    enabled: Boolean = true,
     onClick: () -> Unit
 ) {
     val context = LocalContext.current
@@ -125,7 +139,7 @@ private fun LanguageFlagItem(
     Card(
         modifier = Modifier
             .aspectRatio(1f)
-            .clickable { onClick() },
+            .clickable(enabled = enabled) { onClick() },
         shape = RoundedCornerShape(12.dp),
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.surface
@@ -184,11 +198,12 @@ private fun LanguageFlagItem(
             Spacer(modifier = Modifier.height(8.dp))
             
             // Language name
+            val labelColor = if (enabled) MaterialTheme.colorScheme.onSurface else MaterialTheme.colorScheme.onSurface.copy(alpha = 0.4f)
             Text(
                 text = languageName ?: languageCode,
                 fontSize = 12.sp,
                 fontWeight = FontWeight.Medium,
-                color = MaterialTheme.colorScheme.onSurface,
+                color = labelColor,
                 textAlign = TextAlign.Center,
                 maxLines = 2
             )

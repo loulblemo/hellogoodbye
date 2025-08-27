@@ -121,7 +121,7 @@ fun generateTravelSectionsFromRecipes(startLangCode: String, recipes: List<Quest
     sections.add(
         TravelSection(
             id = "${startLangCode}_complete",
-            flag = "🥈",
+            flag = "🥉",
             name = "Level 1 Complete!",
             language = "Completion",
             isMixed = false,

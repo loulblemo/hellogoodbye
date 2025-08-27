@@ -217,10 +217,8 @@ fun HomeScreen(
             selectedCountries = selectedCountries,
             onFlagClick = onFlagClick,
             onAddFlag = {
-                if (currency >= 50) {
-                    showLanguageDialog = true
-                }
-                // Removed popup message about needing 50 points - will handle later
+                // Always open language selection; affordability handled in dialog UI
+                showLanguageDialog = true
             },
             canAddMore = availableCountries.any { candidate ->
                 selectedCountries.none { it.name == candidate.name && it.language == candidate.language }
@@ -243,6 +241,7 @@ fun HomeScreen(
         val selectedLanguageNames = selectedCountries.map { it.language }
         LanguageSelectionDialog(
             selectedLanguages = selectedLanguageNames,
+            canAffordAdd = currency >= 50,
             onLanguageSelected = { languageName ->
                 // Find the country from availableCountries that matches the selected language
                 val selectedCountry = availableCountries.find { it.language == languageName }
