@@ -36,7 +36,7 @@ fun LanguageSelectionDialog(
     val remainingLanguages = remember(selectedLanguages) {
         allLanguageCodes.filter { code ->
             val languageName = getLanguageMetadata(context, code)?.optString("name")
-            languageName != null && !selectedLanguages.contains(languageName)
+            code != "en" && languageName != null && !selectedLanguages.contains(languageName)
         }
     }
 
