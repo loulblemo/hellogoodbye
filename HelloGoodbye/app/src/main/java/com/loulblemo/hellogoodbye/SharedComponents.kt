@@ -222,28 +222,40 @@ fun CentralGridSection(
         }
         if (canAddMore) {
             item {
-                // Plus button
-                Card(
-                    modifier = Modifier
-                        .aspectRatio(1f)
-                        .clickable(enabled = true) { onAddFlag() },
-                    colors = CardDefaults.cardColors(
-                        // Dark purple tile matching app style
-                        containerColor = MaterialTheme.colorScheme.primary
-                    ),
-                    shape = RoundedCornerShape(12.dp)
+                // Plus button - matching flag shape
+                Box(
+                    modifier = Modifier.aspectRatio(1f)
                 ) {
-                    Box(
-                        modifier = Modifier.fillMaxSize(),
-                        contentAlignment = Alignment.Center
+                    Card(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .clickable(enabled = true) { onAddFlag() },
+                        colors = CardDefaults.cardColors(
+                            containerColor = MaterialTheme.colorScheme.background
+                        ),
+                        shape = RoundedCornerShape(12.dp)
                     ) {
-                        Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                            Icon(
-                                imageVector = Icons.Default.Add,
-                                contentDescription = "Add flag",
-                                modifier = Modifier.size(36.dp),
-                                tint = MaterialTheme.colorScheme.onPrimary
-                            )
+                        Column(
+                            modifier = Modifier.fillMaxSize(),
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            verticalArrangement = Arrangement.Center
+                        ) {
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxWidth(0.86f)
+                                    .aspectRatio(4f / 3f)
+                                    .clip(RoundedCornerShape(12.dp))
+                                    .background(MaterialTheme.colorScheme.primary)
+                                    .border(3.dp, MaterialTheme.colorScheme.primary.copy(alpha = 0.7f), RoundedCornerShape(12.dp)),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Default.Add,
+                                    contentDescription = "Add flag",
+                                    modifier = Modifier.size(36.dp),
+                                    tint = MaterialTheme.colorScheme.onPrimary
+                                )
+                            }
                         }
                     }
                 }
