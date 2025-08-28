@@ -42,6 +42,8 @@ import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.draw.scale
 import androidx.compose.animation.animateContentSize
 import kotlinx.coroutines.delay
+import androidx.compose.runtime.rememberCoroutineScope
+import kotlinx.coroutines.launch
 import com.airbnb.lottie.compose.*
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
@@ -566,6 +568,11 @@ fun MatchingExercise(
     var leftSelection by remember(pairs) { mutableStateOf<String?>(null) }
     var rightSelection by remember(pairs) { mutableStateOf<String?>(null) }
     var completed by remember(pairs) { mutableStateOf(false) }
+    var wrongLeftId by remember(pairs) { mutableStateOf<String?>(null) }
+    var wrongRightId by remember(pairs) { mutableStateOf<String?>(null) }
+    var isFlashingWrong by remember(pairs) { mutableStateOf(false) }
+
+    val scope = rememberCoroutineScope()
 
     // Build lookup maps and shuffled lists
     val leftItems = remember(pairs) { pairs.map { it.left }.shuffled() }
@@ -593,8 +600,18 @@ fun MatchingExercise(
                 }
             } else {
                 mistakes += 1
+                // Briefly flash the wrong choices in red, then clear
+                wrongLeftId = l
+                wrongRightId = r
                 leftSelection = null
                 rightSelection = null
+                isFlashingWrong = true
+                scope.launch {
+                    delay(1000)
+                    wrongLeftId = null
+                    wrongRightId = null
+                    isFlashingWrong = false
+                }
             }
         }
     }
@@ -625,7 +642,9 @@ fun MatchingExercise(
                         label = item.label,
                         selected = leftSelection == item.id,
                         solved = solved,
+                        error = wrongLeftId == item.id,
                         onClick = {
+                            if (isFlashingWrong) return@PracticeBubble
                             if (item.isAudio && item.audioFile != null) {
                                 playAssetAudio(context, item.audioFile)
                             }
@@ -647,7 +666,9 @@ fun MatchingExercise(
                         label = item.label,
                         selected = rightSelection == item.id,
                         solved = solved,
+                        error = wrongRightId == item.id,
                         onClick = {
+                            if (isFlashingWrong) return@PracticeBubble
                             if (item.isAudio && item.audioFile != null) {
                                 playAssetAudio(context, item.audioFile)
                             }
@@ -678,23 +699,42 @@ fun PracticeBubble(
     label: String,
     selected: Boolean,
     solved: Boolean,
+    error: Boolean = false,
     onClick: () -> Unit
 ) {
-    val bg = when {
-        solved -> MaterialTheme.colorScheme.secondaryContainer
-        selected -> MaterialTheme.colorScheme.tertiaryContainer
+    val containerColor = when {
+        error -> MaterialTheme.colorScheme.errorContainer
+        solved -> Color(0xFFC8E6C9) // light green
+        selected -> MaterialTheme.colorScheme.primaryContainer // purple selection
         else -> MaterialTheme.colorScheme.surface
+    }
+    val borderColor = when {
+        error -> MaterialTheme.colorScheme.error
+        solved -> Color(0xFF2E7D32) // dark green outline
+        selected -> MaterialTheme.colorScheme.primary
+        else -> Color.Transparent
+    }
+    val textColor = when {
+        error -> MaterialTheme.colorScheme.onErrorContainer
+        solved -> Color(0xFF1B5E20)
+        selected -> MaterialTheme.colorScheme.onPrimaryContainer
+        else -> MaterialTheme.colorScheme.onSurface
     }
     Card(
         modifier = Modifier
             .fillMaxWidth()
             .height(48.dp)
-            .clickable { onClick() },
-        colors = CardDefaults.cardColors(containerColor = bg),
+            .clickable { onClick() }
+            .border(
+                width = if (borderColor == Color.Transparent) 0.dp else 2.dp,
+                color = borderColor,
+                shape = RoundedCornerShape(24.dp)
+            ),
+        colors = CardDefaults.cardColors(containerColor = containerColor),
         shape = RoundedCornerShape(24.dp)
     ) {
         Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-            Text(label)
+            Text(label, color = textColor)
         }
     }
 }
