@@ -399,41 +399,34 @@ fun PracticeButtonSection(onClick: () -> Unit, modifier: Modifier = Modifier, en
         onClick = onClick,
         enabled = enabled,
         modifier = modifier
-            .fillMaxWidth()
-            .height(56.dp),
+            .wrapContentWidth(),
         colors = ButtonDefaults.buttonColors(
             containerColor = MaterialTheme.colorScheme.primary,
-            disabledContainerColor = MaterialTheme.colorScheme.surfaceVariant,
-            disabledContentColor = MaterialTheme.colorScheme.onSurfaceVariant
+            contentColor = MaterialTheme.colorScheme.onPrimary,
+            disabledContainerColor = Color(0xFFE0E0E0),
+            disabledContentColor = Color(0xFF7A7A7A)
         ),
-        shape = RoundedCornerShape(16.dp)
+        shape = RoundedCornerShape(12.dp)
     ) {
         val provider = GoogleFont.Provider(
             providerAuthority = "com.google.android.gms.fonts",
             providerPackage = "com.google.android.gms",
             certificates = R.array.com_google_android_gms_fonts_certs
         )
-        val rubikMonoOne = remember {
-            val googleFont = GoogleFont("Rubik Mono One")
+        val titanOne = remember {
+            val googleFont = GoogleFont("Titan One")
             FontFamily(Font(googleFont = googleFont, fontProvider = provider))
         }
         // Debug: Log font loading attempt
         LaunchedEffect(Unit) {
-            println("DEBUG: Attempting to load Rubik Mono One font with provider: $provider")
+            println("DEBUG: Attempting to load Titan One font with provider: $provider")
         }
         Text(
             text = "PRACTICE",
-            fontSize = 22.sp,
+            fontSize = 40.sp,
             fontWeight = FontWeight.Bold,
-            color = if (enabled) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurfaceVariant,
-            fontFamily = rubikMonoOne,
-            style = TextStyle(
-                shadow = Shadow(
-                    color = Color.Black.copy(alpha = 0.25f),
-                    offset = Offset(0f, 2f),
-                    blurRadius = 6f
-                )
-            )
+            color = if (enabled) MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.92f) else Color(0xFF7A7A7A),
+            fontFamily = titanOne
         )
     }
 }
@@ -523,12 +516,26 @@ fun PracticeAndTravelButtonsSection(onPracticeClick: () -> Unit, onTravelClick: 
                 .fillMaxWidth()
                 .padding(bottom = 8.dp)
         )
-        // Single full-width Practice button; travel removed from main screen
-        PracticeButtonSection(
-            onClick = onPracticeClick,
-            modifier = Modifier.fillMaxWidth(),
-            enabled = travelEnabled
-        )
+        // Centered Practice button with fixed size
+        BoxWithConstraints(
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            val spacing = 12.dp
+            val tileWidth = (this.maxWidth - spacing * 3) / 4
+            val innerFlagWidth = tileWidth * 0.86f
+            val flagHeight = innerFlagWidth * (3f / 4f)
+
+            Box(
+                modifier = Modifier.fillMaxWidth(),
+                contentAlignment = Alignment.Center
+            ) {
+                PracticeButtonSection(
+                    onClick = onPracticeClick,
+                    modifier = Modifier.height(flagHeight * 1.5f),
+                    enabled = travelEnabled
+                )
+            }
+        }
         
         if (!travelEnabled) {
             Spacer(modifier = Modifier.height(8.dp))

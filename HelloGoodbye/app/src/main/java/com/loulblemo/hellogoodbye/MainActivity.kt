@@ -13,6 +13,8 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.googlefonts.Font
+import androidx.compose.ui.text.googlefonts.GoogleFont
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.airbnb.lottie.compose.*
@@ -81,9 +83,17 @@ fun SplashScreen() {
             Text(
                 text = "Where to today?",
                 fontSize = 30.sp,
-                fontWeight = FontWeight.SemiBold,
+                fontWeight = FontWeight.Bold,
                 color = MaterialTheme.colorScheme.onBackground,
-                fontFamily = FontFamily.Cursive,
+                fontFamily = run {
+                    val provider = GoogleFont.Provider(
+                        providerAuthority = "com.google.android.gms.fonts",
+                        providerPackage = "com.google.android.gms",
+                        certificates = R.array.com_google_android_gms_fonts_certs
+                    )
+                    val googleFont = GoogleFont("Titan One")
+                    FontFamily(Font(googleFont = googleFont, fontProvider = provider))
+                },
                 letterSpacing = 0.5.sp,
                 modifier = Modifier.padding(horizontal = 40.dp),
                 textAlign = androidx.compose.ui.text.style.TextAlign.Center
