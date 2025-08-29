@@ -20,16 +20,15 @@ fun defaultQuestRecipes(): List<QuestRecipe> {
         type = QuestType.SINGLE,
         languageCount = 1,
         exerciseOrder = listOf(
-            "audio_to_english_multi",
+            "pronunciation_audio_to_english",
+            "pronunciation_audio_to_english",
+            "pronunciation_audio_to_english",
+            "pronunciation_audio_to_english",
             "pronunciation_audio_to_english",
             "audio_to_english_multi",
-            "pronunciation_audio_to_english",
             "audio_to_english_multi",
-            "pronunciation_audio_to_english",
-            "audio_to_english_multi",
-            "pronunciation_audio_to_english",
-            "audio_to_english_multi",
-            "pronunciation_audio_to_english"
+            "pronunciation_to_english_multi",
+            "pronunciation_to_english_multi",
         ),
         randomOrder = false,
         newWordsFromMain = 5
@@ -84,7 +83,7 @@ fun defaultQuestRecipes(): List<QuestRecipe> {
             "audio_to_english_multi"
         ),
         randomOrder = false,
-        newWordsFromMain = 5
+        newWordsFromMain = 0
     )
 
     // Level 5: Single language, random order
@@ -93,7 +92,7 @@ fun defaultQuestRecipes(): List<QuestRecipe> {
         languageCount = 1,
         exerciseOrder = List(10) { if (it % 2 == 0) "audio_to_english_multi" else "pronunciation_audio_to_english" },
         randomOrder = true,
-        newWordsFromMain = 5
+        newWordsFromMain = 0
     )
 
     return listOf(level1, level2, level3, level4, level5)
