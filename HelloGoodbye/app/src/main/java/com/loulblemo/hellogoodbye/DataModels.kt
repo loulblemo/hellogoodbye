@@ -511,6 +511,28 @@ fun updateQuestProgress(
     return newTravelState
 }
 
+// Reset in-progress quest state (not marking it completed) — clears any partially completed exercises for the quest
+fun resetQuestProgress(
+    context: Context,
+    travelState: TravelState,
+    questId: String
+): TravelState {
+    val currentProgress = travelState.questProgresses[questId] ?: return travelState
+    val reset = currentProgress.copy(
+        completedExercises = emptySet(),
+        isCompleted = false
+    )
+    val updated = travelState.questProgresses.toMutableMap()
+    updated[questId] = reset
+    // Persist immediately so the list view reflects the reset when returning
+    saveQuestProgress(context, updated)
+    return travelState.copy(
+        questProgresses = updated,
+        currentQuestId = null,
+        currentExerciseIndex = 0
+    )
+}
+
 // Simple persistence for tracking whether the first quest for a language was completed
 fun supportedLanguageCodes(): List<String> {
     // This function is now deprecated in favor of getSupportedLanguageCodesFromMetadata

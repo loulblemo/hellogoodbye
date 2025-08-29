@@ -83,6 +83,10 @@ dependencies {
     implementation("androidx.compose.ui:ui-tooling-preview")
     implementation("androidx.compose.material3:material3")
     implementation("androidx.activity:activity-compose:1.8.2")
+    // Google Fonts for Compose
+    implementation("androidx.compose.ui:ui-text-google-fonts")
+    // Google Play services (provides built-in fonts certs resource)
+    implementation("com.google.android.gms:play-services-basement:18.3.0")
     
     // Lottie animation
     implementation("com.airbnb.android:lottie-compose:6.1.0")

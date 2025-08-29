@@ -2,6 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
+    <uses-permission android:name="android.permission.INTERNET" />
+
     <application
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
@@ -14,7 +16,13 @@
 		<meta-data
 			android:name="androidx.profileinstaller.ProfileInstaller"
 			android:value="skip" />
-        
+        <meta-data
+            android:name="com.google.android.gms.fonts.certs"
+            android:resource="@array/com_google_android_gms_fonts_certs" />
+        <meta-data
+            android:name="preloaded_fonts"
+            android:resource="@array/preloaded_fonts" />
+
         <activity
             android:name=".MainActivity"
             android:exported="true"

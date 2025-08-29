@@ -1,6 +1,7 @@
 package com.loulblemo.hellogoodbye
 
 import android.content.Context
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
@@ -218,6 +219,14 @@ fun TravelScreen(
         }
     }
     
+    // Intercept system back while inside a quest: reset that quest and return to list
+    BackHandler(enabled = travelState.currentQuestId != null) {
+        val qid = travelState.currentQuestId
+        if (qid != null) {
+            travelState = resetQuestProgress(context, travelState, qid)
+        }
+    }
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -1124,7 +1133,8 @@ fun QuestPracticeScreen(
                             options = options,
                             correctOption = correctAnswer,
                             onDone = { _ ->
-                                triggerCompletion(stepKey)
+                                // Inline continue inside the exercise: advance without animation
+                                onExerciseComplete(stepKey)
                             }
                         )
                     }

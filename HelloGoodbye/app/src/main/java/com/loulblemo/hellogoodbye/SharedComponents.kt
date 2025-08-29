@@ -23,6 +23,11 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.googlefonts.Font
+import androidx.compose.ui.text.googlefonts.GoogleFont
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.graphics.Shadow
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -403,11 +408,32 @@ fun PracticeButtonSection(onClick: () -> Unit, modifier: Modifier = Modifier, en
         ),
         shape = RoundedCornerShape(16.dp)
     ) {
+        val provider = GoogleFont.Provider(
+            providerAuthority = "com.google.android.gms.fonts",
+            providerPackage = "com.google.android.gms",
+            certificates = R.array.com_google_android_gms_fonts_certs
+        )
+        val rubikMonoOne = remember {
+            val googleFont = GoogleFont("Rubik Mono One")
+            FontFamily(Font(googleFont = googleFont, fontProvider = provider))
+        }
+        // Debug: Log font loading attempt
+        LaunchedEffect(Unit) {
+            println("DEBUG: Attempting to load Rubik Mono One font with provider: $provider")
+        }
         Text(
             text = "PRACTICE",
-            fontSize = 18.sp,
+            fontSize = 22.sp,
             fontWeight = FontWeight.Bold,
-            color = if (enabled) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurfaceVariant
+            color = if (enabled) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurfaceVariant,
+            fontFamily = rubikMonoOne,
+            style = TextStyle(
+                shadow = Shadow(
+                    color = Color.Black.copy(alpha = 0.25f),
+                    offset = Offset(0f, 2f),
+                    blurRadius = 6f
+                )
+            )
         )
     }
 }
@@ -1007,17 +1033,40 @@ fun PronunciationAudioToEnglishExercise(
         ) {
             options.forEach { option ->
                 val isSelected = selected == option
+                val isCorrectSelected = completed && isSelected && option == correctOption
+                val isWrongSelected = completed && isSelected && option != correctOption
                 PracticeBubble(
                     label = option,
                     selected = isSelected,
-                    solved = completed && option == correctOption,
+                    solved = isCorrectSelected,
+                    error = isWrongSelected,
                     onClick = {
                         if (completed) return@PracticeBubble
                         selected = option
                         completed = true
-                        onDone(option == correctOption)
                     }
                 )
+            }
+
+            // Continue button appears after a selection, colored by correctness
+            if (completed) {
+                val isCorrect = selected == correctOption
+                Spacer(modifier = Modifier.height(8.dp))
+                Button(
+                    onClick = { onDone(isCorrect) },
+                    modifier = Modifier.fillMaxWidth(),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = if (isCorrect) Color(0xFF4CAF50) else MaterialTheme.colorScheme.error,
+                        contentColor = Color.White
+                    ),
+                    shape = RoundedCornerShape(12.dp)
+                ) {
+                    Text(
+                        text = "Continue",
+                        fontSize = 16.sp,
+                        fontWeight = FontWeight.Bold
+                    )
+                }
             }
         }
     }
