@@ -432,6 +432,58 @@ fun PracticeButtonSection(onClick: () -> Unit, modifier: Modifier = Modifier, en
 }
 
 @Composable
+fun PronunciationWordBubble(
+    text: String,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    // Button-like bubble styled like Practice: primary background, Titan font, white text
+    val provider = GoogleFont.Provider(
+        providerAuthority = "com.google.android.gms.fonts",
+        providerPackage = "com.google.android.gms",
+        certificates = R.array.com_google_android_gms_fonts_certs
+    )
+    val titanOne = remember {
+        val googleFont = GoogleFont("Titan One")
+        FontFamily(Font(googleFont = googleFont, fontProvider = provider))
+    }
+
+    BoxWithConstraints(
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(horizontal = 16.dp),
+        contentAlignment = Alignment.Center
+    ) {
+        // Heuristic auto-sizing: shrink font for longer words
+        val length = text.length
+        val fontSp = when {
+            length <= 8 -> 40.sp
+            length <= 12 -> 34.sp
+            length <= 18 -> 28.sp
+            else -> 22.sp
+        }
+        Box(
+            modifier = Modifier
+                .wrapContentWidth()
+                .clip(RoundedCornerShape(12.dp))
+                .background(MaterialTheme.colorScheme.primary)
+                .clickable { onClick() }
+                .padding(horizontal = 20.dp, vertical = 12.dp),
+            contentAlignment = Alignment.Center
+        ) {
+            Text(
+                text = text,
+                fontSize = fontSp,
+                fontWeight = FontWeight.Bold,
+                color = Color.White,
+                textAlign = TextAlign.Center,
+                fontFamily = titanOne
+            )
+        }
+    }
+}
+
+@Composable
 fun TravelIconTicker(
     modifier: Modifier = Modifier,
     intervalMillis: Long = 6000L,
@@ -605,7 +657,8 @@ fun ExerciseCompletionScreen(
 fun MatchingExercise(
     title: String,
     pairs: List<MatchingPair>,
-    onDone: (Boolean) -> Unit
+    onDone: (Boolean) -> Unit,
+    useFlagAssets: Boolean = false
 ) {
     val context = LocalContext.current
     var mistakes by remember(pairs) { mutableStateOf(0) }
@@ -707,22 +760,40 @@ fun MatchingExercise(
             ) {
                 rightItems.forEach { item ->
                     val solved = solvedRightIds.contains(item.id)
-                    PracticeBubble(
-                        label = item.label,
-                        selected = rightSelection == item.id,
-                        solved = solved,
-                        error = wrongRightId == item.id,
-                        onClick = {
-                            if (isFlashingWrong) return@PracticeBubble
-                            if (item.isAudio && item.audioFile != null) {
-                                playAssetAudio(context, item.audioFile)
+                    if (useFlagAssets && !item.isAudio) {
+                        val mk = item.matchKey
+                        val langCode = if (mk.contains("_")) mk.substringBefore("_") else mk
+                        PracticeBubbleFlag(
+                            languageCode = langCode,
+                            selected = rightSelection == item.id,
+                            solved = solved,
+                            error = wrongRightId == item.id,
+                            onClick = {
+                                if (isFlashingWrong) return@PracticeBubbleFlag
+                                if (!solved) {
+                                    rightSelection = if (rightSelection == item.id) null else item.id
+                                    tryMatch()
+                                }
                             }
-                            if (!solved) {
-                                rightSelection = if (rightSelection == item.id) null else item.id
-                                tryMatch()
+                        )
+                    } else {
+                        PracticeBubble(
+                            label = item.label,
+                            selected = rightSelection == item.id,
+                            solved = solved,
+                            error = wrongRightId == item.id,
+                            onClick = {
+                                if (isFlashingWrong) return@PracticeBubble
+                                if (item.isAudio && item.audioFile != null) {
+                                    playAssetAudio(context, item.audioFile)
+                                }
+                                if (!solved) {
+                                    rightSelection = if (rightSelection == item.id) null else item.id
+                                    tryMatch()
+                                }
                             }
-                        }
-                    )
+                        )
+                    }
                 }
             }
         }
@@ -736,6 +807,45 @@ fun MatchingExercise(
         //     Text("Remaining: $remaining")
         //     Text("Mistakes: $mistakes")
         // }
+    }
+}
+
+@Composable
+fun PracticeBubbleFlag(
+    languageCode: String,
+    selected: Boolean,
+    solved: Boolean,
+    error: Boolean = false,
+    onClick: () -> Unit
+) {
+    val containerColor = when {
+        error -> MaterialTheme.colorScheme.errorContainer
+        solved -> Color(0xFFC8E6C9)
+        selected -> MaterialTheme.colorScheme.primaryContainer
+        else -> MaterialTheme.colorScheme.surface
+    }
+    val borderColor = when {
+        error -> MaterialTheme.colorScheme.error
+        solved -> Color(0xFF2E7D32)
+        selected -> MaterialTheme.colorScheme.primary
+        else -> Color.Transparent
+    }
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(48.dp)
+            .clickable { onClick() }
+            .border(
+                width = if (borderColor == Color.Transparent) 0.dp else 2.dp,
+                color = borderColor,
+                shape = RoundedCornerShape(24.dp)
+            ),
+        colors = CardDefaults.cardColors(containerColor = containerColor),
+        shape = RoundedCornerShape(24.dp)
+    ) {
+        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+            BottomFlagBadge(languageCode = languageCode, modifier = Modifier)
+        }
     }
 }
 
@@ -1010,32 +1120,20 @@ fun PronunciationAudioToEnglishExercise(
     Column(modifier = Modifier.fillMaxSize()) {
         // Removed title for cleaner UI
 
-        // Pronunciation display; tap to replay audio
-        Card(
+        // Pronunciation bubble; tap to replay audio
+        PronunciationWordBubble(
+            text = pronunciation,
+            onClick = { if (audioFile != null) playAssetAudio(context, audioFile) },
             modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 16.dp)
-                .height(80.dp)
-                .clickable { if (audioFile != null) playAssetAudio(context, audioFile) },
-            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.tertiaryContainer),
-            shape = RoundedCornerShape(16.dp)
-        ) {
-            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                Text(
-                    text = pronunciation,
-                    fontSize = 20.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colorScheme.onTertiaryContainer
-                )
-            }
-        }
+        )
 
         Spacer(modifier = Modifier.height(16.dp))
 
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 16.dp),
+                .padding(horizontal = 16.dp)
+                .weight(1f),
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             options.forEach { option ->
@@ -1054,26 +1152,21 @@ fun PronunciationAudioToEnglishExercise(
                     }
                 )
             }
+        }
 
-            // Continue button appears after a selection, colored by correctness
-            if (completed) {
-                val isCorrect = selected == correctOption
-                Spacer(modifier = Modifier.height(8.dp))
-                Button(
-                    onClick = { onDone(isCorrect) },
-                    modifier = Modifier.fillMaxWidth(),
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = if (isCorrect) Color(0xFF4CAF50) else MaterialTheme.colorScheme.error,
-                        contentColor = Color.White
-                    ),
-                    shape = RoundedCornerShape(12.dp)
-                ) {
-                    Text(
-                        text = "Continue",
-                        fontSize = 16.sp,
-                        fontWeight = FontWeight.Bold
-                    )
-                }
+        // Continue bubble at bottom when a selection is made
+        if (completed) {
+            val isCorrect = selected == correctOption
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 16.dp),
+                contentAlignment = Alignment.Center
+            ) {
+                PronunciationWordBubble(
+                    text = "CONTINUE",
+                    onClick = { onDone(isCorrect) }
+                )
             }
         }
     }
@@ -1099,31 +1192,19 @@ fun PronunciationAudioToTypeEnglishExercise(
     }
 
     Column(modifier = Modifier.fillMaxSize()) {
-        Card(
+        PronunciationWordBubble(
+            text = pronunciation,
+            onClick = { if (audioFile != null) playAssetAudio(context, audioFile) },
             modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 16.dp)
-                .height(80.dp)
-                .clickable { if (audioFile != null) playAssetAudio(context, audioFile) },
-            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.tertiaryContainer),
-            shape = RoundedCornerShape(16.dp)
-        ) {
-            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                Text(
-                    text = pronunciation,
-                    fontSize = 20.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colorScheme.onTertiaryContainer
-                )
-            }
-        }
+        )
 
         Spacer(modifier = Modifier.height(16.dp))
 
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 16.dp),
+                .padding(horizontal = 16.dp)
+                .weight(1f),
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             OutlinedTextField(
@@ -1160,17 +1241,21 @@ fun PronunciationAudioToTypeEnglishExercise(
                     text = "Correct: " + correctAnswer,
                     color = MaterialTheme.colorScheme.error
                 )
-                Button(
-                    onClick = { onDone(false) },
-                    modifier = Modifier.fillMaxWidth(),
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = MaterialTheme.colorScheme.error,
-                        contentColor = Color.White
-                    ),
-                    shape = RoundedCornerShape(12.dp)
-                ) {
-                    Text("Continue")
-                }
+            }
+        }
+
+        // Bottom continue bubble when wrong answer
+        if (completed && (isCorrect == false)) {
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 16.dp),
+                contentAlignment = Alignment.Center
+            ) {
+                PronunciationWordBubble(
+                    text = "CONTINUE",
+                    onClick = { onDone(false) }
+                )
             }
         }
     }

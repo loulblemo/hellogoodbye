@@ -170,6 +170,7 @@ fun TravelScreen(
     onAwardCoin: () -> Unit
 ) {
     val context = LocalContext.current
+    var currency by remember { mutableStateOf(loadCurrency(context)) }
     val corpus by remember { mutableStateOf(loadCorpusFromAssets(context)) }
     val supportedLangCodes = remember(corpus) {
         corpus.flatMap { it.byLang.keys }.distinct().filter { it != "en" }
@@ -232,19 +233,34 @@ fun TravelScreen(
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.background)
     ) {
-        // Header
+        // Header with coins and exit
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 16.dp, vertical = 8.dp),
+                .padding(16.dp),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Text(
-                text = "Travel Mode",
-                fontSize = 20.sp,
-                fontWeight = FontWeight.Bold
-            )
+            // Currency display (matches home top bar style)
+            Card(
+                modifier = Modifier.size(60.dp),
+                colors = CardDefaults.cardColors(
+                    containerColor = MaterialTheme.colorScheme.primaryContainer
+                ),
+                shape = RoundedCornerShape(12.dp)
+            ) {
+                Box(
+                    modifier = Modifier.fillMaxSize(),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        text = "$currency",
+                        fontSize = 18.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = MaterialTheme.colorScheme.onPrimaryContainer
+                    )
+                }
+            }
             ResponsiveRedCross(onClick = {
                 val qid = travelState.currentQuestId
                 if (qid != null) {
@@ -299,6 +315,8 @@ fun TravelScreen(
                             questExercises
                         )
                         onAwardCoin()
+                        // Refresh local display from storage to avoid double-counting
+                        currency = loadCurrency(context)
                         
                         val currentProgress = travelState.questProgresses[currentSection.id]
                         if (currentProgress?.isCompleted == true) {
@@ -344,6 +362,8 @@ fun TravelScreen(
                         
                         // Award coins for all exercises
                         repeat(allExerciseIds.size) { onAwardCoin() }
+                        // Refresh local display from storage to avoid double-counting
+                        currency = loadCurrency(context)
                         
                         // Track encountered words from this quest (same as real completion)
                         val languages = if (currentSection.isMixed) {
@@ -415,14 +435,7 @@ fun TravelQuestListScreen(
         verticalArrangement = Arrangement.spacedBy(24.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        item {
-            Text(
-                text = "Your Language Journey",
-                style = MaterialTheme.typography.headlineMedium,
-                color = MaterialTheme.colorScheme.onSurface,
-                modifier = Modifier.padding(bottom = 16.dp)
-            )
-        }
+        // Removed list title for cleaner UI
         
         // Show sections based on progression, but always display mixed sections when they become available
         val visibleSections = travelSections.filter { section ->
@@ -494,7 +507,7 @@ private fun RandomTravelIcon(
 }
 
 @Composable
-private fun BottomFlagBadge(
+fun BottomFlagBadge(
     languageCode: String?,
     modifier: Modifier = Modifier
 ) {
@@ -567,7 +580,7 @@ fun CircleQuestBubble(
                         containerColor = Color(0xFFF4D3A2) // Bronze background
                     ),
                     shape = CircleShape,
-                    border = BorderStroke(4.dp, Color(0xFFCD7F32)) // Bronze border
+                    border = BorderStroke(6.dp, Color(0xFFCD7F32)) // Bronze border (thicker)
                 ) {
                     Box(
                         modifier = Modifier.fillMaxSize(),
@@ -590,7 +603,7 @@ fun CircleQuestBubble(
                     ),
                     shape = CircleShape,
                     border = BorderStroke(
-                        width = if (isCompleted) 8.dp else 4.dp,
+                        width = if (isCompleted) 10.dp else 6.dp,
                         color = if (isCompleted) Color(0xFF4CAF50) else MaterialTheme.colorScheme.primary
                     )
                 ) {
@@ -671,7 +684,7 @@ fun LockedMixedQuestBubble(
                     containerColor = Color(0xFFE0E0E0) // Light grey background
                 ),
                 shape = CircleShape,
-                border = BorderStroke(4.dp, Color(0xFFBDBDBD)) // Grey border
+                border = BorderStroke(6.dp, Color(0xFFBDBDBD)) // Grey border (thicker)
             ) {
                 Box(
                     modifier = Modifier.fillMaxSize(),
@@ -899,42 +912,33 @@ fun QuestPracticeScreen(
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.background)
     ) {
-        // Header
+        // Removed header flag and language name for cleaner UI
+        
+        // Progress row: flag badge (smudged SVG) + dark purple progress bar
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 16.dp, vertical = 8.dp),
-            horizontalArrangement = Arrangement.SpaceBetween,
+                .padding(horizontal = 16.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Column {
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    Text(
-                        text = section.flag,
-                        fontSize = 24.sp
-                    )
-                    Spacer(modifier = Modifier.width(8.dp))
-                    Text(
-                        text = section.name,
-                        fontSize = 18.sp,
-                        fontWeight = FontWeight.Bold
-                    )
-                }
-                // Removed exercise text for cleaner UI
+            val badgeCode = if (section.isMixed) startLangCodeFromQuestId(section.id) else languageNameToCode(section.language)
+            if (badgeCode != null) {
+                BottomFlagBadge(
+                    languageCode = badgeCode,
+                    modifier = Modifier
+                        .padding(end = 10.dp)
+                )
             }
+            LinearProgressIndicator(
+                progress = (currentExerciseIndex + 1).toFloat() / exerciseTypes.size,
+                modifier = Modifier
+                    .weight(1f)
+                    .height(12.dp),
+                color = MaterialTheme.colorScheme.primary, // Dark purple brand color
+                trackColor = MaterialTheme.colorScheme.surfaceVariant,
+                strokeCap = androidx.compose.ui.graphics.StrokeCap.Round
+            )
         }
-        
-        // Progress indicator - thicker, smudged angles, bright green
-        LinearProgressIndicator(
-            progress = (currentExerciseIndex + 1).toFloat() / exerciseTypes.size,
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 16.dp)
-                .height(12.dp), // Make it thicker
-            color = androidx.compose.ui.graphics.Color(0xFF4CAF50), // Bright green
-            trackColor = MaterialTheme.colorScheme.surfaceVariant,
-            strokeCap = androidx.compose.ui.graphics.StrokeCap.Round // Smudged/rounded angles
-        )
         
         Spacer(modifier = Modifier.height(16.dp))
         
@@ -1030,6 +1034,7 @@ fun QuestPracticeScreen(
                         MatchingExercise(
                             title = currentExercise.title,
                             pairs = pairs,
+                            useFlagAssets = true,
                             onDone = { perfect ->
                                 triggerCompletion(stepKey)
                             }
@@ -1048,6 +1053,7 @@ fun QuestPracticeScreen(
                         MatchingExercise(
                             title = currentExercise.title,
                             pairs = pairs,
+                            useFlagAssets = true,
                             onDone = { perfect ->
                                 triggerCompletion(stepKey)
                             }
