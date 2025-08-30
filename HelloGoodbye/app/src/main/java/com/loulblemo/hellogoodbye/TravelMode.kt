@@ -464,7 +464,7 @@ fun TravelQuestListScreen(
                     section = section,
                     questProgress = questProgress,
                     onClick = { 
-                        if (!section.isCompletionBadge && isUnlocked) {
+                        if (!section.isCompletionBadge && isUnlocked && questProgress?.isCompleted != true) {
                             onQuestClick(section.id)
                         }
                     }
@@ -615,7 +615,7 @@ fun CircleQuestBubble(
                 Card(
                     modifier = Modifier
                         .fillMaxSize()
-                        .clickable(enabled = isUnlocked) { onClick() },
+                        .clickable(enabled = isUnlocked && !isCompleted) { onClick() },
                     colors = CardDefaults.cardColors(
                         containerColor = Color.White
                     ),
@@ -813,7 +813,7 @@ fun TravelQuestCard(
         modifier = Modifier
             .fillMaxWidth()
             .height(120.dp)
-            .clickable(enabled = isUnlocked) { onClick() },
+            .clickable(enabled = isUnlocked && !isCompleted) { onClick() },
         colors = CardDefaults.cardColors(containerColor = bgColor),
         shape = RoundedCornerShape(12.dp),
         border = if (isCompleted) BorderStroke(3.dp, borderColor) else null
