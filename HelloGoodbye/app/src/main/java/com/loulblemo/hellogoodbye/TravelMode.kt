@@ -19,6 +19,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.PathEffect
@@ -626,14 +627,32 @@ fun CircleQuestBubble(
                     )
                 }
                 // Bottom flag badge overlay
-                val badgeCode = if (!section.isMixed) languageNameToCode(section.language) else null
-                if (badgeCode != null) {
-                    BottomFlagBadge(
-                        languageCode = badgeCode,
+                if (section.isMixed) {
+                    val firstCode = startLangCodeFromQuestId(section.id)
+                    val secondCode = section.languages.getOrNull(1)
+                    Row(
                         modifier = Modifier
                             .align(Alignment.BottomCenter)
-                            .offset(y = 6.dp)
-                    )
+                            .offset(y = 6.dp),
+                        horizontalArrangement = Arrangement.spacedBy(6.dp)
+                    ) {
+                        if (firstCode != null) {
+                            BottomFlagBadge(languageCode = firstCode, modifier = Modifier)
+                        }
+                        if (secondCode != null) {
+                            BottomFlagBadge(languageCode = secondCode, modifier = Modifier)
+                        }
+                    }
+                } else {
+                    val badgeCode = languageNameToCode(section.language)
+                    if (badgeCode != null) {
+                        BottomFlagBadge(
+                            languageCode = badgeCode,
+                            modifier = Modifier
+                                .align(Alignment.BottomCenter)
+                                .offset(y = 6.dp)
+                        )
+                    }
                 }
             }
         }
@@ -690,35 +709,57 @@ fun LockedMixedQuestBubble(
                     modifier = Modifier.fillMaxSize(),
                     contentAlignment = Alignment.Center
                 ) {
-                    // World icon in center for mixed
-                    Text(
-                        text = "🌍",
-                        fontSize = 60.sp,
-                        color = Color(0xFF9E9E9E) // Grey tint
+                    // Sampled travel icon with grey veil (not transparent)
+                    RandomTravelIcon(
+                        questId = section.id,
+                        sizeDp = 60
+                    )
+                    Box(
+                        modifier = Modifier
+                            .matchParentSize()
+                            .clip(CircleShape)
+                            .background(Color(0x80333333))
                     )
                 }
             }
             
-            // Lock icon overlay
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .clip(CircleShape)
-                    .background(Color(0xFF424242).copy(alpha = 0.3f)),
-                contentAlignment = Alignment.Center
-            ) {
-                Text(
-                    text = "🔒",
-                    fontSize = 36.sp
-                )
-            }
-            // Bottom flag badge (start language)
-            BottomFlagBadge(
-                languageCode = startLangCodeFromQuestId(section.id),
+            // Removed lock overlay
+            // Bottom flag badges: start flag + question mark placeholder (greyed)
+            val firstCode = startLangCodeFromQuestId(section.id)
+            Row(
                 modifier = Modifier
                     .align(Alignment.BottomCenter)
-                    .offset(y = 6.dp)
-            )
+                    .offset(y = 6.dp),
+                horizontalArrangement = Arrangement.spacedBy(6.dp)
+            ) {
+                if (firstCode != null) {
+                    Box {
+                        BottomFlagBadge(languageCode = firstCode, modifier = Modifier)
+                        Box(
+                            modifier = Modifier
+                                .matchParentSize()
+                                .clip(RoundedCornerShape(8.dp))
+                                .background(Color(0x80BDBDBD))
+                        )
+                    }
+                }
+                Box(
+                    modifier = Modifier
+                        .width(48.dp)
+                        .height(36.dp)
+                        .clip(RoundedCornerShape(8.dp))
+                        .background(Color(0xFFE0E0E0))
+                        .border(2.dp, Color(0xFFBDBDBD), RoundedCornerShape(8.dp)),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        text = "?",
+                        fontSize = 20.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = Color(0xFF757575)
+                    )
+                }
+            }
         }
         
         Spacer(modifier = Modifier.height(12.dp))
@@ -736,7 +777,7 @@ fun LockedMixedQuestBubble(
         
         // Explanatory text
         Text(
-            text = "Mixed mode requires:\n• Previous quest completed\n• At least one other language\n  with bronze medal",
+            text = "Mixed mode requires:\n• Previous quest completed\n• First quest completed in another language",
             style = MaterialTheme.typography.bodySmall,
             color = Color(0xFF757575),
             textAlign = TextAlign.Center,
