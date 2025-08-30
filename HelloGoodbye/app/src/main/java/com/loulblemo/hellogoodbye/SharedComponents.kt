@@ -435,7 +435,8 @@ fun PracticeButtonSection(onClick: () -> Unit, modifier: Modifier = Modifier, en
 fun PronunciationWordBubble(
     text: String,
     onClick: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    containerColor: Color = MaterialTheme.colorScheme.primary
 ) {
     // Button-like bubble styled like Practice: primary background, Titan font, white text
     val provider = GoogleFont.Provider(
@@ -466,7 +467,7 @@ fun PronunciationWordBubble(
             modifier = Modifier
                 .wrapContentWidth()
                 .clip(RoundedCornerShape(12.dp))
-                .background(MaterialTheme.colorScheme.primary)
+                .background(containerColor)
                 .clickable { onClick() }
                 .padding(horizontal = 20.dp, vertical = 12.dp),
             contentAlignment = Alignment.Center
@@ -1165,7 +1166,8 @@ fun PronunciationAudioToEnglishExercise(
             ) {
                 PronunciationWordBubble(
                     text = "CONTINUE",
-                    onClick = { onDone(isCorrect) }
+                    onClick = { onDone(isCorrect) },
+                    containerColor = if (isCorrect) Color(0xFF4CAF50) else MaterialTheme.colorScheme.error
                 )
             }
         }
@@ -1254,7 +1256,8 @@ fun PronunciationAudioToTypeEnglishExercise(
             ) {
                 PronunciationWordBubble(
                     text = "CONTINUE",
-                    onClick = { onDone(false) }
+                    onClick = { onDone(false) },
+                    containerColor = MaterialTheme.colorScheme.error
                 )
             }
         }

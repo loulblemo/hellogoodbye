@@ -22,6 +22,8 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorMatrix
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.PathEffect
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.platform.LocalContext
@@ -475,7 +477,8 @@ fun TravelQuestListScreen(
 private fun RandomTravelIcon(
     questId: String,
     modifier: Modifier = Modifier,
-    sizeDp: Int = 64
+    sizeDp: Int = 64,
+    isGreyscale: Boolean = false
 ) {
     val context = LocalContext.current
     val iconFiles = remember {
@@ -497,12 +500,18 @@ private fun RandomTravelIcon(
         }
     }
     if (chosen != null) {
+        val greyFilter = if (isGreyscale) {
+            val m = ColorMatrix()
+            m.setToSaturation(0f)
+            ColorFilter.colorMatrix(m)
+        } else null
         AsyncImage(
             model = ImageRequest.Builder(context)
                 .data("file:///android_asset/travel_icons/$chosen")
                 .build(),
             contentDescription = "Travel icon",
-            modifier = modifier.size(sizeDp.dp)
+            modifier = modifier.size(sizeDp.dp),
+            colorFilter = greyFilter
         )
     }
 }
@@ -510,7 +519,8 @@ private fun RandomTravelIcon(
 @Composable
 fun BottomFlagBadge(
     languageCode: String?,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    isGreyscale: Boolean = false
 ) {
     if (languageCode == null) return
     val context = LocalContext.current
@@ -551,7 +561,12 @@ fun BottomFlagBadge(
                     .build(),
                 contentDescription = "Flag badge",
                 imageLoader = imageLoader,
-                modifier = Modifier.fillMaxSize()
+                modifier = Modifier.fillMaxSize(),
+                colorFilter = if (isGreyscale) {
+                    val m = ColorMatrix()
+                    m.setToSaturation(0f)
+                    ColorFilter.colorMatrix(m)
+                } else null
             )
         }
     }
@@ -709,16 +724,11 @@ fun LockedMixedQuestBubble(
                     modifier = Modifier.fillMaxSize(),
                     contentAlignment = Alignment.Center
                 ) {
-                    // Sampled travel icon with grey veil (not transparent)
+                    // Sampled travel icon in greyscale
                     RandomTravelIcon(
                         questId = section.id,
-                        sizeDp = 60
-                    )
-                    Box(
-                        modifier = Modifier
-                            .matchParentSize()
-                            .clip(CircleShape)
-                            .background(Color(0x80333333))
+                        sizeDp = 60,
+                        isGreyscale = true
                     )
                 }
             }
@@ -733,15 +743,7 @@ fun LockedMixedQuestBubble(
                 horizontalArrangement = Arrangement.spacedBy(6.dp)
             ) {
                 if (firstCode != null) {
-                    Box {
-                        BottomFlagBadge(languageCode = firstCode, modifier = Modifier)
-                        Box(
-                            modifier = Modifier
-                                .matchParentSize()
-                                .clip(RoundedCornerShape(8.dp))
-                                .background(Color(0x80BDBDBD))
-                        )
-                    }
+                    BottomFlagBadge(languageCode = firstCode, modifier = Modifier, isGreyscale = true)
                 }
                 Box(
                     modifier = Modifier
