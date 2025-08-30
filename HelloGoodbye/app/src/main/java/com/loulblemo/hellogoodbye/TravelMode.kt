@@ -236,7 +236,7 @@ fun TravelScreen(
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.background)
     ) {
-        // Header with coins and exit
+        // Header with coins, debug indicator, and exit
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -244,26 +244,54 @@ fun TravelScreen(
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            // Currency display (matches home top bar style)
-            Card(
-                modifier = Modifier.size(60.dp),
-                colors = CardDefaults.cardColors(
-                    containerColor = MaterialTheme.colorScheme.primaryContainer
-                ),
-                shape = RoundedCornerShape(12.dp)
+            // Left side: Currency + Debug indicator
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                Box(
-                    modifier = Modifier.fillMaxSize(),
-                    contentAlignment = Alignment.Center
+                // Currency display (matches home top bar style)
+                Card(
+                    modifier = Modifier.size(60.dp),
+                    colors = CardDefaults.cardColors(
+                        containerColor = MaterialTheme.colorScheme.primaryContainer
+                    ),
+                    shape = RoundedCornerShape(12.dp)
                 ) {
-                    Text(
-                        text = "$currency",
-                        fontSize = 18.sp,
-                        fontWeight = FontWeight.Bold,
-                        color = MaterialTheme.colorScheme.onPrimaryContainer
-                    )
+                    Box(
+                        modifier = Modifier.fillMaxSize(),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text(
+                            text = "$currency",
+                            fontSize = 18.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = MaterialTheme.colorScheme.onPrimaryContainer
+                        )
+                    }
+                }
+                
+                // Debug mode indicator (only show when enabled)
+                if (loadDebugMode(context)) {
+                    Card(
+                        modifier = Modifier.size(32.dp),
+                        colors = CardDefaults.cardColors(
+                            containerColor = FlagRed
+                        ),
+                        shape = RoundedCornerShape(8.dp)
+                    ) {
+                        Box(
+                            modifier = Modifier.fillMaxSize(),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Text(
+                                text = "🐛",
+                                fontSize = 16.sp
+                            )
+                        }
+                    }
                 }
             }
+            
             ResponsiveRedCross(onClick = {
                 val qid = travelState.currentQuestId
                 if (qid != null) {
@@ -622,7 +650,7 @@ fun CircleQuestBubble(
                     shape = CircleShape,
                     border = BorderStroke(
                         width = if (isCompleted) 10.dp else 6.dp,
-                        color = if (isCompleted) FlagGreen else MaterialTheme.colorScheme.primary
+                        color = if (isCompleted) GreenMain else MaterialTheme.colorScheme.primary
                     )
                 ) {
                     Box(
@@ -807,7 +835,7 @@ fun TravelQuestCard(
         else -> MaterialTheme.colorScheme.surfaceVariant
     }
     
-    val borderColor = if (isCompleted) FlagGreen else Color.Transparent
+    val borderColor = if (isCompleted) GreenMain else Color.Transparent
     
     Card(
         modifier = Modifier
@@ -875,7 +903,7 @@ fun TravelQuestCard(
                     modifier = Modifier
                         .size(32.dp)
                         .clip(CircleShape)
-                        .background(FlagGreen),
+                        .background(GreenMain),
                     contentAlignment = Alignment.Center
                 ) {
                     ModernCheckmark(
@@ -1254,25 +1282,27 @@ fun QuestPracticeScreen(
                 }
             }
             
-            // Debug button at bottom
-            Button(
-                onClick = onDebugCompleteQuest,
-                modifier = Modifier
-                    .align(Alignment.BottomCenter)
-                    .fillMaxWidth()
-                    .padding(16.dp),
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = FlagRed,
-                    contentColor = Color.White
-                ),
-                shape = RoundedCornerShape(8.dp)
-            ) {
-                Text(
-                    text = "🐛 DEBUG: Complete Quest",
-                    fontSize = 16.sp,
-                    fontWeight = FontWeight.Bold
-                )
-            }
+            // Debug button at bottom - only show when debug mode is enabled
+            if (loadDebugMode(context)) {
+                Button(
+                    onClick = onDebugCompleteQuest,
+                    modifier = Modifier
+                        .align(Alignment.BottomCenter)
+                        .fillMaxWidth()
+                        .padding(16.dp),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = FlagRed,
+                        contentColor = Color.White
+                    ),
+                    shape = RoundedCornerShape(8.dp)
+                    ) {
+                        Text(
+                            text = "🐛 DEBUG: Complete Quest",
+                            fontSize = 16.sp,
+                            fontWeight = FontWeight.Bold
+                        )
+                    }
+                }
         }
     }
         }

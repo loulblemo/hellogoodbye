@@ -801,5 +801,19 @@ fun saveCurrency(context: Context, currency: Int) {
 
 fun loadCurrency(context: Context): Int {
     val prefs = context.getSharedPreferences("hg_progress", Context.MODE_PRIVATE)
-    return prefs.getInt("user_currency", 50) // Default to 50 points
+    val baseCurrency = prefs.getInt("user_currency", 50) // Default to 50 points
+    
+    // In debug mode, give user 500 credits
+    return if (loadDebugMode(context)) 500 else baseCurrency
+}
+
+// Debug mode settings
+fun saveDebugMode(context: Context, enabled: Boolean) {
+    val prefs = context.getSharedPreferences("hg_progress", Context.MODE_PRIVATE)
+    prefs.edit().putBoolean("debug_mode_enabled", enabled).apply()
+}
+
+fun loadDebugMode(context: Context): Boolean {
+    val prefs = context.getSharedPreferences("hg_progress", Context.MODE_PRIVATE)
+    return prefs.getBoolean("debug_mode_enabled", false)
 }

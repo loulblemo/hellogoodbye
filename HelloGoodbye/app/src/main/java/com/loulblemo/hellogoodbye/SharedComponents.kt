@@ -75,6 +75,9 @@ fun assetFlagPathForLanguage(code: String): String? {
 
 @Composable
 fun TopBarSection(currency: Int, onSettingsClick: () -> Unit) {
+    val context = LocalContext.current
+    val debugModeEnabled = loadDebugMode(context)
+    
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -82,24 +85,51 @@ fun TopBarSection(currency: Int, onSettingsClick: () -> Unit) {
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {
-        // Currency display
-        Card(
-            modifier = Modifier.size(60.dp),
-            colors = CardDefaults.cardColors(
-                containerColor = MaterialTheme.colorScheme.primaryContainer
-            ),
-            shape = RoundedCornerShape(12.dp)
+        // Left side: Currency + Debug indicator
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            Box(
-                modifier = Modifier.fillMaxSize(),
-                contentAlignment = Alignment.Center
+            // Currency display
+            Card(
+                modifier = Modifier.size(60.dp),
+                colors = CardDefaults.cardColors(
+                    containerColor = MaterialTheme.colorScheme.primaryContainer
+                ),
+                shape = RoundedCornerShape(12.dp)
             ) {
-                Text(
-                    text = "$currency",
-                    fontSize = 18.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colorScheme.onPrimaryContainer
-                )
+                Box(
+                    modifier = Modifier.fillMaxSize(),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        text = "$currency",
+                        fontSize = 18.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = MaterialTheme.colorScheme.onPrimaryContainer
+                    )
+                }
+            }
+            
+            // Debug mode indicator (only show when enabled)
+            if (debugModeEnabled) {
+                Card(
+                    modifier = Modifier.size(32.dp),
+                    colors = CardDefaults.cardColors(
+                        containerColor = FlagRed
+                    ),
+                    shape = RoundedCornerShape(8.dp)
+                ) {
+                    Box(
+                        modifier = Modifier.fillMaxSize(),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text(
+                            text = "🐛",
+                            fontSize = 16.sp
+                        )
+                    }
+                }
             }
         }
         
@@ -332,7 +362,7 @@ fun ResponsiveRedCross(
 fun ModernCheckmark(
     modifier: Modifier = Modifier,
     size: Float = 48f,
-    color: Color = FlagGreen,
+                        color: Color = GreenMain,
     strokeWidthFactor: Float = 0.08f
 ) {
     Canvas(modifier = modifier.size(size.dp)) {
@@ -370,7 +400,7 @@ fun ModernCheckmarkOverlay(
             .size(size.dp)
             .clip(CircleShape)
             .background(
-                FlagGreen.copy(alpha = overlayAlpha),
+                GreenMain.copy(alpha = overlayAlpha),
                 CircleShape
             ),
         contentAlignment = Alignment.Center
@@ -381,7 +411,7 @@ fun ModernCheckmarkOverlay(
                 .size(size.dp)
                 .clip(CircleShape)
                 .background(
-                    Color(0xFF2E7D32).copy(alpha = 0.3f),
+                    GreenDark.copy(alpha = 0.3f),
                     CircleShape
                 )
         )
@@ -417,9 +447,11 @@ fun PracticeButtonSection(onClick: () -> Unit, modifier: Modifier = Modifier, en
             val googleFont = GoogleFont("Titan One")
             FontFamily(Font(googleFont = googleFont, fontProvider = provider))
         }
-        // Debug: Log font loading attempt
+        // Debug: Log font loading attempt (only in debug mode)
         LaunchedEffect(Unit) {
-            println("DEBUG: Attempting to load Titan One font with provider: $provider")
+            if (loadDebugMode(context)) {
+                println("DEBUG: Attempting to load Titan One font with provider: $provider")
+            }
         }
         Text(
             text = "PRACTICE",
@@ -638,7 +670,7 @@ fun ExerciseCompletionScreen(
         Button(
             onClick = onContinue,
             colors = ButtonDefaults.buttonColors(
-                containerColor = FlagGreen
+                containerColor = GreenMain
             ),
             modifier = Modifier
                 .fillMaxWidth()
@@ -821,13 +853,13 @@ fun PracticeBubbleFlag(
 ) {
     val containerColor = when {
         error -> MaterialTheme.colorScheme.errorContainer
-        solved -> Color(0xFFC8E6C9)
+        solved -> GreenLight
         selected -> MaterialTheme.colorScheme.primaryContainer
         else -> MaterialTheme.colorScheme.surface
     }
     val borderColor = when {
         error -> FlagRed
-        solved -> Color(0xFF2E7D32)
+        solved -> GreenDark
         selected -> MaterialTheme.colorScheme.primary
         else -> Color.Transparent
     }
@@ -860,19 +892,19 @@ fun PracticeBubble(
 ) {
     val containerColor = when {
         error -> MaterialTheme.colorScheme.errorContainer
-        solved -> Color(0xFFC8E6C9) // light green
+        solved -> GreenLight // light green
         selected -> MaterialTheme.colorScheme.primaryContainer // purple selection
         else -> MaterialTheme.colorScheme.surface
     }
     val borderColor = when {
         error -> FlagRed
-        solved -> Color(0xFF2E7D32) // dark green outline
+        solved -> GreenDark // dark green outline
         selected -> MaterialTheme.colorScheme.primary
         else -> Color.Transparent
     }
     val textColor = when {
         error -> MaterialTheme.colorScheme.onErrorContainer
-        solved -> Color(0xFF1B5E20)
+        solved -> GreenDarker
         selected -> MaterialTheme.colorScheme.onPrimaryContainer
         else -> MaterialTheme.colorScheme.onSurface
     }
@@ -961,6 +993,7 @@ fun SettingsScreen(
 ) {
     val context = LocalContext.current
     var showConfirmDialog by remember { mutableStateOf(false) }
+    var debugModeEnabled by remember { mutableStateOf(loadDebugMode(context)) }
     
     Column(
         modifier = Modifier
@@ -1039,6 +1072,71 @@ fun SettingsScreen(
                         text = "🗑️ Clear All Progress",
                         fontSize = 16.sp,
                         fontWeight = FontWeight.Bold
+                    )
+                }
+            }
+        }
+        
+        Spacer(modifier = Modifier.height(24.dp))
+        
+        // Debug Mode Section
+        Card(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp),
+            colors = CardDefaults.cardColors(
+                containerColor = MaterialTheme.colorScheme.secondaryContainer
+            ),
+            shape = RoundedCornerShape(12.dp)
+        ) {
+            Column(
+                modifier = Modifier.padding(16.dp)
+            ) {
+                Text(
+                    text = "🔧 Developer Options",
+                    fontSize = 18.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colorScheme.onSecondaryContainer
+                )
+                
+                Spacer(modifier = Modifier.height(16.dp))
+                
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Column {
+                        Text(
+                            text = "Debug Mode",
+                            fontSize = 16.sp,
+                            fontWeight = FontWeight.Medium
+                        )
+                        Text(
+                            text = "Show debug buttons and developer tools",
+                            fontSize = 14.sp,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                        if (debugModeEnabled) {
+                            Text(
+                                text = "💰 +500 credits enabled",
+                                fontSize = 12.sp,
+                                color = GreenMain,
+                                fontWeight = FontWeight.Bold
+                            )
+                        }
+                    }
+                    
+                    Switch(
+                        checked = debugModeEnabled,
+                        onCheckedChange = { enabled ->
+                            debugModeEnabled = enabled
+                            saveDebugMode(context, enabled)
+                        },
+                        colors = SwitchDefaults.colors(
+                            checkedThumbColor = MaterialTheme.colorScheme.primary,
+                            checkedTrackColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.5f)
+                        )
                     )
                 }
             }
@@ -1167,7 +1265,7 @@ fun PronunciationAudioToEnglishExercise(
                 PronunciationWordBubble(
                     text = "CONTINUE",
                     onClick = { onDone(isCorrect) },
-                    containerColor = if (isCorrect) FlagGreen else FlagRed
+                    containerColor = if (isCorrect) GreenMain else FlagRed
                 )
             }
         }
