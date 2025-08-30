@@ -1187,8 +1187,14 @@ fun QuestPracticeScreen(
                             pronunciation = pronunciation,
                             audioFile = variant?.audio,
                             correctAnswer = correctAnswer,
-                            onDone = { _ ->
-                                triggerCompletion(stepKey)
+                            onDone = { isCorrect ->
+                                if (isCorrect) {
+                                    // Correct: show completion animation
+                                    triggerCompletion(stepKey)
+                                } else {
+                                    // Wrong: advance inline without animation
+                                    onExerciseComplete(stepKey)
+                                }
                             }
                         )
                     }

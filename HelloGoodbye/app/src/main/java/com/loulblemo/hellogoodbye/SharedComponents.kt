@@ -1090,6 +1090,7 @@ fun PronunciationAudioToTypeEnglishExercise(
     val context = LocalContext.current
     var input by remember(correctAnswer) { mutableStateOf("") }
     var completed by remember(correctAnswer) { mutableStateOf(false) }
+    var isCorrect by remember(correctAnswer) { mutableStateOf<Boolean?>(null) }
 
     LaunchedEffect(audioFile) {
         if (audioFile != null) {
@@ -1130,7 +1131,8 @@ fun PronunciationAudioToTypeEnglishExercise(
                 onValueChange = { if (!completed) input = it },
                 modifier = Modifier.fillMaxWidth(),
                 label = { Text("Type the English translation") },
-                singleLine = true
+                singleLine = true,
+                isError = completed && (isCorrect == false)
             )
 
             Button(
@@ -1139,12 +1141,36 @@ fun PronunciationAudioToTypeEnglishExercise(
                     completed = true
                     val normalizedInput = input.trim().lowercase()
                     val normalizedAnswer = correctAnswer.trim().lowercase()
-                    onDone(normalizedInput == normalizedAnswer)
+                    val correct = normalizedInput == normalizedAnswer
+                    isCorrect = correct
+                    // If correct, immediately finish so parent can show animation; if wrong, show feedback first
+                    if (correct) {
+                        onDone(true)
+                    }
                 },
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(12.dp)
             ) {
                 Text("Check")
+            }
+
+            // When wrong, show the correct answer and a red continue button (no animation)
+            if (completed && (isCorrect == false)) {
+                Text(
+                    text = "Correct: " + correctAnswer,
+                    color = MaterialTheme.colorScheme.error
+                )
+                Button(
+                    onClick = { onDone(false) },
+                    modifier = Modifier.fillMaxWidth(),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = MaterialTheme.colorScheme.error,
+                        contentColor = Color.White
+                    ),
+                    shape = RoundedCornerShape(12.dp)
+                ) {
+                    Text("Continue")
+                }
             }
         }
     }
