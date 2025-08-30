@@ -425,6 +425,8 @@ fun ModernCheckmarkOverlay(
 
 @Composable
 fun PracticeButtonSection(onClick: () -> Unit, modifier: Modifier = Modifier, enabled: Boolean = true) {
+    val context = LocalContext.current
+    
     Button(
         onClick = onClick,
         enabled = enabled,
