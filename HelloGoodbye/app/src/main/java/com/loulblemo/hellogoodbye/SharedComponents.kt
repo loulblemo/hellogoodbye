@@ -332,7 +332,7 @@ fun ResponsiveRedCross(
 fun ModernCheckmark(
     modifier: Modifier = Modifier,
     size: Float = 48f,
-    color: Color = Color(0xFF4CAF50),
+    color: Color = FlagGreen,
     strokeWidthFactor: Float = 0.08f
 ) {
     Canvas(modifier = modifier.size(size.dp)) {
@@ -370,7 +370,7 @@ fun ModernCheckmarkOverlay(
             .size(size.dp)
             .clip(CircleShape)
             .background(
-                Color(0xFF4CAF50).copy(alpha = overlayAlpha),
+                FlagGreen.copy(alpha = overlayAlpha),
                 CircleShape
             ),
         contentAlignment = Alignment.Center
@@ -638,7 +638,7 @@ fun ExerciseCompletionScreen(
         Button(
             onClick = onContinue,
             colors = ButtonDefaults.buttonColors(
-                containerColor = Color(0xFF4CAF50)
+                containerColor = FlagGreen
             ),
             modifier = Modifier
                 .fillMaxWidth()
@@ -826,7 +826,7 @@ fun PracticeBubbleFlag(
         else -> MaterialTheme.colorScheme.surface
     }
     val borderColor = when {
-        error -> MaterialTheme.colorScheme.error
+        error -> FlagRed
         solved -> Color(0xFF2E7D32)
         selected -> MaterialTheme.colorScheme.primary
         else -> Color.Transparent
@@ -865,7 +865,7 @@ fun PracticeBubble(
         else -> MaterialTheme.colorScheme.surface
     }
     val borderColor = when {
-        error -> MaterialTheme.colorScheme.error
+        error -> FlagRed
         solved -> Color(0xFF2E7D32) // dark green outline
         selected -> MaterialTheme.colorScheme.primary
         else -> Color.Transparent
@@ -1167,7 +1167,7 @@ fun PronunciationAudioToEnglishExercise(
                 PronunciationWordBubble(
                     text = "CONTINUE",
                     onClick = { onDone(isCorrect) },
-                    containerColor = if (isCorrect) Color(0xFF4CAF50) else MaterialTheme.colorScheme.error
+                    containerColor = if (isCorrect) FlagGreen else FlagRed
                 )
             }
         }
@@ -1241,7 +1241,7 @@ fun PronunciationAudioToTypeEnglishExercise(
             if (completed && (isCorrect == false)) {
                 Text(
                     text = "Correct: " + correctAnswer,
-                    color = MaterialTheme.colorScheme.error
+                    color = FlagRed
                 )
             }
         }
@@ -1257,7 +1257,7 @@ fun PronunciationAudioToTypeEnglishExercise(
                 PronunciationWordBubble(
                     text = "CONTINUE",
                     onClick = { onDone(false) },
-                    containerColor = MaterialTheme.colorScheme.error
+                    containerColor = FlagRed
                 )
             }
         }

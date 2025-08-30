@@ -281,6 +281,8 @@ fun TravelScreen(
                 travelState = travelState,
                 questExercises = questExercises,
                 onQuestClick = { questId ->
+                    // Always restart quest from the beginning: clear any partial progress first
+                    travelState = resetQuestProgress(context, travelState, questId)
                     travelState = travelState.copy(
                         currentQuestId = questId,
                         currentExerciseIndex = 0
@@ -620,7 +622,7 @@ fun CircleQuestBubble(
                     shape = CircleShape,
                     border = BorderStroke(
                         width = if (isCompleted) 10.dp else 6.dp,
-                        color = if (isCompleted) Color(0xFF4CAF50) else MaterialTheme.colorScheme.primary
+                        color = if (isCompleted) FlagGreen else MaterialTheme.colorScheme.primary
                     )
                 ) {
                     Box(
@@ -805,7 +807,7 @@ fun TravelQuestCard(
         else -> MaterialTheme.colorScheme.surfaceVariant
     }
     
-    val borderColor = if (isCompleted) Color(0xFF4CAF50) else Color.Transparent
+    val borderColor = if (isCompleted) FlagGreen else Color.Transparent
     
     Card(
         modifier = Modifier
@@ -873,7 +875,7 @@ fun TravelQuestCard(
                     modifier = Modifier
                         .size(32.dp)
                         .clip(CircleShape)
-                        .background(Color(0xFF4CAF50)),
+                        .background(FlagGreen),
                     contentAlignment = Alignment.Center
                 ) {
                     ModernCheckmark(
@@ -1112,6 +1114,7 @@ fun QuestPracticeScreen(
                         MatchingExercise(
                             title = currentExercise.title,
                             pairs = pairs,
+                            useFlagAssets = true,
                             onDone = { perfect ->
                                 triggerCompletion(stepKey)
                             }
@@ -1130,6 +1133,7 @@ fun QuestPracticeScreen(
                         MatchingExercise(
                             title = currentExercise.title,
                             pairs = pairs,
+                            useFlagAssets = true,
                             onDone = { perfect ->
                                 triggerCompletion(stepKey)
                             }
@@ -1258,7 +1262,7 @@ fun QuestPracticeScreen(
                     .fillMaxWidth()
                     .padding(16.dp),
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = Color.Red,
+                    containerColor = FlagRed,
                     contentColor = Color.White
                 ),
                 shape = RoundedCornerShape(8.dp)

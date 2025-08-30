@@ -120,6 +120,7 @@ fun PracticeScreen(
                         restrictToEncountered = true,
                         availableLanguages = encounteredLanguages
                     ),
+                    useFlagAssets = true,
                     onDone = onExerciseDone
                 )
                 1 -> MatchingExercise(
@@ -130,6 +131,7 @@ fun PracticeScreen(
                         restrictToEncountered = true,
                         availableLanguages = encounteredLanguages
                     ),
+                    useFlagAssets = true,
                     onDone = onExerciseDone
                 )
                 2 -> MatchingExercise(

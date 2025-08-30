@@ -80,10 +80,9 @@ fun buildAudioToFlagPairs(
             PairItem(id = "L_${lang}_$audio", label = "▶︎", isAudio = true, audioFile = audio, matchKey = lang)
         },
         buildRight = { word, lang, _ ->
-            val flag = languageCodeToFlag(lang)
             // Use unique right ID per word to allow multiple pairs per language
             val key = "${lang}_${word.original}"
-            PairItem(id = "R_${key}", label = flag ?: lang.uppercase(), isAudio = false, matchKey = lang)
+            PairItem(id = "R_${key}", label = lang.uppercase(), isAudio = false, matchKey = lang)
         },
         restrictToEncounteredLanguages = restrictToEncountered,
         availableLanguages = availableLanguages
@@ -105,9 +104,8 @@ fun buildAudioToFlagPairsMulti(
             PairItem(id = "L_${key}", label = "▶︎", isAudio = true, audioFile = audio, matchKey = key)
         },
         buildRight = { word, lang, _ ->
-            val flag = languageCodeToFlag(lang)
             val key = "${lang}_${word.original}"
-            PairItem(id = "R_${key}", label = flag ?: lang.uppercase(), isAudio = false, matchKey = key)
+            PairItem(id = "R_${key}", label = lang.uppercase(), isAudio = false, matchKey = key)
         },
         restrictToEncounteredLanguages = restrictToEncountered,
         availableLanguages = availableLanguages
@@ -128,10 +126,9 @@ fun buildPronunciationToFlagPairs(
             PairItem(id = "L_${lang}_$text", label = text, isAudio = false, matchKey = lang)
         },
         buildRight = { word, lang, _ ->
-            val flag = languageCodeToFlag(lang)
             // Use unique right ID per word to allow multiple pairs per language
             val key = "${lang}_${word.original}"
-            PairItem(id = "R_${key}", label = flag ?: lang.uppercase(), isAudio = false, matchKey = lang)
+            PairItem(id = "R_${key}", label = lang.uppercase(), isAudio = false, matchKey = lang)
         },
         restrictToEncounteredLanguages = restrictToEncountered,
         availableLanguages = availableLanguages
@@ -153,9 +150,8 @@ fun buildPronunciationToFlagPairsMulti(
             PairItem(id = "L_${key}", label = text, isAudio = false, matchKey = key)
         },
         buildRight = { word, lang, _ ->
-            val flag = languageCodeToFlag(lang)
             val key = "${lang}_${word.original}"
-            PairItem(id = "R_${key}", label = flag ?: lang.uppercase(), isAudio = false, matchKey = key)
+            PairItem(id = "R_${key}", label = lang.uppercase(), isAudio = false, matchKey = key)
         },
         restrictToEncounteredLanguages = restrictToEncountered,
         availableLanguages = availableLanguages
