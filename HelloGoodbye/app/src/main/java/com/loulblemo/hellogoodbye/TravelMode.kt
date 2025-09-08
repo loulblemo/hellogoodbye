@@ -8,6 +8,8 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListState
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.CircleShape
@@ -469,7 +471,24 @@ fun TravelQuestListScreen(
     questExercises: Map<String, List<ExerciseType>>,
     onQuestClick: (String) -> Unit
 ) {
+    val listState = rememberLazyListState()
+    
+    // Show sections based on progression, but always display mixed sections when they become available
+    val visibleSections = travelSections.filter { section ->
+        val progress = travelState.questProgresses[section.id]
+        // Show if unlocked OR if it's a mixed section that should be visible in progression
+        progress?.isUnlocked == true || (section.isMixed && isMixedSectionVisible(section, travelSections, travelState))
+    }
+    
+    // Auto-scroll to the end when the screen is loaded
+    LaunchedEffect(visibleSections.size) {
+        if (visibleSections.isNotEmpty()) {
+            listState.animateScrollToItem(visibleSections.size - 1)
+        }
+    }
+    
     LazyColumn(
+        state = listState,
         modifier = Modifier
             .fillMaxWidth()
             .padding(horizontal = 24.dp),
@@ -477,13 +496,6 @@ fun TravelQuestListScreen(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         // Removed list title for cleaner UI
-        
-        // Show sections based on progression, but always display mixed sections when they become available
-        val visibleSections = travelSections.filter { section ->
-            val progress = travelState.questProgresses[section.id]
-            // Show if unlocked OR if it's a mixed section that should be visible in progression
-            progress?.isUnlocked == true || (section.isMixed && isMixedSectionVisible(section, travelSections, travelState))
-        }
         
         items(visibleSections) { section ->
             val questProgress = travelState.questProgresses[section.id]
@@ -976,11 +988,6 @@ fun QuestPracticeScreen(
     // Get the recipe for this quest to determine word selection strategy
     val recipe = recipeForQuestId(questRecipes, section.id)
     
-    // Debug: Print quest ID and recipe for Level 2 Exercise 1
-    if (section.id.contains("level2_exercise1")) {
-        println("DEBUG: Quest ID: ${section.id}, Recipe: ${recipe}, WordRange: ${recipe?.wordRange}")
-    }
-    
     fun getWordsForQuest(base: List<WordEntry>): List<WordEntry> {
         return when {
             section.isMixed || recipe?.useEncounteredWords == true -> {
@@ -1062,11 +1069,7 @@ fun QuestPracticeScreen(
         }
         
         val threeWords = remember(corpus, section.isMixed, languageCodes, recipe) {
-            val words = getWordsForQuest(corpus).take(3)
-            if (section.id.contains("level2_exercise1")) {
-                println("DEBUG: Three words selected: ${words.map { it.original }}")
-            }
-            words
+            getWordsForQuest(corpus).take(3)
         }
         val eligibleAudioWords = remember(corpus, section.isMixed, languageCodes, recipe) {
             getWordsForQuest(corpus).filter { entry -> languageCodes.any { code -> entry.byLang[code]?.audio != null } }

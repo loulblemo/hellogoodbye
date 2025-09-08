@@ -192,22 +192,10 @@ fun generateTravelSectionsFromRecipes(startLangCode: String, recipes: List<Quest
 fun recipeForQuestId(recipes: List<QuestRecipe>, questId: String): QuestRecipe? {
     val parts = questId.split("_")
     
-    // Debug logging
-    if (questId.contains("level2_exercise1")) {
-        println("DEBUG recipeForQuestId: questId=$questId, parts=${parts.toList()}")
-        println("DEBUG: parts.size=${parts.size}, parts[1]=${parts.getOrNull(1)}, parts[2]=${parts.getOrNull(2)}")
-    }
-    
     // Handle new naming pattern: level1_exercise1, level1_exercise2, level2_exercise1, etc.
     if (parts.size >= 3 && parts[1].startsWith("level") && parts[2].startsWith("exercise")) {
         val level = parts[1].removePrefix("level").toIntOrNull() ?: return null
         val exercise = parts[2].removePrefix("exercise").toIntOrNull() ?: return null
-        
-        if (questId.contains("level2_exercise1")) {
-            println("DEBUG: level=$level, exercise=$exercise")
-            println("DEBUG: level == 2 = ${level == 2}, exercise >= 1 = ${exercise >= 1}")
-            println("DEBUG: recipes.size=${recipes.size}, index=${4 + exercise}")
-        }
         
         return when {
             level == 1 && exercise in 1..5 -> recipes.getOrNull(exercise - 1) // Level 1 exercises: indices 0-4
