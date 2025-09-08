@@ -115,7 +115,36 @@ fun defaultQuestRecipes(): List<QuestRecipe> {
         wordRange = 5..9 // Next 5 words: help, sorry, water, yes, no
     )
 
-    return listOf(level1_exercise1, level1_exercise2, level1_exercise3, level1_exercise4, level1_exercise5, level2_exercise1)
+    val level2_exercise2 = QuestRecipe(
+        type = QuestType.SINGLE,
+        languageCount = 1,
+        exerciseOrder = listOf(
+            "audio_to_english_multi",
+            "pronunciation_audio_to_english",
+            "pronunciation_audio_to_type_english"
+
+        ).let { base -> List(10) { base[it % base.size] } },
+        randomOrder = true,
+        wordRange = 5..9 // Next 5 words: help, sorry, water, yes, no
+    )
+    val level2_exercise3 = QuestRecipe(
+        type = QuestType.MIXED,
+        languageCount = 3,
+        exerciseOrder = listOf(
+            "audio_to_flag_multi",
+            "pronunciation_to_flag_multi",
+            "audio_to_english_multi",
+            "audio_to_flag_multi",
+            "pronunciation_to_flag_multi",
+            "audio_to_english_multi",
+            "audio_to_flag_multi",
+            "pronunciation_to_flag_multi",
+            "pronunciation_audio_to_type_english"
+        ),
+        randomOrder = true,
+        useEncounteredWords = true, // Mixed exercises use encountered words
+    )
+    return listOf(level1_exercise1, level1_exercise2, level1_exercise3, level1_exercise4, level1_exercise5, level2_exercise1, level2_exercise2, level2_exercise3)
 }
 
 // Example of a quest recipe that uses a specific word range

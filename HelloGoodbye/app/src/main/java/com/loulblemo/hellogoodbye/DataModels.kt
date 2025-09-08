@@ -440,9 +440,20 @@ fun initializeTravelState(context: Context, travelSections: List<TravelSection>,
             val previousQuest = travelSections[index - 1]
             val isPreviousCompleted = updatedProgresses[previousQuest.id]?.isCompleted == true
             val currentLanguageCode = startLangCodeFromQuestId(section.id)
-            val hasOtherLanguageQuest = currentLanguageCode == null || hasCompletedQuestInOtherLanguage(context, currentLanguageCode)
             
-            if (isPreviousCompleted && hasOtherLanguageQuest) {
+            // Check language requirements based on quest type
+            val canUnlockMixed = when {
+                section.id.endsWith("level2_exercise3") -> {
+                    // Level 2 Exercise 3 requires 3 languages
+                    hasCompletedQuestsInAtLeast3Languages(context)
+                }
+                else -> {
+                    // Other mixed quests require at least one other language
+                    currentLanguageCode == null || hasCompletedQuestInOtherLanguage(context, currentLanguageCode)
+                }
+            }
+            
+            if (isPreviousCompleted && canUnlockMixed) {
                 val currentProgress = updatedProgresses[section.id]
                 if (currentProgress != null && !currentProgress.isUnlocked) {
                     updatedProgresses[section.id] = currentProgress.copy(isUnlocked = true)
@@ -505,9 +516,18 @@ fun updateQuestProgress(
                         }
                     }
                 } else if (nextSection.isMixed) {
-                    // Mixed quest - check if user has completed at least one quest in another language
+                    // Mixed quest - check language requirements based on quest type
                     val currentLanguageCode = startLangCodeFromQuestId(questId)
-                    val canUnlockMixed = currentLanguageCode == null || hasCompletedQuestInOtherLanguage(context, currentLanguageCode)
+                    val canUnlockMixed = when {
+                        nextSection.id.endsWith("level2_exercise3") -> {
+                            // Level 2 Exercise 3 requires 3 languages
+                            hasCompletedQuestsInAtLeast3Languages(context)
+                        }
+                        else -> {
+                            // Other mixed quests require at least one other language
+                            currentLanguageCode == null || hasCompletedQuestInOtherLanguage(context, currentLanguageCode)
+                        }
+                    }
                     
                     if (canUnlockMixed) {
                         updatedProgresses[nextQuestId] = nextProgress.copy(isUnlocked = true)
@@ -688,6 +708,13 @@ fun hasCompletedQuestInOtherLanguage(context: Context, currentLanguageCode: Stri
     return getSupportedLanguageCodesFromMetadata(context)
         .filter { it != currentLanguageCode }
         .any { langCode -> getLanguageQuestCount(context, langCode) > 0 }
+}
+
+// Check if user has completed at least one quest in at least 3 different languages
+fun hasCompletedQuestsInAtLeast3Languages(context: Context): Boolean {
+    val languagesWithCompletedQuests = getSupportedLanguageCodesFromMetadata(context)
+        .count { langCode -> getLanguageQuestCount(context, langCode) > 0 }
+    return languagesWithCompletedQuests >= 3
 }
 
 fun getBadgeLevel(context: Context, languageCode: String): BadgeLevel {

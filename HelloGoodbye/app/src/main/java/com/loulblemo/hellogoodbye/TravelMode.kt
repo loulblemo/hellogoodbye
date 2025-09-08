@@ -23,6 +23,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorMatrix
 import androidx.compose.ui.graphics.ColorFilter
@@ -118,6 +119,7 @@ private fun updateTravelSectionsWithMixedLanguages(
         if (section.isMixed) {
             // For mixed sections, work exactly like practice mode
             val startLangCode = section.id.split("_")[0] // Extract start language from section ID
+            val isLevel2Exercise3 = section.id.endsWith("level2_exercise3")
             
             val availableLanguagesForMixed = mutableListOf<String>()
             availableLanguagesForMixed.add(startLangCode)
@@ -129,20 +131,30 @@ private fun updateTravelSectionsWithMixedLanguages(
                 getLanguageQuestCount(context, langCode) >= 1
             }
             
-            // Randomly select one language from those with bronze medal
-            if (languagesWithBronzeMedal.isNotEmpty()) {
-                availableLanguagesForMixed.add(languagesWithBronzeMedal.random())
+            if (isLevel2Exercise3) {
+                // Level 2 Exercise 3 needs 3 languages total
+                if (languagesWithBronzeMedal.size >= 2) {
+                    // Randomly select 2 additional languages
+                    availableLanguagesForMixed.addAll(languagesWithBronzeMedal.shuffled().take(2))
+                }
+            } else {
+                // Other mixed quests need 2 languages total
+                if (languagesWithBronzeMedal.isNotEmpty()) {
+                    availableLanguagesForMixed.add(languagesWithBronzeMedal.random())
+                }
             }
             
-            val secondLangName = if (availableLanguagesForMixed.size > 1) {
-                languageCodeToName(availableLanguagesForMixed[1]) ?: availableLanguagesForMixed[1]
+            val additionalLangNames = if (availableLanguagesForMixed.size > 1) {
+                availableLanguagesForMixed.drop(1).joinToString(" + ") { langCode ->
+                    languageCodeToName(langCode) ?: langCode
+                }
             } else {
                 "Mixed"
             }
             
             section.copy(
                 languages = availableLanguagesForMixed,
-                name = "Mixed: ${languageCodeToName(startLangCode) ?: startLangCode} + $secondLangName"
+                name = "Mixed: ${languageCodeToName(startLangCode) ?: startLangCode} + $additionalLangNames"
             )
         } else {
             section
@@ -589,7 +601,7 @@ fun BottomFlagBadge(
                 .clip(RoundedCornerShape(8.dp))
                 .drawBehind {
                     val baseRadius = 8.dp.toPx()
-                    val outlineSize = androidx.compose.ui.geometry.Size(size.width, size.height)
+                    val outlineSize = androidx.compose.ui.geometry.Size(48.dp.toPx(), 36.dp.toPx())
                     drawRoundRect(
                         color = Color.Black.copy(alpha = 0.06f),
                         size = outlineSize,
@@ -694,18 +706,62 @@ fun CircleQuestBubble(
                 // Bottom flag badge overlay
                 if (section.isMixed) {
                     val firstCode = startLangCodeFromQuestId(section.id)
-                    val secondCode = section.languages.getOrNull(1)
-                    Row(
-                        modifier = Modifier
-                            .align(Alignment.BottomCenter)
-                            .offset(y = 6.dp),
-                        horizontalArrangement = Arrangement.spacedBy(6.dp)
-                    ) {
-                        if (firstCode != null) {
-                            BottomFlagBadge(languageCode = firstCode, modifier = Modifier)
+                    val isLevel2Exercise3 = section.id.endsWith("level2_exercise3")
+                    
+                    if (isLevel2Exercise3) {
+                        // 3 flags in a row, smaller size
+                        val secondCode = section.languages.getOrNull(1)
+                        val thirdCode = section.languages.getOrNull(2)
+                        
+                        Row(
+                            modifier = Modifier
+                                .align(Alignment.BottomCenter)
+                                .offset(y = 6.dp),
+                            horizontalArrangement = Arrangement.spacedBy(3.dp)
+                        ) {
+                            if (firstCode != null) {
+                                Box(
+                                    modifier = Modifier
+                                        .width(34.dp)
+                                        .height(25.dp)
+                                ) {
+                                    BottomFlagBadge(languageCode = firstCode, modifier = Modifier.scale(0.7f))
+                                }
+                            }
+                            if (secondCode != null) {
+                                Box(
+                                    modifier = Modifier
+                                        .width(34.dp)
+                                        .height(25.dp)
+                                ) {
+                                    BottomFlagBadge(languageCode = secondCode, modifier = Modifier.scale(0.7f))
+                                }
+                            }
+                            if (thirdCode != null) {
+                                Box(
+                                    modifier = Modifier
+                                        .width(34.dp)
+                                        .height(25.dp)
+                                ) {
+                                    BottomFlagBadge(languageCode = thirdCode, modifier = Modifier.scale(0.7f))
+                                }
+                            }
                         }
-                        if (secondCode != null) {
-                            BottomFlagBadge(languageCode = secondCode, modifier = Modifier)
+                    } else {
+                        // Regular 2-flag display for other mixed quests
+                        val secondCode = section.languages.getOrNull(1)
+                        Row(
+                            modifier = Modifier
+                                .align(Alignment.BottomCenter)
+                                .offset(y = 6.dp),
+                            horizontalArrangement = Arrangement.spacedBy(6.dp)
+                        ) {
+                            if (firstCode != null) {
+                                BottomFlagBadge(languageCode = firstCode, modifier = Modifier)
+                            }
+                            if (secondCode != null) {
+                                BottomFlagBadge(languageCode = secondCode, modifier = Modifier)
+                            }
                         }
                     }
                 } else {
@@ -752,6 +808,7 @@ fun LockedMixedQuestBubble(
 ) {
     val context = LocalContext.current
     val currentLanguageCode = startLangCodeFromQuestId(section.id) ?: ""
+    val isLevel2Exercise3 = section.id.endsWith("level2_exercise3")
     
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -784,32 +841,91 @@ fun LockedMixedQuestBubble(
             }
             
             // Removed lock overlay
-            // Bottom flag badges: start flag + question mark placeholder (greyed)
+            // Bottom flag badges: show appropriate number of languages based on quest type
             val firstCode = startLangCodeFromQuestId(section.id)
-            Row(
-                modifier = Modifier
-                    .align(Alignment.BottomCenter)
-                    .offset(y = 6.dp),
-                horizontalArrangement = Arrangement.spacedBy(6.dp)
-            ) {
-                if (firstCode != null) {
-                    BottomFlagBadge(languageCode = firstCode, modifier = Modifier, isGreyscale = true)
-                }
-                Box(
+            
+            if (isLevel2Exercise3) {
+                // 3 flags in a row, smaller size
+                Row(
                     modifier = Modifier
-                        .width(48.dp)
-                        .height(36.dp)
-                        .clip(RoundedCornerShape(8.dp))
-                        .background(Color(0xFFE0E0E0))
-                        .border(2.dp, Color(0xFFBDBDBD), RoundedCornerShape(8.dp)),
-                    contentAlignment = Alignment.Center
+                        .align(Alignment.BottomCenter)
+                        .offset(y = 6.dp),
+                    horizontalArrangement = Arrangement.spacedBy(3.dp)
                 ) {
-                    Text(
-                        text = "?",
-                        fontSize = 20.sp,
-                        fontWeight = FontWeight.Bold,
-                        color = Color(0xFF757575)
-                    )
+                    if (firstCode != null) {
+                        Box(
+                            modifier = Modifier
+                                .width(34.dp)
+                                .height(25.dp)
+                        ) {
+                            BottomFlagBadge(languageCode = firstCode, modifier = Modifier.scale(0.7f), isGreyscale = true)
+                        }
+                    }
+                    // First placeholder
+                    Box(
+                        modifier = Modifier
+                            .width(34.dp)
+                            .height(25.dp)
+                            .scale(0.7f)
+                            .clip(RoundedCornerShape(8.dp))
+                            .background(Color(0xFFE0E0E0))
+                            .border(2.dp, Color(0xFFBDBDBD), RoundedCornerShape(8.dp)),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text(
+                            text = "?",
+                            fontSize = 20.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = Color(0xFF757575)
+                        )
+                    }
+                    // Second placeholder
+                    Box(
+                        modifier = Modifier
+                            .width(34.dp)
+                            .height(25.dp)
+                            .scale(0.7f)
+                            .clip(RoundedCornerShape(8.dp))
+                            .background(Color(0xFFE0E0E0))
+                            .border(2.dp, Color(0xFFBDBDBD), RoundedCornerShape(8.dp)),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text(
+                            text = "?",
+                            fontSize = 20.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = Color(0xFF757575)
+                        )
+                    }
+                }
+            } else {
+                // Regular 2-flag display for other mixed quests
+                Row(
+                    modifier = Modifier
+                        .align(Alignment.BottomCenter)
+                        .offset(y = 6.dp),
+                    horizontalArrangement = Arrangement.spacedBy(6.dp)
+                ) {
+                    if (firstCode != null) {
+                        BottomFlagBadge(languageCode = firstCode, modifier = Modifier, isGreyscale = true)
+                    }
+                    // Single placeholder
+                    Box(
+                        modifier = Modifier
+                            .width(48.dp)
+                            .height(36.dp)
+                            .clip(RoundedCornerShape(8.dp))
+                            .background(Color(0xFFE0E0E0))
+                            .border(2.dp, Color(0xFFBDBDBD), RoundedCornerShape(8.dp)),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text(
+                            text = "?",
+                            fontSize = 20.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = Color(0xFF757575)
+                        )
+                    }
                 }
             }
         }
@@ -828,8 +944,13 @@ fun LockedMixedQuestBubble(
         Spacer(modifier = Modifier.height(8.dp))
         
         // Explanatory text
+        val explanationText = if (isLevel2Exercise3) {
+            "Mixed mode requires:\n• Previous quest completed\n• First quest completed in 3 different languages"
+        } else {
+            "Mixed mode requires:\n• Previous quest completed\n• First quest completed in another language"
+        }
         Text(
-            text = "Mixed mode requires:\n• Previous quest completed\n• First quest completed in another language",
+            text = explanationText,
             style = MaterialTheme.typography.bodySmall,
             color = Color(0xFF757575),
             textAlign = TextAlign.Center,
