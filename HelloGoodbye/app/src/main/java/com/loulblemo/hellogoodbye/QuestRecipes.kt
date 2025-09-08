@@ -144,8 +144,38 @@ fun defaultQuestRecipes(): List<QuestRecipe> {
         randomOrder = true,
         useEncounteredWords = true, // Mixed exercises use encountered words
     )
-    return listOf(level1_exercise1, level1_exercise2, level1_exercise3, level1_exercise4, level1_exercise5, level2_exercise1, level2_exercise2, level2_exercise3)
+    val level2_exercise4 = QuestRecipe(
+        type = QuestType.SINGLE,
+        languageCount = 1,
+        exerciseOrder = listOf(
+            "pronunciation_audio_to_english",
+            "audio_to_english_multi",
+            "pronunciation_audio_to_english",
+            "audio_to_english_multi",
+            "pronunciation_audio_to_english",
+            "audio_to_english_multi",
+            "pronunciation_audio_to_english",
+            "audio_to_english_multi",
+            "pronunciation_audio_to_english",
+            "audio_to_english_multi"
+        ),
+        randomOrder = false,
+        wordRange = 0..9 // Same 5 words as other Level 1 exercises
+    )
+
+    // Level 1 Exercise 5: Single language, random order
+    val level2_exercise5 = QuestRecipe(
+        type = QuestType.SINGLE,
+        languageCount = 1,
+        exerciseOrder = List(10) { if (it % 2 == 0) "audio_to_english_multi" else "pronunciation_audio_to_english" },
+        randomOrder = true,
+        wordRange = 0..9 // Same 5 words as other Level 1 exercises
+    )
+
+    return listOf(level1_exercise1, level1_exercise2, level1_exercise3, level1_exercise4, level1_exercise5, level2_exercise1, level2_exercise2, level2_exercise3, level2_exercise4, level2_exercise5)
 }
+
+
 
 // Example of a quest recipe that uses a specific word range
 fun createCustomWordRangeRecipe(): QuestRecipe {
@@ -214,6 +244,19 @@ fun generateTravelSectionsFromRecipes(startLangCode: String, recipes: List<Quest
             )
         )
     }
+
+    // Level 2 Complete badge
+    sections.add(
+        TravelSection(
+            id = "${startLangCode}_level2_complete",
+            flag = "🥈",
+            name = "Level 2 Complete!",
+            language = "Completion",
+            isMixed = false,
+            languages = listOf(startLangCode),
+            isCompletionBadge = true
+        )
+    )
 
     return sections
 }

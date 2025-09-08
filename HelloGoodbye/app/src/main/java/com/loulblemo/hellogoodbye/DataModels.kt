@@ -69,8 +69,9 @@ data class MatchingPair(
 
 enum class BadgeLevel {
     NONE,     // No badge - not started
-    BRONZE,   // Completed at least one quest
-    SILVER    // Completed 5 quests in the language
+    GREEN,    // Completed 1 exercise (green badge)
+    BRONZE,   // Completed Level 1 (5 exercises)
+    SILVER    // Completed Level 2 (10 exercises)
 }
 
 data class LanguageProgress(
@@ -720,12 +721,18 @@ fun hasCompletedQuestsInAtLeast3Languages(context: Context): Boolean {
 fun getBadgeLevel(context: Context, languageCode: String): BadgeLevel {
     val count = getLanguageQuestCount(context, languageCode)
     return when {
-        // For now: 1 quest = green badge, 5 quests = bronze badge
-        // Map GREEN -> SILVER enum, BRONZE -> BRONZE enum
+        // 10+ exercises = silver badge (Level 2 Complete)
+        count >= 10 -> BadgeLevel.SILVER
+        // 5+ exercises = bronze badge (Level 1 Complete)
         count >= 5 -> BadgeLevel.BRONZE
-        count >= 1 -> BadgeLevel.SILVER
+        // 1+ exercises = green badge (starting)
+        count >= 1 -> BadgeLevel.GREEN
         else -> BadgeLevel.NONE
     }
+}
+
+fun isLevel2CompleteBadge(section: TravelSection): Boolean {
+    return section.isCompletionBadge && section.id.endsWith("_level2_complete")
 }
 
 fun getLanguageProgress(context: Context, languageCode: String): LanguageProgress {

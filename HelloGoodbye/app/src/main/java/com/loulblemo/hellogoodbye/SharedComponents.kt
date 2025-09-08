@@ -953,10 +953,12 @@ fun BadgeOverlay(
             .build()
     }
     val assetPath = when (badgeLevel) {
-        // Map SILVER enum to plain green badge (1 quest)
-        BadgeLevel.SILVER -> "badges/badge_plain_green.svg"
-        // Map BRONZE enum to plain bronze badge (5 quests)
+        // Map GREEN enum to plain green badge (1+ exercises)
+        BadgeLevel.GREEN -> "badges/badge_plain_green.svg"
+        // Map BRONZE enum to plain bronze badge (5+ exercises)
         BadgeLevel.BRONZE -> "badges/badge_plain_bronze.svg"
+        // Map SILVER enum to plain silver badge (10+ exercises)
+        BadgeLevel.SILVER -> "badges/badge_plain_silver.svg"
         BadgeLevel.NONE -> return // Don't show anything for no badge
     }
 

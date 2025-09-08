@@ -651,21 +651,25 @@ fun CircleQuestBubble(
             contentAlignment = Alignment.Center
         ) {
             if (section.isCompletionBadge) {
-                // Special appearance for completion badge (bronze)
+                // Special appearance for completion badge
+                val isLevel2Complete = isLevel2CompleteBadge(section)
+                val backgroundColor = if (isLevel2Complete) Color(0xFFE8E8E8) else Color(0xFFF4D3A2) // Silver or Bronze background
+                val borderColor = if (isLevel2Complete) Color(0xFFC0C0C0) else Color(0xFFCD7F32) // Silver or Bronze border
+                
                 Card(
                     modifier = Modifier.fillMaxSize(),
                     colors = CardDefaults.cardColors(
-                        containerColor = Color(0xFFF4D3A2) // Bronze background
+                        containerColor = backgroundColor
                     ),
                     shape = CircleShape,
-                    border = BorderStroke(6.dp, Color(0xFFCD7F32)) // Bronze border (thicker)
+                    border = BorderStroke(6.dp, borderColor) // Thicker border
                 ) {
                     Box(
                         modifier = Modifier.fillMaxSize(),
                         contentAlignment = Alignment.Center
                     ) {
                         Text(
-                            text = section.flag, // 🥉 bronze medal
+                            text = section.flag, // 🥈 silver medal or 🥉 bronze medal
                             fontSize = 60.sp
                         )
                     }
