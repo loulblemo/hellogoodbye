@@ -20,19 +20,36 @@ private fun pickFivePairs(
     val shuffledLangs = effectiveLanguageCodes.shuffled()
     val targets = shuffledLangs.take(if (shuffledLangs.size >= 5) 5 else shuffledLangs.size)
     
-    // Distribute three words across target languages
+    // Distribute three words across target languages with balanced distribution
+    // Calculate how many matches each language should get
+    val totalPairs = 5
+    val numLanguages = targets.size
+    val basePairsPerLang = totalPairs / numLanguages
+    val extraPairs = totalPairs % numLanguages
+    
+    var pairCount = 0
     var wordIdx = 0
-    for (lang in targets) {
-        val word = threeWords[wordIdx % threeWords.size]
-        val variant = word.byLang[lang]
-        if (variant != null) {
-            val left = buildLeft(word, lang, variant)
-            val right = buildRight(word, lang, variant)
-            if (left != null && right != null) {
-                combos.add(MatchingPair(left, right))
+    
+    for ((langIndex, lang) in targets.withIndex()) {
+        // Calculate how many pairs this language should get
+        val pairsForThisLang = basePairsPerLang + if (langIndex < extraPairs) 1 else 0
+        
+        // Generate pairs for this language
+        for (i in 0 until pairsForThisLang) {
+            if (pairCount >= totalPairs) break
+            
+            val word = threeWords[wordIdx % threeWords.size]
+            val variant = word.byLang[lang]
+            if (variant != null) {
+                val left = buildLeft(word, lang, variant)
+                val right = buildRight(word, lang, variant)
+                if (left != null && right != null) {
+                    combos.add(MatchingPair(left, right))
+                    pairCount++
+                }
             }
+            wordIdx++
         }
-        wordIdx += 1
     }
     
     // If fewer than 5 pairs (e.g., not enough languages), try to fill with additional random combos

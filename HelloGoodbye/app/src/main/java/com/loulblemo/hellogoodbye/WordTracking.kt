@@ -9,7 +9,8 @@ fun trackWordsFromExercise(
     languageCodes: List<String>
 ) {
     // Sample a few words from the corpus for this exercise and mark them as encountered
-    val sampleWords = corpus.shuffled().take(3)
+    // Use corpus in order instead of shuffled for consistency
+    val sampleWords = corpus.take(3)
     val isEarlyQuest = !section.isMixed && section.id.split("_").lastOrNull()?.toIntOrNull()?.let { it in 1..5 } == true
     val mainLanguageCode = languageCodes.firstOrNull()
     val earlyWords = if (isEarlyQuest && mainLanguageCode != null) getEarlyWords(context, mainLanguageCode) else emptySet()
@@ -38,9 +39,9 @@ fun seedNewWordsForQuest(
         existingEarly.forEach { w -> addEncounteredWord(context, mainLanguageCode, w) }
         return
     }
-    val pool = corpus.shuffled()
+    // Use corpus in order instead of shuffled to ensure consistent first 5 words
     val chosen = mutableListOf<String>()
-    for (entry in pool) {
+    for (entry in corpus) {
         val variant = entry.byLang[mainLanguageCode]
         if (variant != null) {
             val word = variant.word ?: variant.text ?: entry.original

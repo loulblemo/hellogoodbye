@@ -185,7 +185,13 @@ fun MainScreen() {
         }
         "settings" -> {
             SettingsScreen(
-                onBack = { currentScreen = "home" },
+                onBack = { 
+                    // Refresh currency and selected languages when returning from settings
+                    // This ensures developer mode changes are reflected in the UI
+                    currency = loadCurrency(context)
+                    selectedCountries = loadSelectedLanguages(context)
+                    currentScreen = "home" 
+                },
                 onProgressCleared = {
                     // Refresh currency and selected languages after clearing progress
                     currency = loadCurrency(context)
