@@ -24,10 +24,12 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.draw.scale
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorMatrix
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.PathEffect
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
@@ -529,6 +531,36 @@ fun TravelQuestListScreen(
                         }
                     }
                 )
+            }
+            
+            // Add separator after completion badges
+            if (section.isCompletionBadge) {
+                val isLevel2Complete = isLevel2CompleteBadge(section)
+                val separatorColor = if (isLevel2Complete) Color(0xFFC0C0C0) else Color(0xFFCD7F32) // Silver or Bronze
+                
+                Spacer(modifier = Modifier.height(16.dp))
+                
+                // Cool diagonal separator line
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(4.dp)
+                        .background(
+                            brush = Brush.linearGradient(
+                                colors = listOf(
+                                    Color.Transparent,
+                                    separatorColor,
+                                    separatorColor,
+                                    Color.Transparent
+                                ),
+                                start = Offset(0f, 0f),
+                                end = Offset(1000f, 0f)
+                            ),
+                            shape = RoundedCornerShape(2.dp)
+                        )
+                )
+                
+                Spacer(modifier = Modifier.height(16.dp))
             }
         }
 
