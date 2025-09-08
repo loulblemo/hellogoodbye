@@ -425,6 +425,15 @@ fun initializeTravelState(context: Context, travelSections: List<TravelSection>,
                     isCompleted = true,
                     completedExercises = emptySet()
                 )
+                
+                // Also unlock the first level 2 exercise after completion badge
+                if (index + 1 < travelSections.size) {
+                    val nextSection = travelSections[index + 1]
+                    val nextProgress = updatedProgresses[nextSection.id]
+                    if (nextProgress != null && !nextProgress.isUnlocked) {
+                        updatedProgresses[nextSection.id] = nextProgress.copy(isUnlocked = true)
+                    }
+                }
             }
         } else if (section.isMixed && index > 0) {
             // Check if mixed quest should be unlocked
@@ -486,6 +495,15 @@ fun updateQuestProgress(
                         isUnlocked = true,
                         isCompleted = true
                     )
+                    
+                    // Also unlock the first level 2 exercise after completion badge
+                    if (currentIndex + 2 < travelSections.size) {
+                        val level2Section = travelSections[currentIndex + 2]
+                        val level2Progress = updatedProgresses[level2Section.id]
+                        if (level2Progress != null && !level2Progress.isUnlocked) {
+                            updatedProgresses[level2Section.id] = level2Progress.copy(isUnlocked = true)
+                        }
+                    }
                 } else if (nextSection.isMixed) {
                     // Mixed quest - check if user has completed at least one quest in another language
                     val currentLanguageCode = startLangCodeFromQuestId(questId)

@@ -327,6 +327,7 @@ fun TravelScreen(
                     questExercises = questExercises[currentSection.id] ?: emptyList(),
                     basicTravelSections = basicTravelSections,
                     supportedLangCodes = supportedLangCodes,
+                    questRecipes = questRecipes,
                     onExerciseComplete = { completedStepKey ->
                         // Track encountered words from this exercise
                         val languages = if (currentSection.isMixed) {
@@ -436,19 +437,26 @@ fun TravelScreen(
         }
     }
 
-    // Seed new words for main language when a quest starts, based on its recipe
-    val seededQuestIds = remember { mutableStateOf(mutableSetOf<String>()) }
+    // Track words encountered during exercises for mixed exercises and practice mode
     LaunchedEffect(travelState.currentQuestId) {
         val questId = travelState.currentQuestId
-        if (questId != null && !seededQuestIds.value.contains(questId)) {
+        if (questId != null) {
+            // Mark words as encountered when starting a quest
             val recipe = recipeForQuestId(questRecipes, questId)
-            if (recipe != null) {
+            if (recipe?.wordRange != null) {
                 val mainLang = startLangCodeFromQuestId(questId) ?: startLanguageCode
-                if (recipe.newWordsFromMain > 0) {
-                    seedNewWordsForQuest(context, corpus, mainLang, recipe.newWordsFromMain)
+                val wordsToTrack = corpus.subList(
+                    recipe.wordRange.first.coerceAtLeast(0),
+                    (recipe.wordRange.last + 1).coerceAtMost(corpus.size)
+                )
+                wordsToTrack.forEach { wordEntry ->
+                    val variant = wordEntry.byLang[mainLang]
+                    if (variant != null) {
+                        val word = variant.word ?: variant.text ?: wordEntry.original
+                        addEncounteredWord(context, mainLang, word)
+                    }
                 }
             }
-            seededQuestIds.value.add(questId)
         }
     }
 }
@@ -937,6 +945,7 @@ fun QuestPracticeScreen(
     questExercises: List<ExerciseType>,
     basicTravelSections: List<TravelSection>,
     supportedLangCodes: List<String>,
+    questRecipes: List<QuestRecipe>,
     onExerciseComplete: (String) -> Unit,
     onDebugCompleteQuest: () -> Unit
 ) {
@@ -964,17 +973,36 @@ fun QuestPracticeScreen(
         listOf(languageNameToCode(section.language) ?: "es")
     }
     val languageCodes = languages.filterNotNull()
-    val isEarlyQuest = !section.isMixed && section.id.split("_").lastOrNull()?.toIntOrNull()?.let { it in 1..5 } == true
-    val mainLanguageCode = languageCodes.firstOrNull()
-    val earlyWordsSet = if (isEarlyQuest && mainLanguageCode != null) getEarlyWords(context, mainLanguageCode) else emptySet()
-    fun filterToEarly(base: List<WordEntry>): List<WordEntry> {
-        if (!isEarlyQuest || mainLanguageCode == null || earlyWordsSet.isEmpty()) return base
-        val filtered = base.filter { entry ->
-            val v = entry.byLang[mainLanguageCode]
-            val w = v?.word ?: v?.text ?: entry.original
-            earlyWordsSet.contains(w)
+    // Get the recipe for this quest to determine word selection strategy
+    val recipe = recipeForQuestId(questRecipes, section.id)
+    
+    // Debug: Print quest ID and recipe for Level 2 Exercise 1
+    if (section.id.contains("level2_exercise1")) {
+        println("DEBUG: Quest ID: ${section.id}, Recipe: ${recipe}, WordRange: ${recipe?.wordRange}")
+    }
+    
+    fun getWordsForQuest(base: List<WordEntry>): List<WordEntry> {
+        return when {
+            section.isMixed || recipe?.useEncounteredWords == true -> {
+                // Mixed exercises and practice mode use encountered words
+                getEncounteredWordsForMixed(context, base, languageCodes)
+            }
+            recipe?.wordRange != null -> {
+                // Use specific word range from corpus
+                val range = recipe.wordRange
+                val startIndex = range.first.coerceAtLeast(0)
+                val endIndex = range.last.coerceAtMost(base.size - 1)
+                if (startIndex <= endIndex) {
+                    base.subList(startIndex, endIndex + 1)
+                } else {
+                    emptyList()
+                }
+            }
+            else -> {
+                // Fallback to all words
+                base
+            }
         }
-        return if (filtered.isNotEmpty()) filtered else base
     }
     
     val currentExercise = exerciseTypes.getOrNull(currentExerciseIndex)
@@ -1033,31 +1061,18 @@ fun QuestPracticeScreen(
             }
         }
         
-        val threeWords = remember(corpus, section.isMixed, languageCodes, isEarlyQuest, earlyWordsSet) {
-            if (section.isMixed) {
-                // For mixed exercises, only use words that have been encountered before
-                getEncounteredWordsForMixed(context, corpus, languageCodes).shuffled()
-            } else {
-                filterToEarly(corpus).shuffled().take(3)
+        val threeWords = remember(corpus, section.isMixed, languageCodes, recipe) {
+            val words = getWordsForQuest(corpus).take(3)
+            if (section.id.contains("level2_exercise1")) {
+                println("DEBUG: Three words selected: ${words.map { it.original }}")
             }
+            words
         }
-        val eligibleAudioWords = remember(corpus, section.isMixed, languageCodes, isEarlyQuest, earlyWordsSet) {
-            val baseWords = if (section.isMixed) {
-                // For mixed exercises, only use words that have been encountered before
-                getEncounteredWordsForMixed(context, corpus, languageCodes)
-            } else {
-                filterToEarly(corpus)
-            }
-            baseWords.filter { entry -> languageCodes.any { code -> entry.byLang[code]?.audio != null } }
+        val eligibleAudioWords = remember(corpus, section.isMixed, languageCodes, recipe) {
+            getWordsForQuest(corpus).filter { entry -> languageCodes.any { code -> entry.byLang[code]?.audio != null } }
         }
-        val eligiblePronunciationWords = remember(corpus, section.isMixed, languageCodes, isEarlyQuest, earlyWordsSet) {
-            val baseWords = if (section.isMixed) {
-                // For mixed exercises, only use words that have been encountered before
-                getEncounteredWordsForMixed(context, corpus, languageCodes)
-            } else {
-                filterToEarly(corpus)
-            }
-            baseWords.filter { entry -> languageCodes.any { code ->
+        val eligiblePronunciationWords = remember(corpus, section.isMixed, languageCodes, recipe) {
+            getWordsForQuest(corpus).filter { entry -> languageCodes.any { code ->
                 val v = entry.byLang[code]
                 // Require audio, and accept Google pronunciation or fallback to main word
                 v?.audio != null && ((v.googlePronunciation != null) || (v.word != null))
@@ -1096,7 +1111,7 @@ fun QuestPracticeScreen(
                 } else normalized
                 when (effectiveExerciseId) {
                     "audio_to_flag" -> {
-                        val sourceBase = (if (eligibleAudioWords.isNotEmpty()) eligibleAudioWords else filterToEarly(corpus)).shuffled()
+                        val sourceBase = if (eligibleAudioWords.isNotEmpty()) eligibleAudioWords else getWordsForQuest(corpus)
                         val source = if (section.isMixed) sourceBase else sourceBase.take(10)
                         val pairs = buildAudioToFlagPairs(
                             source, 
@@ -1114,9 +1129,8 @@ fun QuestPracticeScreen(
                         )
                     }
                     "audio_to_flag_multi" -> {
-                        val pool = (if (eligibleAudioWords.isNotEmpty()) eligibleAudioWords else filterToEarly(corpus))
-                        val shuffled = pool.shuffled()
-                        val words = if (section.isMixed) shuffled else shuffled.take(20)
+                        val pool = if (eligibleAudioWords.isNotEmpty()) eligibleAudioWords else getWordsForQuest(corpus)
+                        val words = if (section.isMixed) pool else pool.take(20)
                         val pairs = buildAudioToFlagPairsMulti(
                             words,
                             languageCodes,
@@ -1149,9 +1163,8 @@ fun QuestPracticeScreen(
                         )
                     }
                     "pronunciation_to_flag_multi" -> {
-                        val pool = (if (eligiblePronunciationWords.isNotEmpty()) eligiblePronunciationWords else filterToEarly(corpus))
-                        val shuffled = pool.shuffled()
-                        val words = if (section.isMixed) shuffled else shuffled.take(20)
+                        val pool = if (eligiblePronunciationWords.isNotEmpty()) eligiblePronunciationWords else getWordsForQuest(corpus)
+                        val words = if (section.isMixed) pool else pool.take(20)
                         val pairs = buildPronunciationToFlagPairsMulti(
                             words,
                             languageCodes,
@@ -1168,9 +1181,8 @@ fun QuestPracticeScreen(
                         )
                     }
                     "pronunciation_to_english_multi" -> {
-                        val pool = (if (eligiblePronunciationWords.isNotEmpty()) eligiblePronunciationWords else filterToEarly(corpus))
-                        val shuffled = pool.shuffled()
-                        val words = if (section.isMixed) shuffled else shuffled.take(20)
+                        val pool = if (eligiblePronunciationWords.isNotEmpty()) eligiblePronunciationWords else getWordsForQuest(corpus)
+                        val words = if (section.isMixed) pool else pool.take(20)
                         val pairs = buildPronunciationToEnglishPairsMulti(
                             words,
                             languageCodes,
@@ -1186,7 +1198,7 @@ fun QuestPracticeScreen(
                         )
                     }
                     "audio_to_english" -> {
-                        val sourceBase = (if (eligibleAudioWords.isNotEmpty()) eligibleAudioWords else filterToEarly(corpus)).shuffled()
+                        val sourceBase = if (eligibleAudioWords.isNotEmpty()) eligibleAudioWords else getWordsForQuest(corpus)
                         val source = if (section.isMixed) sourceBase else sourceBase.take(10)
                         val pairs = buildAudioToEnglishPairs(
                             source, 
@@ -1203,7 +1215,7 @@ fun QuestPracticeScreen(
                         )
                     }
                     "pronunciation_to_english" -> {
-                        val sourceBase = (if (eligiblePronunciationWords.isNotEmpty()) eligiblePronunciationWords else filterToEarly(corpus)).shuffled()
+                        val sourceBase = if (eligiblePronunciationWords.isNotEmpty()) eligiblePronunciationWords else getWordsForQuest(corpus)
                         val source = if (section.isMixed) sourceBase else sourceBase.take(10)
                         val pairs = buildPronunciationToEnglishPairsMulti(
                             source,
@@ -1220,9 +1232,9 @@ fun QuestPracticeScreen(
                         )
                     }
                     "pronunciation_audio_to_english" -> {
-                        val pool = if (eligiblePronunciationWords.isNotEmpty()) eligiblePronunciationWords else filterToEarly(corpus)
+                        val pool = if (eligiblePronunciationWords.isNotEmpty()) eligiblePronunciationWords else getWordsForQuest(corpus)
                         // pick one word and build 5 options
-                        val chosen = pool.random()
+                        val chosen = pool.firstOrNull() ?: pool.random()
                         // Choose a language variant that has audio and either Google pronunciation or main word
                         val code = languageCodes.firstOrNull {
                             val v = chosen.byLang[it]
@@ -1237,7 +1249,6 @@ fun QuestPracticeScreen(
                         
                         val distractors = pool.filter { it !== chosen }
                             .mapNotNull { it.byLang["en"]?.text ?: it.byLang["en"]?.word ?: it.original }
-                            .shuffled()
                             .distinct()
                             .take(4)
                         val options = (distractors + correctAnswer).shuffled()
@@ -1254,8 +1265,8 @@ fun QuestPracticeScreen(
                         )
                     }
                     "pronunciation_audio_to_type_english" -> {
-                        val pool = if (eligiblePronunciationWords.isNotEmpty()) eligiblePronunciationWords else filterToEarly(corpus)
-                        val chosen = pool.random()
+                        val pool = if (eligiblePronunciationWords.isNotEmpty()) eligiblePronunciationWords else getWordsForQuest(corpus)
+                        val chosen = pool.firstOrNull() ?: pool.random()
                         val code = languageCodes.firstOrNull {
                             val v = chosen.byLang[it]
                             v?.audio != null && (v.googlePronunciation != null || v.word != null)

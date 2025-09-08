@@ -10,13 +10,14 @@ data class QuestRecipe(
     val languageCount: Int,
     val exerciseOrder: List<String>,
     val randomOrder: Boolean,
-    val newWordsFromMain: Int
+    val wordRange: IntRange? = null, // Range of words from corpus to use (e.g., 0..4 for first 5 words)
+    val useEncounteredWords: Boolean = false // For mixed exercises and practice mode
 )
 
 fun defaultQuestRecipes(): List<QuestRecipe> {
     // Define per-level quest recipes
-    // Level 1: Single language, fixed order
-    val level1 = QuestRecipe(
+    // Level 1 Exercise 1: Single language, fixed order
+    val level1_exercise1 = QuestRecipe(
         type = QuestType.SINGLE,
         languageCount = 1,
         exerciseOrder = listOf(
@@ -31,11 +32,11 @@ fun defaultQuestRecipes(): List<QuestRecipe> {
             "pronunciation_to_english_multi",
         ),
         randomOrder = false,
-        newWordsFromMain = 5
+        wordRange = 0..4 // First 5 words: hello, goodbye, please, thank you, excuse me
     )
 
-    // Level 2: Single language, random order same pool
-    val level2 = QuestRecipe(
+    // Level 1 Exercise 2: Single language, random order same pool
+    val level1_exercise2 = QuestRecipe(
         type = QuestType.SINGLE,
         languageCount = 1,
         exerciseOrder = listOf(
@@ -45,11 +46,11 @@ fun defaultQuestRecipes(): List<QuestRecipe> {
 
         ).let { base -> List(10) { base[it % base.size] } },
         randomOrder = true,
-        newWordsFromMain = 0
+        wordRange = 0..4 // Same 5 words as Level 1 Exercise 1
     )
 
-    // Level 3: Mixed, 2 languages, include flag-based rounds, random order
-    val level3 = QuestRecipe(
+    // Level 1 Exercise 3: Mixed, 2 languages, include flag-based rounds, random order
+    val level1_exercise3 = QuestRecipe(
         type = QuestType.MIXED,
         languageCount = 2,
         exerciseOrder = listOf(
@@ -63,11 +64,11 @@ fun defaultQuestRecipes(): List<QuestRecipe> {
             "pronunciation_to_flag_multi"
         ),
         randomOrder = true,
-        newWordsFromMain = 0
+        useEncounteredWords = true // Mixed exercises use encountered words
     )
 
-    // Level 4: Single language, fixed order
-    val level4 = QuestRecipe(
+    // Level 1 Exercise 4: Single language, fixed order
+    val level1_exercise4 = QuestRecipe(
         type = QuestType.SINGLE,
         languageCount = 1,
         exerciseOrder = listOf(
@@ -83,19 +84,54 @@ fun defaultQuestRecipes(): List<QuestRecipe> {
             "audio_to_english_multi"
         ),
         randomOrder = false,
-        newWordsFromMain = 0
+        wordRange = 0..4 // Same 5 words as other Level 1 exercises
     )
 
-    // Level 5: Single language, random order
-    val level5 = QuestRecipe(
+    // Level 1 Exercise 5: Single language, random order
+    val level1_exercise5 = QuestRecipe(
         type = QuestType.SINGLE,
         languageCount = 1,
         exerciseOrder = List(10) { if (it % 2 == 0) "audio_to_english_multi" else "pronunciation_audio_to_english" },
         randomOrder = true,
-        newWordsFromMain = 0
+        wordRange = 0..4 // Same 5 words as other Level 1 exercises
     )
 
-    return listOf(level1, level2, level3, level4, level5)
+    // Level 2 Exercise 1: Single language, fixed order (appears after Level 1 Complete badge)
+    val level2_exercise1 = QuestRecipe(
+        type = QuestType.SINGLE,
+        languageCount = 1,
+        exerciseOrder = listOf(
+            "pronunciation_audio_to_english",
+            "pronunciation_audio_to_english",
+            "pronunciation_audio_to_english",
+            "pronunciation_audio_to_english",
+            "pronunciation_audio_to_english",
+            "audio_to_english_multi",
+            "audio_to_english_multi",
+            "pronunciation_to_english_multi",
+            "pronunciation_to_english_multi",
+        ),
+        randomOrder = false,
+        wordRange = 5..9 // Next 5 words: help, sorry, water, yes, no
+    )
+
+    return listOf(level1_exercise1, level1_exercise2, level1_exercise3, level1_exercise4, level1_exercise5, level2_exercise1)
+}
+
+// Example of a quest recipe that uses a specific word range
+fun createCustomWordRangeRecipe(): QuestRecipe {
+    return QuestRecipe(
+        type = QuestType.SINGLE,
+        languageCount = 1,
+        exerciseOrder = listOf(
+            "pronunciation_audio_to_english",
+            "audio_to_english_multi",
+            "pronunciation_audio_to_english",
+            "audio_to_english_multi"
+        ),
+        randomOrder = false,
+        wordRange = 0..2 // First 3 words only
+    )
 }
 
 fun generateTravelSectionsFromRecipes(startLangCode: String, recipes: List<QuestRecipe>): List<TravelSection> {
@@ -103,13 +139,16 @@ fun generateTravelSectionsFromRecipes(startLangCode: String, recipes: List<Quest
     val startFlag = languageCodeToFlag(startLangCode) ?: "🇺🇸"
     val sections = mutableListOf<TravelSection>()
 
-    recipes.forEachIndexed { index, recipe ->
+    // Level 1: First 5 exercises (indices 0-4)
+    for (i in 0..4) {
+        val recipe = recipes[i]
         val isMixed = recipe.type == QuestType.MIXED
+        val exerciseNumber = i + 1
         sections.add(
             TravelSection(
-                id = "${startLangCode}_${index + 1}",
+                id = "${startLangCode}_level1_exercise${exerciseNumber}",
                 flag = if (isMixed) "🌍" else startFlag,
-                name = if (isMixed) "Mixed" else startName,
+                name = "Level 1 Exercise $exerciseNumber",
                 language = if (isMixed) "Mixed" else startName,
                 isMixed = isMixed,
                 languages = listOf(startLangCode)
@@ -117,6 +156,7 @@ fun generateTravelSectionsFromRecipes(startLangCode: String, recipes: List<Quest
         )
     }
 
+    // Level 1 Complete badge
     sections.add(
         TravelSection(
             id = "${startLangCode}_complete",
@@ -129,11 +169,54 @@ fun generateTravelSectionsFromRecipes(startLangCode: String, recipes: List<Quest
         )
     )
 
+    // Level 2: Remaining exercises (starting from index 5)
+    for (i in 5 until recipes.size) {
+        val recipe = recipes[i]
+        val isMixed = recipe.type == QuestType.MIXED
+        val exerciseNumber = i - 4 // Level 2 exercises start from 1
+        sections.add(
+            TravelSection(
+                id = "${startLangCode}_level2_exercise${exerciseNumber}",
+                flag = if (isMixed) "🌍" else startFlag,
+                name = "Level 2 Exercise $exerciseNumber",
+                language = if (isMixed) "Mixed" else startName,
+                isMixed = isMixed,
+                languages = listOf(startLangCode)
+            )
+        )
+    }
+
     return sections
 }
 
 fun recipeForQuestId(recipes: List<QuestRecipe>, questId: String): QuestRecipe? {
     val parts = questId.split("_")
+    
+    // Debug logging
+    if (questId.contains("level2_exercise1")) {
+        println("DEBUG recipeForQuestId: questId=$questId, parts=${parts.toList()}")
+        println("DEBUG: parts.size=${parts.size}, parts[1]=${parts.getOrNull(1)}, parts[2]=${parts.getOrNull(2)}")
+    }
+    
+    // Handle new naming pattern: level1_exercise1, level1_exercise2, level2_exercise1, etc.
+    if (parts.size >= 3 && parts[1].startsWith("level") && parts[2].startsWith("exercise")) {
+        val level = parts[1].removePrefix("level").toIntOrNull() ?: return null
+        val exercise = parts[2].removePrefix("exercise").toIntOrNull() ?: return null
+        
+        if (questId.contains("level2_exercise1")) {
+            println("DEBUG: level=$level, exercise=$exercise")
+            println("DEBUG: level == 2 = ${level == 2}, exercise >= 1 = ${exercise >= 1}")
+            println("DEBUG: recipes.size=${recipes.size}, index=${4 + exercise}")
+        }
+        
+        return when {
+            level == 1 && exercise in 1..5 -> recipes.getOrNull(exercise - 1) // Level 1 exercises: indices 0-4
+            level == 2 && exercise >= 1 -> recipes.getOrNull(4 + exercise) // Level 2 exercises: start at index 5
+            else -> null
+        }
+    }
+    
+    // Fallback to old pattern for backward compatibility
     val idx = parts.lastOrNull()?.toIntOrNull() ?: return null
     val zeroBased = idx - 1
     if (zeroBased < 0 || zeroBased >= recipes.size) return null
