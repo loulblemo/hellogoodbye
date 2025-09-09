@@ -1238,6 +1238,26 @@ fun QuestPracticeScreen(
                 v?.audio != null && ((v.googlePronunciation != null) || (v.word != null))
             } }
         }
+
+        // Shuffled looping selector for single-word exercises so we don't repeat until pool is exhausted
+        val singleWordOrderByExercise = remember(section.id) { mutableStateMapOf<String, List<WordEntry>>() }
+        val singleWordIndexByExercise = remember(section.id) { mutableStateMapOf<String, Int>() }
+        fun nextSingleWord(exerciseKey: String, pool: List<WordEntry>): WordEntry {
+            val existing = singleWordOrderByExercise[exerciseKey]
+            val list = if (existing != null && existing.size == pool.size && existing.containsAll(pool)) {
+                existing
+            } else {
+                val shuffled = pool.shuffled()
+                singleWordOrderByExercise[exerciseKey] = shuffled
+                singleWordIndexByExercise[exerciseKey] = 0
+                shuffled
+            }
+            val idx = singleWordIndexByExercise[exerciseKey] ?: 0
+            val chosen = list.getOrNull(idx) ?: pool.firstOrNull() ?: pool.random()
+            val nextIdx = if (list.isNotEmpty()) (idx + 1) % list.size else 0
+            singleWordIndexByExercise[exerciseKey] = nextIdx
+            return chosen
+        }
         
         // Check if current exercise is already completed
         val isExerciseCompleted = currentProgress?.completedExercises?.contains(stepKey) == true
@@ -1394,7 +1414,7 @@ fun QuestPracticeScreen(
                     "pronunciation_audio_to_english" -> {
                         val pool = if (eligiblePronunciationWords.isNotEmpty()) eligiblePronunciationWords else getWordsForQuest(corpus)
                         // pick one word and build 5 options
-                        val chosen = pool.firstOrNull() ?: pool.random()
+                        val chosen = remember(stepKey, pool) { nextSingleWord(effectiveExerciseId, pool) }
                         // Choose a language variant that has audio and either Google pronunciation or main word
                         val code = languageCodes.firstOrNull {
                             val v = chosen.byLang[it]
@@ -1426,7 +1446,7 @@ fun QuestPracticeScreen(
                     }
                     "pronunciation_audio_to_type_english" -> {
                         val pool = if (eligiblePronunciationWords.isNotEmpty()) eligiblePronunciationWords else getWordsForQuest(corpus)
-                        val chosen = pool.firstOrNull() ?: pool.random()
+                        val chosen = remember(stepKey, pool) { nextSingleWord(effectiveExerciseId, pool) }
                         val code = languageCodes.firstOrNull {
                             val v = chosen.byLang[it]
                             v?.audio != null && (v.googlePronunciation != null || v.word != null)
