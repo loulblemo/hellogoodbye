@@ -365,25 +365,30 @@ fun WelcomeScreen(onComplete: (List<Country>) -> Unit) {
             Spacer(modifier = Modifier.height(40.dp))
             
             // Language grid
-            LazyVerticalGrid(
-                columns = GridCells.Fixed(3),
-                modifier = Modifier.weight(1f),
-                horizontalArrangement = Arrangement.spacedBy(12.dp),
-                verticalArrangement = Arrangement.spacedBy(12.dp)
+            Box(
+                modifier = Modifier.weight(1f)
             ) {
-                items(allLanguages) { country ->
-                    WelcomeLanguageCard(
-                        country = country,
-                        isSelected = selectedLanguages.contains(country),
-                        onClick = {
-                            if (selectedLanguages.contains(country)) {
-                                selectedLanguages = selectedLanguages - country
-                            } else if (selectedLanguages.size < 5) {
-                                selectedLanguages = selectedLanguages + country
-                            }
-                        },
-                        isEnabled = selectedLanguages.contains(country) || selectedLanguages.size < 5
-                    )
+                LazyVerticalGrid(
+                    columns = GridCells.Fixed(3),
+                    modifier = Modifier.fillMaxSize(),
+                    horizontalArrangement = Arrangement.spacedBy(12.dp),
+                    verticalArrangement = Arrangement.spacedBy(12.dp),
+                    contentPadding = PaddingValues(vertical = 8.dp)
+                ) {
+                    items(allLanguages) { country ->
+                        WelcomeLanguageCard(
+                            country = country,
+                            isSelected = selectedLanguages.contains(country),
+                            onClick = {
+                                if (selectedLanguages.contains(country)) {
+                                    selectedLanguages = selectedLanguages - country
+                                } else if (selectedLanguages.size < 5) {
+                                    selectedLanguages = selectedLanguages + country
+                                }
+                            },
+                            isEnabled = selectedLanguages.contains(country) || selectedLanguages.size < 5
+                        )
+                    }
                 }
             }
             

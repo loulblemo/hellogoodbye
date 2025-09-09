@@ -1,10 +1,15 @@
 import json
 import os
+import sys
 import requests
 import time
 from googletrans import Translator
 from tqdm import tqdm
 import urllib.parse
+
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
+from tools.lang_tools import get_language_code
 
 # Initialize Google Translate
 translator = Translator()
@@ -46,29 +51,7 @@ def download_audio(audio_url, filename):
         print(f"Error downloading audio for {filename}: {e}")
         return False
 
-def get_language_code(lang_key):
-    """Convert language key to Google Translate language code"""
-    lang_mapping = {
-        'en': 'en', # English
-        'es': 'es', # Spanish
-        'fr': 'fr', # French
-        'de': 'de', # German
-        'it': 'it', # Italian
-        'pt': 'pt', # Portuguese
-        'ru': 'ru', # Russian
-        'ja': 'ja', # Japanese
-        'ko': 'ko', # Korean
-        'zh-cn': 'zh-cn', # Chinese
-        'ar': 'ar', # Arabic
-        'hi': 'hi', # Hindi
-        'th': 'th', # Thai
-        'vi': 'vi', # Vietnamese
-        'id': 'id', # Indonesian
-        'ms': 'ms', # Malay
-        'tl': 'tl', # Tagalog
-        'fil': 'fil' # Filipino
-    }
-    return lang_mapping.get(lang_key, 'en')
+
 
 def process_corpus():
     """Process the corpus and add audio files"""
@@ -98,8 +81,8 @@ def process_corpus():
                 audio_filename = f"{original_word}_{lang_key}_{safe_word}.mp3"
                 audio_path = os.path.join(audio_dir, audio_filename)
                 
-                # Check if audio file already exists
-                if not os.path.exists(audio_path):
+                # Check if audio field already exists in corpus and audio file exists
+                if 'audio' not in lang_data or not os.path.exists(audio_path):
                     # Get audio URL and download
                     audio_url = get_audio_url(word, lang_code)
                     if audio_url:
@@ -111,8 +94,9 @@ def process_corpus():
                     # Add small delay to avoid rate limiting
                     time.sleep(0.5)
                 
-                # Add audio field to the language data
-                lang_data['audio'] = audio_filename
+                # Add audio field to the language data if not already present
+                if 'audio' not in lang_data:
+                    lang_data['audio'] = audio_filename
         
         # Save progress every 10 entries
         if (i + 1) % 10 == 0:

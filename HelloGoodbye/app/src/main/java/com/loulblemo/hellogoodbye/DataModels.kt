@@ -111,13 +111,17 @@ fun loadCorpusFromAssets(context: Context): List<WordEntry> {
 private var languageMetadata: JSONObject? = null
 
 fun loadLanguageMetadata(context: Context): JSONObject? {
-    if (languageMetadata == null) {
-        languageMetadata = runCatching {
-            val jsonString = context.assets.open("language_metadata.json").bufferedReader().use { it.readText() }
-            JSONObject(jsonString)
-        }.getOrElse { null }
-    }
+    // Always reload to ensure we have the latest metadata
+    languageMetadata = runCatching {
+        val jsonString = context.assets.open("language_metadata.json").bufferedReader().use { it.readText() }
+        JSONObject(jsonString)
+    }.getOrElse { null }
     return languageMetadata
+}
+
+// Function to clear the cached metadata (useful for development/testing)
+fun clearLanguageMetadataCache() {
+    languageMetadata = null
 }
 
 fun languageNameToCode(name: String): String? {
@@ -134,6 +138,12 @@ fun languageNameToCode(name: String): String? {
         "chinese", "chinese (simplified)", "simplified chinese" -> "zh-cn"
         "dutch" -> "nl"
         "swedish" -> "sv"
+        "thai" -> "th"
+        "vietnamese" -> "vi"
+        "indonesian" -> "id"
+        "malay" -> "ms"
+        "filipino", "tagalog" -> "tl"
+
         else -> null
     }
 }
@@ -154,6 +164,11 @@ fun languageCodeToFlag(code: String): String? {
         "zh-cn" -> "🇨🇳"
         "nl" -> "🇳🇱"
         "sv" -> "🇸🇪"
+        "th" -> "🇹🇭"
+        "vi" -> "🇻🇳"
+        "id" -> "🇮🇩"
+        "ms" -> "🇲🇾"
+        "tl" -> "🇵🇭"
         else -> null
     }
 }
@@ -174,6 +189,11 @@ fun languageCodeToName(code: String): String? {
         "zh-cn" -> "Chinese"
         "nl" -> "Dutch"
         "sv" -> "Swedish"
+        "th" -> "Thai"
+        "vi" -> "Vietnamese"
+        "id" -> "Indonesian"
+        "ms" -> "Malay"
+        "tl" -> "Filipino"
         else -> null
     }
 }
@@ -779,8 +799,8 @@ fun clearAllProgress(context: Context) {
     // Also reset app launch status so welcome screen shows after clearing progress
     editor.remove("app_ever_launched")
     
-    // Reset currency to 50 points
-    editor.putInt("user_currency", 50)
+    // Reset currency to 10 points
+    editor.putInt("user_currency", 10)
     
     // Reset selected languages to default 5 from corpus
     val supportedLanguageCodes = getSupportedLanguageCodesFromMetadata(context)
@@ -865,7 +885,7 @@ fun saveCurrency(context: Context, currency: Int) {
 
 fun loadCurrency(context: Context): Int {
     val prefs = context.getSharedPreferences("hg_progress", Context.MODE_PRIVATE)
-    val baseCurrency = prefs.getInt("user_currency", 50) // Default to 50 points
+    val baseCurrency = prefs.getInt("user_currency", 10) // Default to 10 points
     
     // In debug mode, give user 500 credits
     return if (loadDebugMode(context)) 500 else baseCurrency

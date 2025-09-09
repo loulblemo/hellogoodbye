@@ -64,6 +64,37 @@
       "text": "你好",
       "google_pronunciation": "Nǐ hǎo",
       "audio": "hello_zh-cn_你好.mp3"
+    },
+    "th": {
+      "word": "สวัสดี",
+      "IPA": "sˈa5wmsaɜds",
+      "text": "สวัสดี",
+      "google_pronunciation": "S̄wạs̄dī",
+      "audio": "hello_th_สวสด.mp3"
+    },
+    "vi": {
+      "word": "Xin chào",
+      "IPA": "sˈin tʃˈaː2w",
+      "text": "Xin chào",
+      "audio": "hello_vi_Xin_chào.mp3"
+    },
+    "id": {
+      "word": "Halo",
+      "IPA": "hˈalo",
+      "text": "Halo",
+      "audio": "hello_id_Halo.mp3"
+    },
+    "ms": {
+      "word": "Helo",
+      "IPA": "hˈɛlo",
+      "text": "Helo",
+      "audio": "hello_ms_Helo.mp3"
+    },
+    "tl": {
+      "word": "Kumusta",
+      "IPA": null,
+      "text": "Kumusta",
+      "audio": "hello_tl_Kumusta.mp3"
     }
   },
   {
@@ -131,6 +162,37 @@
       "text": "再见",
       "google_pronunciation": "Zàijiàn",
       "audio": "goodbye_zh-cn_再见.mp3"
+    },
+    "th": {
+      "word": "ลาก่อน",
+      "IPA": "lˈaɜsk ʔˈa2n",
+      "text": "ลาก่อน",
+      "google_pronunciation": "Lā k̀xn",
+      "audio": "goodbye_th_ลากอน.mp3"
+    },
+    "vi": {
+      "word": "tạm biệt",
+      "IPA": "t̪ˈaː6m bˈiɛ6t̪",
+      "text": "tạm biệt",
+      "audio": "goodbye_vi_tạm_biệt.mp3"
+    },
+    "id": {
+      "word": "selamat tinggal",
+      "IPA": "səlˈamat tˈiŋɡal",
+      "text": "selamat tinggal",
+      "audio": "goodbye_id_selamat_tinggal.mp3"
+    },
+    "ms": {
+      "word": "Selamat tinggal",
+      "IPA": "səlˈamat tˈiŋɡal",
+      "text": "Selamat tinggal",
+      "audio": "goodbye_ms_Selamat_tinggal.mp3"
+    },
+    "tl": {
+      "word": "Paalam",
+      "IPA": null,
+      "text": "Paalam",
+      "audio": "goodbye_tl_Paalam.mp3"
     }
   },
   {
@@ -198,6 +260,37 @@
       "text": "请",
       "google_pronunciation": "Qǐng",
       "audio": "please_zh-cn_请.mp3"
+    },
+    "th": {
+      "word": "โปรด",
+      "IPA": "oɜpˈa2ɹaɜd",
+      "text": "โปรด",
+      "google_pronunciation": "Pord",
+      "audio": "please_th_โปรด.mp3"
+    },
+    "vi": {
+      "word": "Xin vui lòng",
+      "IPA": "sˈin vˈuj lˈɔ2ŋ",
+      "text": "Xin vui lòng",
+      "audio": "please_vi_Xin_vui_lòng.mp3"
+    },
+    "id": {
+      "word": "Tolong",
+      "IPA": "tˈoloŋ",
+      "text": "Tolong",
+      "audio": "please_id_Tolong.mp3"
+    },
+    "ms": {
+      "word": "Tolong",
+      "IPA": "tˈoloŋ",
+      "text": "Tolong",
+      "audio": "please_ms_Tolong.mp3"
+    },
+    "tl": {
+      "word": "Mangyaring",
+      "IPA": null,
+      "text": "Mangyaring",
+      "audio": "please_tl_Mangyaring.mp3"
     }
   },
   {
@@ -265,6 +358,37 @@
       "text": "谢谢",
       "google_pronunciation": "Xièxiè",
       "audio": "thank you_zh-cn_谢谢.mp3"
+    },
+    "th": {
+      "word": "ขอบคุณ",
+      "IPA": "khˌa5ʔaɜbˈa2khu2n",
+      "text": "ขอบคุณ",
+      "google_pronunciation": "K̄hxbkhuṇ",
+      "audio": "thank you_th_ขอบคณ.mp3"
+    },
+    "vi": {
+      "word": "Cảm ơn",
+      "IPA": "kˈaː4m ˈəːn",
+      "text": "Cảm ơn",
+      "audio": "thank you_vi_Cảm_ơn.mp3"
+    },
+    "id": {
+      "word": "Terima kasih",
+      "IPA": "tərˈima kˈasih",
+      "text": "Terima kasih",
+      "audio": "thank you_id_Terima_kasih.mp3"
+    },
+    "ms": {
+      "word": "Terima kasih",
+      "IPA": "təɾrˈimə kˈaseh",
+      "text": "Terima kasih",
+      "audio": "thank you_ms_Terima_kasih.mp3"
+    },
+    "tl": {
+      "word": "Salamat",
+      "IPA": null,
+      "text": "Salamat",
+      "audio": "thank you_tl_Salamat.mp3"
     }
   },
   {
@@ -332,6 +456,41 @@
       "text": "打扰一下",
       "google_pronunciation": "Dǎrǎo yīxià",
       "audio": "excuse me_zh-cn_打扰一下.mp3"
+    },
+    "th": {
+      "word": "ขออนุญาต",
+      "IPA": "khˌa5ʔaʔa2nˈu2jaɜst",
+      "text": "ขออนุญาต",
+      "google_pronunciation": "K̄hx xnuỵāt",
+      "audio": "excuse me_th_ขออนญาต.mp3"
+    },
+    "vi": {
+      "word": "xin lỗi",
+      "IPA": "sˈin lˈo5j",
+      "text": "xin lỗi",
+      "google_pronunciation": "excuse me",
+      "audio": "excuse me_vi_xin_lỗi.mp3"
+    },
+    "id": {
+      "word": "Permisi",
+      "IPA": "pərmˈisi",
+      "text": "Permisi",
+      "google_pronunciation": "excuse me",
+      "audio": "excuse me_id_Permisi.mp3"
+    },
+    "ms": {
+      "word": "maafkan saya",
+      "IPA": "maˈafkan sˈajə",
+      "text": "maafkan saya",
+      "google_pronunciation": "excuse me",
+      "audio": "excuse me_ms_maafkan_saya.mp3"
+    },
+    "tl": {
+      "word": "Excuse me",
+      "IPA": null,
+      "text": "Excuse me",
+      "google_pronunciation": "excuse me",
+      "audio": "excuse me_tl_Excuse_me.mp3"
     }
   },
   {
@@ -399,6 +558,37 @@
       "text": "帮助",
       "google_pronunciation": "Bāngzhù",
       "audio": "help_zh-cn_帮助.mp3"
+    },
+    "th": {
+      "word": "ช่วย",
+      "IPA": "ch wˈa2j",
+      "text": "ช่วย",
+      "google_pronunciation": "Ch̀wy",
+      "audio": "help_th_ชวย.mp3"
+    },
+    "vi": {
+      "word": "giúp đỡ",
+      "IPA": "zˈuɜp ɗˈəː5",
+      "text": "giúp đỡ",
+      "audio": "help_vi_giúp_đỡ.mp3"
+    },
+    "id": {
+      "word": "membantu",
+      "IPA": "məmbˈantu",
+      "text": "membantu",
+      "audio": "help_id_membantu.mp3"
+    },
+    "ms": {
+      "word": "tolong",
+      "IPA": "tˈoloŋ",
+      "text": "tolong",
+      "audio": "help_ms_tolong.mp3"
+    },
+    "tl": {
+      "word": "Tulong",
+      "IPA": null,
+      "text": "Tulong",
+      "audio": "help_tl_Tulong.mp3"
     }
   },
   {
@@ -466,6 +656,37 @@
       "text": "对不起",
       "google_pronunciation": "Duìbùqǐ",
       "audio": "sorry_zh-cn_对不起.mp3"
+    },
+    "th": {
+      "word": "ขอโทษ",
+      "IPA": "kha5ʔˈo2tha5s",
+      "text": "ขอโทษ",
+      "google_pronunciation": "K̄hxthos̄ʹ",
+      "audio": "sorry_th_ขอโทษ.mp3"
+    },
+    "vi": {
+      "word": "Xin lỗi",
+      "IPA": "sˈin lˈo5j",
+      "text": "Xin lỗi",
+      "audio": "sorry_vi_Xin_lỗi.mp3"
+    },
+    "id": {
+      "word": "Maaf",
+      "IPA": "mˈaaf",
+      "text": "Maaf",
+      "audio": "sorry_id_Maaf.mp3"
+    },
+    "ms": {
+      "word": "Maaf",
+      "IPA": "mˈaaf",
+      "text": "Maaf",
+      "audio": "sorry_ms_Maaf.mp3"
+    },
+    "tl": {
+      "word": "Pasensya na",
+      "IPA": null,
+      "text": "Pasensya na",
+      "audio": "sorry_tl_Pasensya_na.mp3"
     }
   },
   {
@@ -533,6 +754,37 @@
       "text": "水",
       "google_pronunciation": "Shuǐ",
       "audio": "water_zh-cn_水.mp3"
+    },
+    "th": {
+      "word": "น้ำ",
+      "IPA": "n s",
+      "text": "น้ำ",
+      "google_pronunciation": "N̂ả",
+      "audio": "water_th_นำ.mp3"
+    },
+    "vi": {
+      "word": "Nước",
+      "IPA": "nˈyəɜc",
+      "text": "Nước",
+      "audio": "water_vi_Nước.mp3"
+    },
+    "id": {
+      "word": "air",
+      "IPA": "ˈaɪr",
+      "text": "air",
+      "audio": "water_id_air.mp3"
+    },
+    "ms": {
+      "word": "air",
+      "IPA": "ˈaɪr",
+      "text": "air",
+      "audio": "water_ms_air.mp3"
+    },
+    "tl": {
+      "word": "Tubig",
+      "IPA": null,
+      "text": "Tubig",
+      "audio": "water_tl_Tubig.mp3"
     }
   },
   {
@@ -600,6 +852,37 @@
       "text": "是的",
       "google_pronunciation": "Shì de",
       "audio": "yes_zh-cn_是的.mp3"
+    },
+    "th": {
+      "word": "ใช่",
+      "IPA": "ˈai2ch",
+      "text": "ใช่",
+      "google_pronunciation": "Chı̀",
+      "audio": "yes_th_ใช.mp3"
+    },
+    "vi": {
+      "word": "Đúng",
+      "IPA": "ɗˈuɜŋ",
+      "text": "Đúng",
+      "audio": "yes_vi_Đúng.mp3"
+    },
+    "id": {
+      "word": "Ya",
+      "IPA": "jˈa",
+      "text": "Ya",
+      "audio": "yes_id_Ya.mp3"
+    },
+    "ms": {
+      "word": "Ya",
+      "IPA": "jˈa",
+      "text": "Ya",
+      "audio": "yes_ms_Ya.mp3"
+    },
+    "tl": {
+      "word": "Oo",
+      "IPA": null,
+      "text": "Oo",
+      "audio": "yes_tl_Oo.mp3"
     }
   },
   {
@@ -667,6 +950,37 @@
       "text": "不",
       "google_pronunciation": "Bù",
       "audio": "no_zh-cn_不.mp3"
+    },
+    "th": {
+      "word": "เลขที่",
+      "IPA": "e2lˈa5kha2ths",
+      "text": "เลขที่",
+      "google_pronunciation": "Lek̄h thī̀",
+      "audio": "no_th_เลขท.mp3"
+    },
+    "vi": {
+      "word": "KHÔNG",
+      "IPA": "xˌoŋ",
+      "text": "KHÔNG",
+      "audio": "no_vi_KHÔNG.mp3"
+    },
+    "id": {
+      "word": "TIDAK",
+      "IPA": "tˈidak",
+      "text": "TIDAK",
+      "audio": "no_id_TIDAK.mp3"
+    },
+    "ms": {
+      "word": "tidak",
+      "IPA": "tˈidaʔ",
+      "text": "tidak",
+      "audio": "no_ms_tidak.mp3"
+    },
+    "tl": {
+      "word": "hindi",
+      "IPA": null,
+      "text": "hindi",
+      "audio": "no_tl_hindi.mp3"
     }
   }
 ]

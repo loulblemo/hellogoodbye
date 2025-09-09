@@ -49,6 +49,31 @@
       "name": "Chinese",
       "flag": "🇨🇳",
       "flagAsset": "flags/4x3/cn.svg"
+    },
+    "th": {
+      "name": "Thai",
+      "flag": "🇹🇭",
+      "flagAsset": "flags/4x3/th.svg"
+    },
+    "vi": {
+      "name": "Vietnamese",
+      "flag": "🇻🇳",
+      "flagAsset": "flags/4x3/vi.svg"
+    },
+    "id": {
+      "name": "Indonesian",
+      "flag": "🇮🇩",
+      "flagAsset": "flags/4x3/id.svg"
+    },
+    "ms": {
+      "name": "Malay",
+      "flag": "🇲🇾",
+      "flagAsset": "flags/4x3/my.svg"
+    },
+    "tl": {
+      "name": "Filipino",
+      "flag": "🇵🇭",
+      "flagAsset": "flags/4x3/ph.svg"
     }
   }
 }
