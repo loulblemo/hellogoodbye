@@ -252,7 +252,7 @@ fun TravelScreen(
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.background)
     ) {
-        // Header with coins, debug indicator, and exit
+        // Header with coins, debug indicator, language name, and exit
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -308,6 +308,18 @@ fun TravelScreen(
                 }
             }
             
+            // Center: Language name
+            val languageName = languageCodeToName(startLanguageCode) ?: startLanguageCode
+            Text(
+                text = languageName,
+                fontSize = 20.sp,
+                fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colorScheme.onBackground,
+                modifier = Modifier.weight(1f),
+                textAlign = TextAlign.Center
+            )
+            
+            // Right side: Exit button
             ResponsiveRedCross(onClick = {
                 val qid = travelState.currentQuestId
                 if (qid != null) {
@@ -1177,8 +1189,6 @@ fun QuestPracticeScreen(
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.background)
     ) {
-        // Removed header flag and language name for cleaner UI
-        
         // Progress row: flag badge (smudged SVG) + dark purple progress bar
         Row(
             modifier = Modifier
