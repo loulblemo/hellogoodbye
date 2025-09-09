@@ -59,6 +59,45 @@ import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.geometry.CornerRadius
 
+// Helper function to determine if text contains Thai or Vietnamese characters
+fun needsLilitaFont(text: String): Boolean {
+    return text.any { char ->
+        // Thai Unicode range: U+0E00-U+0E7F
+        // Vietnamese uses Latin characters with diacritics, but we'll check for common Vietnamese diacritics
+        val codePoint = char.code
+        (codePoint in 0x0E00..0x0E7F) || // Thai characters
+        (char in "àáạảãâầấậẩẫăằắặẳẵèéẹẻẽêềếệểễìíịỉĩòóọỏõôồốộổỗơờớợởỡùúụủũưừứựửữỳýỵỷỹđĐ") // Vietnamese diacritics
+    }
+}
+
+/*
+Test cases for needsLilitaFont function:
+- needsLilitaFont("สวัสดี") should return true (Thai)
+- needsLilitaFont("Xin chào") should return true (Vietnamese with diacritics)
+- needsLilitaFont("hello") should return false (English)
+- needsLilitaFont("Hola") should return false (Spanish)
+- needsLilitaFont("привет") should return false (Russian - not Thai/Vietnamese)
+*/
+
+// Helper function to get the appropriate font family based on text content
+@Composable
+fun getAppropriateFontFamily(text: String): FontFamily {
+    val provider = GoogleFont.Provider(
+        providerAuthority = "com.google.android.gms.fonts",
+        providerPackage = "com.google.android.gms",
+        certificates = R.array.com_google_android_gms_fonts_certs
+    )
+    
+    return remember(text) {
+        val googleFont = if (needsLilitaFont(text)) {
+            GoogleFont("Lilita One")
+        } else {
+            GoogleFont("Titan One")
+        }
+        FontFamily(Font(googleFont = googleFont, fontProvider = provider))
+    }
+}
+
 fun assetFlagPathForLanguage(code: String): String? {
     // This function is now deprecated in favor of getLanguageFlagAssetFromMetadata
     // Keeping for backward compatibility
@@ -472,16 +511,8 @@ fun PronunciationWordBubble(
     modifier: Modifier = Modifier,
     containerColor: Color = MaterialTheme.colorScheme.primary
 ) {
-    // Button-like bubble styled like Practice: primary background, Titan font, white text
-    val provider = GoogleFont.Provider(
-        providerAuthority = "com.google.android.gms.fonts",
-        providerPackage = "com.google.android.gms",
-        certificates = R.array.com_google_android_gms_fonts_certs
-    )
-    val titanOne = remember {
-        val googleFont = GoogleFont("Titan One")
-        FontFamily(Font(googleFont = googleFont, fontProvider = provider))
-    }
+    // Button-like bubble styled like Practice: primary background, appropriate font, white text
+    val appropriateFont = getAppropriateFontFamily(text)
 
     BoxWithConstraints(
         modifier = modifier
@@ -512,7 +543,7 @@ fun PronunciationWordBubble(
                 fontWeight = FontWeight.Bold,
                 color = Color.White,
                 textAlign = TextAlign.Center,
-                fontFamily = titanOne
+                fontFamily = appropriateFont
             )
         }
     }
