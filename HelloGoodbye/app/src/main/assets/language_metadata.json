@@ -99,6 +99,36 @@
       "name": "Turkish",
       "flag": "🇹🇷",
       "flagAsset": "flags/4x3/tr.svg"
+    },
+    "hi": {
+      "name": "Hindi",
+      "flag": "🇮🇳",
+      "flagAsset": "flags/4x3/in.svg"
+    },
+    "nl": {
+      "name": "Dutch",
+      "flag": "🇳🇱",
+      "flagAsset": "flags/4x3/nl.svg"
+    },
+    "pl": {
+      "name": "Polish",
+      "flag": "🇵🇱",
+      "flagAsset": "flags/4x3/pl.svg"
+    },
+    "hu": {
+      "name": "Hungarian",
+      "flag": "🇭🇺",
+      "flagAsset": "flags/4x3/hu.svg"
+    },
+    "sw": {
+      "name": "Swahili",
+      "flag": "🇹🇿",
+      "flagAsset": "flags/4x3/tz.svg"
+    },
+    "ha": {
+      "name": "Hausa",
+      "flag": "🇳🇪",
+      "flagAsset": "flags/4x3/ne.svg"
     }
   }
 }
