@@ -774,26 +774,33 @@ fun clearAllProgress(context: Context) {
         }
     }
     
+    // Reset welcome screen completion status so it shows again
+    editor.remove("welcome_screen_completed")
+    // Also reset app launch status so welcome screen shows after clearing progress
+    editor.remove("app_ever_launched")
+    
     // Reset currency to 50 points
     editor.putInt("user_currency", 50)
     
-    // Reset selected languages to default 5
-    editor.putInt("selected_languages_count", 5)
-    editor.putString("selected_language_0_flag", "🇪🇸")
-    editor.putString("selected_language_0_name", "Spain")
-    editor.putString("selected_language_0_language", "Spanish")
-    editor.putString("selected_language_1_flag", "🇫🇷")
-    editor.putString("selected_language_1_name", "France")
-    editor.putString("selected_language_1_language", "French")
-    editor.putString("selected_language_2_flag", "🇩🇪")
-    editor.putString("selected_language_2_name", "Germany")
-    editor.putString("selected_language_2_language", "German")
-    editor.putString("selected_language_3_flag", "🇮🇹")
-    editor.putString("selected_language_3_name", "Italy")
-    editor.putString("selected_language_3_language", "Italian")
-    editor.putString("selected_language_4_flag", "🇯🇵")
-    editor.putString("selected_language_4_name", "Japan")
-    editor.putString("selected_language_4_language", "Japanese")
+    // Reset selected languages to default 5 from corpus
+    val supportedLanguageCodes = getSupportedLanguageCodesFromMetadata(context)
+    val defaultLanguages = supportedLanguageCodes
+        .filter { it != "en" } // Exclude English as it's the base language
+        .take(5) // Take first 5 languages
+        .mapNotNull { code ->
+            val name = getLanguageNameFromMetadata(context, code)
+            val flag = getLanguageFlagFromMetadata(context, code)
+            if (name != null && flag != null) {
+                Triple(flag, name, name) // flag, name, language
+            } else null
+        }
+    
+    editor.putInt("selected_languages_count", defaultLanguages.size)
+    defaultLanguages.forEachIndexed { index, (flag, name, language) ->
+        editor.putString("selected_language_${index}_flag", flag)
+        editor.putString("selected_language_${index}_name", name)
+        editor.putString("selected_language_${index}_language", language)
+    }
     
     editor.apply()
 }
@@ -821,14 +828,19 @@ fun loadSelectedLanguages(context: Context): List<Country> {
     val count = prefs.getInt("selected_languages_count", 0)
     
     if (count == 0) {
-        // Return default languages if none saved
-        return listOf(
-            Country("🇪🇸", "Spain", "Spanish"),
-            Country("🇫🇷", "France", "French"),
-            Country("🇩🇪", "Germany", "German"),
-            Country("🇮🇹", "Italy", "Italian"),
-            Country("🇯🇵", "Japan", "Japanese")
-        )
+        // Return default languages if none saved - use first 5 languages from corpus
+        val supportedLanguageCodes = getSupportedLanguageCodesFromMetadata(context)
+        val defaultLanguages = supportedLanguageCodes
+            .filter { it != "en" } // Exclude English as it's the base language
+            .take(5) // Take first 5 languages
+            .mapNotNull { code ->
+                val name = getLanguageNameFromMetadata(context, code)
+                val flag = getLanguageFlagFromMetadata(context, code)
+                if (name != null && flag != null) {
+                    Country(flag = flag, name = name, language = name)
+                } else null
+            }
+        return defaultLanguages
     }
     
     val languages = mutableListOf<Country>()
@@ -868,4 +880,36 @@ fun saveDebugMode(context: Context, enabled: Boolean) {
 fun loadDebugMode(context: Context): Boolean {
     val prefs = context.getSharedPreferences("hg_progress", Context.MODE_PRIVATE)
     return prefs.getBoolean("debug_mode_enabled", false)
+}
+
+// Welcome screen functions
+fun shouldShowWelcomeScreen(context: Context): Boolean {
+    val prefs = context.getSharedPreferences("hg_progress", Context.MODE_PRIVATE)
+    val hasCompletedWelcome = prefs.getBoolean("welcome_screen_completed", false)
+    val hasEverLaunched = prefs.getBoolean("app_ever_launched", false)
+    
+    // Show welcome screen only if:
+    // 1. App has never been launched before (first time ever)
+    // 2. OR welcome screen was explicitly reset (after clearing progress)
+    val shouldShow = !hasEverLaunched || !hasCompletedWelcome
+    
+    // Debug logging
+    if (loadDebugMode(context)) {
+        println("DEBUG: shouldShowWelcomeScreen - hasEverLaunched: $hasEverLaunched, hasCompletedWelcome: $hasCompletedWelcome, shouldShow: $shouldShow")
+    }
+    
+    return shouldShow
+}
+
+fun markWelcomeScreenCompleted(context: Context) {
+    val prefs = context.getSharedPreferences("hg_progress", Context.MODE_PRIVATE)
+    val editor = prefs.edit()
+    editor.putBoolean("welcome_screen_completed", true)
+    editor.putBoolean("app_ever_launched", true) // Mark that app has been launched
+    editor.apply()
+}
+
+fun markAppLaunched(context: Context) {
+    val prefs = context.getSharedPreferences("hg_progress", Context.MODE_PRIVATE)
+    prefs.edit().putBoolean("app_ever_launched", true).apply()
 }

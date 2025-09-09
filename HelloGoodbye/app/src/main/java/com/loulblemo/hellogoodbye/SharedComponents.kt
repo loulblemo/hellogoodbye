@@ -1174,7 +1174,7 @@ fun SettingsScreen(
                         clearAllProgress(context)
                         showConfirmDialog = false
                         onProgressCleared()
-                        onBack()
+                        // Don't call onBack() - let the parent handle the welcome screen redirect
                     }
                 ) {
                     Text("Clear", color = MaterialTheme.colorScheme.error)
