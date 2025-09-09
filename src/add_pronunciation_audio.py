@@ -55,7 +55,7 @@ def download_audio(audio_url, filename):
 
 def process_corpus():
     """Process the corpus and add audio files"""
-    corpus_file = "corpus.json"
+    corpus_file = "HelloGoodbye/app/src/main/assets/corpus.json"
     
     # Load corpus
     with open(corpus_file, "r", encoding='utf-8') as f:

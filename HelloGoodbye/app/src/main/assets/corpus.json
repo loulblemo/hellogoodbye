@@ -95,6 +95,38 @@
       "IPA": null,
       "text": "Kumusta",
       "audio": "hello_tl_Kumusta.mp3"
+    },
+    "el": {
+      "word": "Γειά σου",
+      "IPA": "jˈa su",
+      "text": "Γειά σου",
+      "google_pronunciation": "Geiá sou",
+      "audio": "hello_el_Γειά_σου.mp3"
+    },
+    "sv": {
+      "word": "Hej",
+      "IPA": "hˈɛj",
+      "text": "Hej",
+      "audio": "hello_sv_Hej.mp3"
+    },
+    "fi": {
+      "word": "Hei",
+      "IPA": "hˈei",
+      "text": "Hei",
+      "audio": "hello_fi_Hei.mp3"
+    },
+    "ar": {
+      "word": "مرحبًا",
+      "IPA": "murˈaħħibˌan",
+      "text": "مرحبًا",
+      "google_pronunciation": "mrhban",
+      "audio": "hello_ar_مرحبا.mp3"
+    },
+    "tr": {
+      "word": "Merhaba",
+      "IPA": "mˈɛrhaba",
+      "text": "Merhaba",
+      "audio": "hello_tr_Merhaba.mp3"
     }
   },
   {
@@ -193,6 +225,38 @@
       "IPA": null,
       "text": "Paalam",
       "audio": "goodbye_tl_Paalam.mp3"
+    },
+    "el": {
+      "word": "Αντίο",
+      "IPA": "adˈio",
+      "text": "Αντίο",
+      "google_pronunciation": "Antío",
+      "audio": "goodbye_el_Αντίο.mp3"
+    },
+    "sv": {
+      "word": "adjö",
+      "IPA": "ˈadjøː",
+      "text": "adjö",
+      "audio": "goodbye_sv_adjö.mp3"
+    },
+    "fi": {
+      "word": "Hyvästi",
+      "IPA": "hˈyvæstɪ",
+      "text": "Hyvästi",
+      "audio": "goodbye_fi_Hyvästi.mp3"
+    },
+    "ar": {
+      "word": "مع السلامة",
+      "IPA": "mˈaʕ ʔassˈalaːmˌa",
+      "text": "مع السلامة",
+      "google_pronunciation": "mae alsalama",
+      "audio": "goodbye_ar_مع_السلامة.mp3"
+    },
+    "tr": {
+      "word": "Güle güle",
+      "IPA": "ɟˈylɛ ɟˈylɛ",
+      "text": "Güle güle",
+      "audio": "goodbye_tr_Güle_güle.mp3"
     }
   },
   {
@@ -291,6 +355,38 @@
       "IPA": null,
       "text": "Mangyaring",
       "audio": "please_tl_Mangyaring.mp3"
+    },
+    "el": {
+      "word": "παρακαλώ",
+      "IPA": "pˌarakalˈo",
+      "text": "παρακαλώ",
+      "google_pronunciation": "parakaló",
+      "audio": "please_el_παρακαλώ.mp3"
+    },
+    "sv": {
+      "word": "behaga",
+      "IPA": "bəhˈɑːɡa",
+      "text": "behaga",
+      "audio": "please_sv_behaga.mp3"
+    },
+    "fi": {
+      "word": "Ole hyvä",
+      "IPA": "ˌoleh hˈyvæ",
+      "text": "Ole hyvä",
+      "audio": "please_fi_Ole_hyvä.mp3"
+    },
+    "ar": {
+      "word": "لو سمحت",
+      "IPA": "lˈaw smħt",
+      "text": "لو سمحت",
+      "google_pronunciation": "law samaht",
+      "audio": "please_ar_لو_سمحت.mp3"
+    },
+    "tr": {
+      "word": "Lütfen",
+      "IPA": "lˈøtfæn",
+      "text": "Lütfen",
+      "audio": "please_tr_Lütfen.mp3"
     }
   },
   {
@@ -389,6 +485,38 @@
       "IPA": null,
       "text": "Salamat",
       "audio": "thank you_tl_Salamat.mp3"
+    },
+    "el": {
+      "word": "Σας ευχαριστώ",
+      "IPA": "sas ˌefxaristˈo",
+      "text": "Σας ευχαριστώ",
+      "google_pronunciation": "Sas efcharistó",
+      "audio": "thank you_el_Σας_ευχαριστώ.mp3"
+    },
+    "sv": {
+      "word": "tack",
+      "IPA": "tˈak",
+      "text": "tack",
+      "audio": "thank you_sv_tack.mp3"
+    },
+    "fi": {
+      "word": "Kiitos",
+      "IPA": "kˈiːtos",
+      "text": "Kiitos",
+      "audio": "thank you_fi_Kiitos.mp3"
+    },
+    "ar": {
+      "word": "شكرًا لك",
+      "IPA": "ʃˈukran lkˈa",
+      "text": "شكرًا لك",
+      "google_pronunciation": "shkran lak",
+      "audio": "thank you_ar_شكرا_لك.mp3"
+    },
+    "tr": {
+      "word": "Teşekkürler",
+      "IPA": "teʃekːørlˈɛr",
+      "text": "Teşekkürler",
+      "audio": "thank you_tr_Teşekkürler.mp3"
     }
   },
   {
@@ -491,6 +619,41 @@
       "text": "Excuse me",
       "google_pronunciation": "excuse me",
       "audio": "excuse me_tl_Excuse_me.mp3"
+    },
+    "el": {
+      "word": "Με συγχωρείτε",
+      "IPA": "me sˌiŋxorˈite",
+      "text": "Με συγχωρείτε",
+      "google_pronunciation": "Me synchoreíte",
+      "audio": "excuse me_el_Με_συγχωρείτε.mp3"
+    },
+    "sv": {
+      "word": "Ursäkta mig",
+      "IPA": "ˈɵʂəktˌa mˈɛj",
+      "text": "Ursäkta mig",
+      "google_pronunciation": "excuse me",
+      "audio": "excuse me_sv_Ursäkta_mig.mp3"
+    },
+    "fi": {
+      "word": "Anteeksi",
+      "IPA": "ˈanteːksɪ",
+      "text": "Anteeksi",
+      "google_pronunciation": "excuse me",
+      "audio": "excuse me_fi_Anteeksi.mp3"
+    },
+    "ar": {
+      "word": "اعذرني",
+      "IPA": "ˈaʕðrniː",
+      "text": "اعذرني",
+      "google_pronunciation": "aiedhirni",
+      "audio": "excuse me_ar_اعذرني.mp3"
+    },
+    "tr": {
+      "word": "Affedersin",
+      "IPA": "affedɛrsˈɪn",
+      "text": "Affedersin",
+      "google_pronunciation": "Affedersin",
+      "audio": "excuse me_tr_Affedersin.mp3"
     }
   },
   {
@@ -589,6 +752,38 @@
       "IPA": null,
       "text": "Tulong",
       "audio": "help_tl_Tulong.mp3"
+    },
+    "el": {
+      "word": "βοήθεια",
+      "IPA": "voˈiθça",
+      "text": "βοήθεια",
+      "google_pronunciation": "voítheia",
+      "audio": "help_el_βοήθεια.mp3"
+    },
+    "sv": {
+      "word": "hjälp",
+      "IPA": "jˈɛlp",
+      "text": "hjälp",
+      "audio": "help_sv_hjälp.mp3"
+    },
+    "fi": {
+      "word": "auttaa",
+      "IPA": "ˈautːaː",
+      "text": "auttaa",
+      "audio": "help_fi_auttaa.mp3"
+    },
+    "ar": {
+      "word": "يساعد",
+      "IPA": "jsˈaːʕd",
+      "text": "يساعد",
+      "google_pronunciation": "yusaeid",
+      "audio": "help_ar_يساعد.mp3"
+    },
+    "tr": {
+      "word": "yardım",
+      "IPA": "jardˈɯm",
+      "text": "yardım",
+      "audio": "help_tr_yardım.mp3"
     }
   },
   {
@@ -687,6 +882,38 @@
       "IPA": null,
       "text": "Pasensya na",
       "audio": "sorry_tl_Pasensya_na.mp3"
+    },
+    "el": {
+      "word": "Συγνώμη",
+      "IPA": "siɣnˈomi",
+      "text": "Συγνώμη",
+      "google_pronunciation": "Sygnómi",
+      "audio": "sorry_el_Συγνώμη.mp3"
+    },
+    "sv": {
+      "word": "ledsen",
+      "IPA": "lˈɛdsən",
+      "text": "ledsen",
+      "audio": "sorry_sv_ledsen.mp3"
+    },
+    "fi": {
+      "word": "pahoillani",
+      "IPA": "pˈahoillˌanɪ",
+      "text": "pahoillani",
+      "audio": "sorry_fi_pahoillani.mp3"
+    },
+    "ar": {
+      "word": "آسف",
+      "IPA": "ʔˈaːsif",
+      "text": "آسف",
+      "google_pronunciation": "asf",
+      "audio": "sorry_ar_آسف.mp3"
+    },
+    "tr": {
+      "word": "Üzgünüm",
+      "IPA": "øzɟˈynøm",
+      "text": "Üzgünüm",
+      "audio": "sorry_tr_Üzgünüm.mp3"
     }
   },
   {
@@ -785,6 +1012,38 @@
       "IPA": null,
       "text": "Tubig",
       "audio": "water_tl_Tubig.mp3"
+    },
+    "el": {
+      "word": "νερό",
+      "IPA": "nerˈo",
+      "text": "νερό",
+      "google_pronunciation": "neró",
+      "audio": "water_el_νερό.mp3"
+    },
+    "sv": {
+      "word": "vatten",
+      "IPA": "vˈatːən",
+      "text": "vatten",
+      "audio": "water_sv_vatten.mp3"
+    },
+    "fi": {
+      "word": "vettä",
+      "IPA": "vˈetːæ",
+      "text": "vettä",
+      "audio": "water_fi_vettä.mp3"
+    },
+    "ar": {
+      "word": "ماء",
+      "IPA": "mˈaːʔ",
+      "text": "ماء",
+      "google_pronunciation": "ma'",
+      "audio": "water_ar_ماء.mp3"
+    },
+    "tr": {
+      "word": "su",
+      "IPA": "sˈʊ",
+      "text": "su",
+      "audio": "water_tr_su.mp3"
     }
   },
   {
@@ -883,6 +1142,38 @@
       "IPA": null,
       "text": "Oo",
       "audio": "yes_tl_Oo.mp3"
+    },
+    "el": {
+      "word": "Ναί",
+      "IPA": "nˈe",
+      "text": "Ναί",
+      "google_pronunciation": "Naí",
+      "audio": "yes_el_Ναί.mp3"
+    },
+    "sv": {
+      "word": "ja",
+      "IPA": "jˈɑː",
+      "text": "ja",
+      "audio": "yes_sv_ja.mp3"
+    },
+    "fi": {
+      "word": "kyllä",
+      "IPA": "kˈyllæ",
+      "text": "kyllä",
+      "audio": "yes_fi_kyllä.mp3"
+    },
+    "ar": {
+      "word": "نعم",
+      "IPA": "nˈaʕam",
+      "text": "نعم",
+      "google_pronunciation": "naeam",
+      "audio": "yes_ar_نعم.mp3"
+    },
+    "tr": {
+      "word": "Evet",
+      "IPA": "evˈɛt",
+      "text": "Evet",
+      "audio": "yes_tr_Evet.mp3"
     }
   },
   {
@@ -981,6 +1272,38 @@
       "IPA": null,
       "text": "hindi",
       "audio": "no_tl_hindi.mp3"
+    },
+    "el": {
+      "word": "Όχι",
+      "IPA": "ˈoçi",
+      "text": "Όχι",
+      "google_pronunciation": "Óchi",
+      "audio": "no_el_Όχι.mp3"
+    },
+    "sv": {
+      "word": "inga",
+      "IPA": "ˈɪŋa",
+      "text": "inga",
+      "audio": "no_sv_inga.mp3"
+    },
+    "fi": {
+      "word": "ei",
+      "IPA": "ei",
+      "text": "ei",
+      "audio": "no_fi_ei.mp3"
+    },
+    "ar": {
+      "word": "لا",
+      "IPA": "lˈaː",
+      "text": "لا",
+      "google_pronunciation": "la",
+      "audio": "no_ar_لا.mp3"
+    },
+    "tr": {
+      "word": "HAYIR",
+      "IPA": "hajˈɯr",
+      "text": "HAYIR",
+      "audio": "no_tr_HAYIR.mp3"
     }
   }
 ]

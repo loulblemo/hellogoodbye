@@ -74,6 +74,31 @@
       "name": "Filipino",
       "flag": "🇵🇭",
       "flagAsset": "flags/4x3/ph.svg"
+    },
+    "el": {
+      "name": "Greek",
+      "flag": "🇬🇷",
+      "flagAsset": "flags/4x3/gr.svg"
+    },
+    "sv": {
+      "name": "Swedish",
+      "flag": "🇸🇪",
+      "flagAsset": "flags/4x3/se.svg"
+    },
+    "fi": {
+      "name": "Finnish",
+      "flag": "🇫🇮",
+      "flagAsset": "flags/4x3/fi.svg"
+    },
+    "ar": {
+      "name": "Arabic",
+      "flag": "🇸🇦",
+      "flagAsset": "flags/4x3/sa.svg"
+    },
+    "tr": {
+      "name": "Turkish",
+      "flag": "🇹🇷",
+      "flagAsset": "flags/4x3/tr.svg"
     }
   }
 }

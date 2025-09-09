@@ -61,6 +61,7 @@ android {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
             excludes += "/**/baseline.prof"
             excludes += "/**/baseline.profm"
+            excludes += "/**/flag-icons/**"
         }
     }
     

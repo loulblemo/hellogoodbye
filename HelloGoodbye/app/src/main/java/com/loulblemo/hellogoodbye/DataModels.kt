@@ -143,6 +143,11 @@ fun languageNameToCode(name: String): String? {
         "indonesian" -> "id"
         "malay" -> "ms"
         "filipino", "tagalog" -> "tl"
+        "greek" -> "el"
+        "swedish" -> "sv"
+        "finnish" -> "fi"
+        "arabic" -> "ar"
+        "turkish" -> "tr"
 
         else -> null
     }
@@ -169,6 +174,11 @@ fun languageCodeToFlag(code: String): String? {
         "id" -> "🇮🇩"
         "ms" -> "🇲🇾"
         "tl" -> "🇵🇭"
+        "el" -> "🇬🇷"
+        "sv" -> "🇸🇪"
+        "fi" -> "🇫🇮"
+        "ar" -> "🇸🇦"
+        "tr" -> "🇹🇷"
         else -> null
     }
 }
@@ -194,6 +204,11 @@ fun languageCodeToName(code: String): String? {
         "id" -> "Indonesian"
         "ms" -> "Malay"
         "tl" -> "Filipino"
+        "el" -> "Greek"
+        "sv" -> "Swedish"
+        "fi" -> "Finnish"
+        "ar" -> "Arabic"
+        "tr" -> "Turkish"
         else -> null
     }
 }
