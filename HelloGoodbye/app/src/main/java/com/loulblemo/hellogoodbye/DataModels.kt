@@ -907,9 +907,29 @@ fun markWelcomeScreenCompleted(context: Context) {
     editor.putBoolean("welcome_screen_completed", true)
     editor.putBoolean("app_ever_launched", true) // Mark that app has been launched
     editor.apply()
+    
+    // Debug logging
+    if (loadDebugMode(context)) {
+        println("DEBUG: markWelcomeScreenCompleted called")
+        println("DEBUG: welcome_screen_completed = ${prefs.getBoolean("welcome_screen_completed", false)}")
+        println("DEBUG: app_ever_launched = ${prefs.getBoolean("app_ever_launched", false)}")
+    }
 }
 
 fun markAppLaunched(context: Context) {
     val prefs = context.getSharedPreferences("hg_progress", Context.MODE_PRIVATE)
     prefs.edit().putBoolean("app_ever_launched", true).apply()
+}
+
+// Debug function to check welcome screen state
+fun debugWelcomeScreenState(context: Context) {
+    val prefs = context.getSharedPreferences("hg_progress", Context.MODE_PRIVATE)
+    val hasCompletedWelcome = prefs.getBoolean("welcome_screen_completed", false)
+    val hasEverLaunched = prefs.getBoolean("app_ever_launched", false)
+    val shouldShow = shouldShowWelcomeScreen(context)
+    
+    println("DEBUG: Welcome Screen State:")
+    println("  - hasCompletedWelcome: $hasCompletedWelcome")
+    println("  - hasEverLaunched: $hasEverLaunched")
+    println("  - shouldShowWelcomeScreen: $shouldShow")
 }

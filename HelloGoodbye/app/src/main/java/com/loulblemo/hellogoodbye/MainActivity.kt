@@ -124,6 +124,15 @@ fun MainScreen() {
     var travelStartLang by remember { mutableStateOf<String?>(null) }
     var showWelcome by remember { mutableStateOf(shouldShowWelcomeScreen(context)) }
     
+    // Debug logging for welcome screen state
+    LaunchedEffect(showWelcome) {
+        if (loadDebugMode(context)) {
+            println("DEBUG: showWelcome state changed to: $showWelcome")
+            debugWelcomeScreenState(context)
+        }
+    }
+    
+    
     val availableCountries = remember(selectedCountries) {
         val supportedLanguageCodes = getSupportedLanguageCodesFromMetadata(context)
         val allLanguages = supportedLanguageCodes
@@ -147,10 +156,16 @@ fun MainScreen() {
     if (showWelcome) {
         WelcomeScreen(
             onComplete = { selectedLanguages ->
+                if (loadDebugMode(context)) {
+                    println("DEBUG: Welcome screen completed with ${selectedLanguages.size} languages")
+                }
                 selectedCountries = selectedLanguages
                 saveSelectedLanguages(context, selectedLanguages)
                 markWelcomeScreenCompleted(context)
                 showWelcome = false
+                if (loadDebugMode(context)) {
+                    println("DEBUG: showWelcome set to false, shouldShowWelcomeScreen = ${shouldShowWelcomeScreen(context)}")
+                }
             }
         )
     } else {
@@ -213,7 +228,11 @@ fun MainScreen() {
                     currency = loadCurrency(context)
                     selectedCountries = loadSelectedLanguages(context)
                     // Reset welcome screen to show again after clearing progress
-                    showWelcome = shouldShowWelcomeScreen(context)
+                    val shouldShow = shouldShowWelcomeScreen(context)
+                    if (loadDebugMode(context)) {
+                        println("DEBUG: Progress cleared, shouldShowWelcomeScreen = $shouldShow")
+                    }
+                    showWelcome = shouldShow
                 }
             )
         }
