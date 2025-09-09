@@ -468,21 +468,21 @@
       "word": "xin lỗi",
       "IPA": "sˈin lˈo5j",
       "text": "xin lỗi",
-      "google_pronunciation": "excuse me",
+      "google_pronunciation": "Xin loi",
       "audio": "excuse me_vi_xin_lỗi.mp3"
     },
     "id": {
       "word": "Permisi",
       "IPA": "pərmˈisi",
       "text": "Permisi",
-      "google_pronunciation": "excuse me",
+      "google_pronunciation": "Permisi",
       "audio": "excuse me_id_Permisi.mp3"
     },
     "ms": {
       "word": "maafkan saya",
       "IPA": "maˈafkan sˈajə",
       "text": "maafkan saya",
-      "google_pronunciation": "excuse me",
+      "google_pronunciation": "Maafkan saya",
       "audio": "excuse me_ms_maafkan_saya.mp3"
     },
     "tl": {
@@ -561,7 +561,7 @@
     },
     "th": {
       "word": "ช่วย",
-      "IPA": "ch wˈa2j",
+      "IPA": "tɕʰˈuaj",
       "text": "ช่วย",
       "google_pronunciation": "Ch̀wy",
       "audio": "help_th_ชวย.mp3"
@@ -736,7 +736,7 @@
     },
     "ja": {
       "word": "水",
-      "IPA": "(en)tʃˈaɪniːz(ja)lˈe̞tə",
+      "IPA": "mˈizɯᵝ",
       "text": "水",
       "google_pronunciation": "Mizu",
       "audio": "water_ja_水.mp3"
@@ -757,7 +757,7 @@
     },
     "th": {
       "word": "น้ำ",
-      "IPA": "n s",
+      "IPA": "nˈaːm",
       "text": "น้ำ",
       "google_pronunciation": "N̂ả",
       "audio": "water_th_นำ.mp3"
@@ -952,11 +952,11 @@
       "audio": "no_zh-cn_不.mp3"
     },
     "th": {
-      "word": "เลขที่",
-      "IPA": "e2lˈa5kha2ths",
-      "text": "เลขที่",
-      "google_pronunciation": "Lek̄h thī̀",
-      "audio": "no_th_เลขท.mp3"
+      "word": "ไม่",
+      "IPA": "mˈaj",
+      "text": "ไม่",
+      "google_pronunciation": "Mai",
+      "audio": "no_th_ไม่.mp3"
     },
     "vi": {
       "word": "KHÔNG",
