@@ -18,11 +18,13 @@ private fun pickFivePairs(
     }
     
     val shuffledLangs = effectiveLanguageCodes.shuffled()
-    val targets = shuffledLangs.take(if (shuffledLangs.size >= 5) 5 else shuffledLangs.size)
+    // Desired total pairs: up to 5, or fewer if there are fewer available words
+    val desiredTotalPairs = if (threeWords.size < 5) threeWords.size else 5
+    val targets = shuffledLangs.take(if (shuffledLangs.size >= desiredTotalPairs) desiredTotalPairs else shuffledLangs.size)
     
-    // Distribute three words across target languages with balanced distribution
+    // Distribute words across target languages with balanced distribution
     // Calculate how many matches each language should get
-    val totalPairs = 5
+    val totalPairs = desiredTotalPairs
     val numLanguages = targets.size
     val basePairsPerLang = totalPairs / numLanguages
     val extraPairs = totalPairs % numLanguages
@@ -52,8 +54,8 @@ private fun pickFivePairs(
         }
     }
     
-    // If fewer than 5 pairs (e.g., not enough languages), try to fill with additional random combos
-    if (combos.size < 5) {
+    // If fewer than desired pairs (e.g., not enough languages), try to fill with additional random combos
+    if (combos.size < totalPairs) {
         val fallbackLangs = if (restrictToEncounteredLanguages && availableLanguages.isNotEmpty()) {
             availableLanguages
         } else {
@@ -73,14 +75,14 @@ private fun pickFivePairs(
         }
         val existingRightIds = combos.map { it.right.id }.toMutableSet()
         pool.shuffled().forEach {
-            if (combos.size >= 5) return@forEach
+            if (combos.size >= totalPairs) return@forEach
             if (!existingRightIds.contains(it.right.id)) {
                 combos.add(it)
                 existingRightIds.add(it.right.id)
             }
         }
     }
-    return combos.take(5)
+    return combos.take(totalPairs)
 }
 
 fun buildAudioToFlagPairs(

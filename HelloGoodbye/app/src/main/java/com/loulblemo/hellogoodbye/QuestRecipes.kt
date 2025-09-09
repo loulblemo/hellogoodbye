@@ -24,6 +24,23 @@ fun defaultQuestRecipes(): List<QuestRecipe> {
             "pronunciation_audio_to_english",
             "pronunciation_audio_to_english",
             "pronunciation_audio_to_english",
+            "audio_to_english_multi",
+            "audio_to_english_multi",
+            "pronunciation_to_english_multi",
+            "pronunciation_to_english_multi",
+        ),
+        randomOrder = false,
+        wordRange = 0..2 // First 3 words: hello, goodbye, please
+    )
+
+    // Level 1 Exercise 2: Single language, random order same pool
+    val level1_exercise2 = QuestRecipe(
+        type = QuestType.SINGLE,
+        languageCount = 1,
+        exerciseOrder = listOf(
+            "pronunciation_audio_to_english",
+            "pronunciation_audio_to_english",
+            "pronunciation_audio_to_english",
             "pronunciation_audio_to_english",
             "pronunciation_audio_to_english",
             "audio_to_english_multi",
@@ -32,20 +49,6 @@ fun defaultQuestRecipes(): List<QuestRecipe> {
             "pronunciation_to_english_multi",
         ),
         randomOrder = false,
-        wordRange = 0..4 // First 5 words: hello, goodbye, please, thank you, excuse me
-    )
-
-    // Level 1 Exercise 2: Single language, random order same pool
-    val level1_exercise2 = QuestRecipe(
-        type = QuestType.SINGLE,
-        languageCount = 1,
-        exerciseOrder = listOf(
-            "audio_to_english_multi",
-            "pronunciation_audio_to_english",
-            "pronunciation_audio_to_type_english"
-
-        ).let { base -> List(10) { base[it % base.size] } },
-        randomOrder = true,
         wordRange = 0..4 // Same 5 words as Level 1 Exercise 1
     )
 
@@ -72,18 +75,13 @@ fun defaultQuestRecipes(): List<QuestRecipe> {
         type = QuestType.SINGLE,
         languageCount = 1,
         exerciseOrder = listOf(
-            "pronunciation_audio_to_english",
             "audio_to_english_multi",
             "pronunciation_audio_to_english",
             "audio_to_english_multi",
+            "pronunciation_audio_to_type_english",
             "pronunciation_audio_to_english",
-            "audio_to_english_multi",
-            "pronunciation_audio_to_english",
-            "audio_to_english_multi",
-            "pronunciation_audio_to_english",
-            "audio_to_english_multi"
         ),
-        randomOrder = false,
+        randomOrder = true,
         wordRange = 0..4 // Same 5 words as other Level 1 exercises
     )
 
@@ -91,7 +89,13 @@ fun defaultQuestRecipes(): List<QuestRecipe> {
     val level1_exercise5 = QuestRecipe(
         type = QuestType.SINGLE,
         languageCount = 1,
-        exerciseOrder = List(10) { if (it % 2 == 0) "audio_to_english_multi" else "pronunciation_audio_to_english" },
+        exerciseOrder = listOf(
+            "audio_to_english_multi",
+            "pronunciation_audio_to_english",
+            "audio_to_english_multi",
+            "pronunciation_audio_to_type_english",
+            "pronunciation_audio_to_english",
+        ),
         randomOrder = true,
         wordRange = 0..4 // Same 5 words as other Level 1 exercises
     )
@@ -104,6 +108,22 @@ fun defaultQuestRecipes(): List<QuestRecipe> {
             "pronunciation_audio_to_english",
             "pronunciation_audio_to_english",
             "pronunciation_audio_to_english",
+            "audio_to_english_multi",
+            "audio_to_english_multi",
+            "pronunciation_to_english_multi",
+            "pronunciation_to_english_multi",
+        ),
+        randomOrder = false,
+        wordRange = 5..7 // Next 3 words: help, sorry, water, yes, no
+    )
+
+    val level2_exercise2 = QuestRecipe(
+        type = QuestType.SINGLE,
+        languageCount = 1,
+        exerciseOrder = listOf(
+            "pronunciation_audio_to_english",
+            "pronunciation_audio_to_english",
+            "pronunciation_audio_to_english",
             "pronunciation_audio_to_english",
             "pronunciation_audio_to_english",
             "audio_to_english_multi",
@@ -112,19 +132,6 @@ fun defaultQuestRecipes(): List<QuestRecipe> {
             "pronunciation_to_english_multi",
         ),
         randomOrder = false,
-        wordRange = 5..9 // Next 5 words: help, sorry, water, yes, no
-    )
-
-    val level2_exercise2 = QuestRecipe(
-        type = QuestType.SINGLE,
-        languageCount = 1,
-        exerciseOrder = listOf(
-            "audio_to_english_multi",
-            "pronunciation_audio_to_english",
-            "pronunciation_audio_to_type_english"
-
-        ).let { base -> List(10) { base[it % base.size] } },
-        randomOrder = true,
         wordRange = 5..9 // Next 5 words: help, sorry, water, yes, no
     )
     val level2_exercise3 = QuestRecipe(
