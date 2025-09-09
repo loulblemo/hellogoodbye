@@ -17,13 +17,14 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.googlefonts.Font
 import androidx.compose.ui.text.googlefonts.GoogleFont
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.graphics.Color
 import com.airbnb.lottie.compose.*
 import kotlinx.coroutines.delay
 import com.loulblemo.hellogoodbye.LanguageSelectionDialog
@@ -390,6 +391,25 @@ fun WelcomeScreen(onComplete: (List<Country>) -> Unit) {
                         )
                     }
                 }
+                
+                // Gradient fade at bottom to indicate more content
+                Box(
+                    modifier = Modifier
+                        .align(Alignment.BottomCenter)
+                        .fillMaxWidth()
+                        .height(60.dp)
+                        .background(
+                            brush = Brush.verticalGradient(
+                                colors = listOf(
+                                    Color.Transparent,
+                                    Color(0xFF2D1B69).copy(alpha = 0.8f),
+                                    Color(0xFF2D1B69)
+                                ),
+                                startY = 0f,
+                                endY = Float.POSITIVE_INFINITY
+                            )
+                        )
+                )
             }
             
             Spacer(modifier = Modifier.height(20.dp))

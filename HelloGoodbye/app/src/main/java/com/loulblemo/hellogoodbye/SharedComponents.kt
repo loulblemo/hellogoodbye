@@ -1243,10 +1243,11 @@ fun PronunciationAudioToEnglishExercise(
                 val isSelected = selected == option
                 val isCorrectSelected = completed && isSelected && option == correctOption
                 val isWrongSelected = completed && isSelected && option != correctOption
+                val isCorrectAnswer = completed && option == correctOption && selected != correctOption
                 PracticeBubble(
                     label = option,
                     selected = isSelected,
-                    solved = isCorrectSelected,
+                    solved = isCorrectSelected || isCorrectAnswer,
                     error = isWrongSelected,
                     onClick = {
                         if (completed) return@PracticeBubble

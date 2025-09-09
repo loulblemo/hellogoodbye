@@ -1,5 +1,6 @@
 package com.loulblemo.hellogoodbye
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -12,6 +13,8 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -86,25 +89,47 @@ fun LanguageSelectionDialog(
                 Spacer(modifier = Modifier.height(24.dp))
                 
                 // Language grid
-                LazyVerticalGrid(
-                    columns = GridCells.Fixed(3),
-                    horizontalArrangement = Arrangement.spacedBy(12.dp),
-                    verticalArrangement = Arrangement.spacedBy(12.dp),
+                Box(
                     modifier = Modifier.heightIn(max = 400.dp)
                 ) {
-                    items(remainingLanguages) { languageCode ->
-                        LanguageFlagItem(
-                            languageCode = languageCode,
-                            enabled = canAffordAdd,
-                            onClick = {
-                                val languageName = getLanguageMetadata(context, languageCode)?.optString("name")
-                                if (languageName != null) {
-                                    onLanguageSelected(languageName)
+                    LazyVerticalGrid(
+                        columns = GridCells.Fixed(3),
+                        horizontalArrangement = Arrangement.spacedBy(12.dp),
+                        verticalArrangement = Arrangement.spacedBy(12.dp),
+                        modifier = Modifier.fillMaxSize()
+                    ) {
+                        items(remainingLanguages) { languageCode ->
+                            LanguageFlagItem(
+                                languageCode = languageCode,
+                                enabled = canAffordAdd,
+                                onClick = {
+                                    val languageName = getLanguageMetadata(context, languageCode)?.optString("name")
+                                    if (languageName != null) {
+                                        onLanguageSelected(languageName)
+                                    }
+                                    onDismiss()
                                 }
-                                onDismiss()
-                            }
-                        )
+                            )
+                        }
                     }
+                    
+                    // Gradient fade at bottom to indicate more content
+                    Box(
+                        modifier = Modifier
+                            .align(Alignment.BottomCenter)
+                            .fillMaxWidth()
+                            .height(40.dp)
+                            .background(
+                                brush = Brush.verticalGradient(
+                                    colors = listOf(
+                                        Color.Transparent,
+                                        MaterialTheme.colorScheme.surface
+                                    ),
+                                    startY = 0f,
+                                    endY = Float.POSITIVE_INFINITY
+                                )
+                            )
+                    )
                 }
                 
                 Spacer(modifier = Modifier.height(24.dp))
