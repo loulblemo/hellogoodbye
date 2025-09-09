@@ -15,7 +15,7 @@ from tools.lang_tools import get_language_code
 translator = Translator()
 
 # Create audio directory if it doesn't exist
-audio_dir = "audio_files"
+audio_dir = "/Users/gabriele/src/hellogoodbye/HelloGoodbye/app/src/main/assets/audio_files/"
 if not os.path.exists(audio_dir):
     os.makedirs(audio_dir)
 
