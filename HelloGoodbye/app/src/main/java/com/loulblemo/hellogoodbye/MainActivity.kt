@@ -13,6 +13,8 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.border
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -28,6 +30,10 @@ import androidx.compose.ui.unit.sp
 import com.airbnb.lottie.compose.*
 import kotlinx.coroutines.delay
 import com.loulblemo.hellogoodbye.LanguageSelectionDialog
+import com.google.firebase.auth.FirebaseAuth
+import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.ui.text.input.KeyboardType
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -40,16 +46,34 @@ class MainActivity : ComponentActivity() {
                         .windowInsetsPadding(WindowInsets.systemBars)
                 ) {
                     var showSplash by remember { mutableStateOf(true) }
+                    var showAuthChoice by remember { mutableStateOf(false) }
+                    var useAnonymousMode by remember { mutableStateOf(false) }
                     
                     LaunchedEffect(Unit) {
                         delay(2750) // Wait for animation to complete (~1.75s) + 1s pause on last frame
                         showSplash = false
+                        showAuthChoice = true
                     }
                     
-                    if (showSplash) {
-                        SplashScreen()
-                    } else {
-                        MainScreen()
+                    when {
+                        showSplash -> SplashScreen()
+                        showAuthChoice -> AuthChoiceScreen(
+                            onSignIn = { 
+                                showAuthChoice = false
+                                useAnonymousMode = false
+                            },
+                            onAnonymousStart = { 
+                                showAuthChoice = false
+                                useAnonymousMode = true
+                            }
+                        )
+                        useAnonymousMode -> MainScreen()
+                        else -> AuthGate(
+                            onBackToChoice = { 
+                                showAuthChoice = true
+                                useAnonymousMode = false
+                            }
+                        ) { MainScreen() }
                     }
                 }
             }
@@ -111,14 +135,333 @@ fun SplashScreen() {
 }
 
 @Composable
+fun AuthChoiceScreen(
+    onSignIn: () -> Unit,
+    onAnonymousStart: () -> Unit
+) {
+    val titanOneFont = remember {
+        val provider = GoogleFont.Provider(
+            providerAuthority = "com.google.android.gms.fonts",
+            providerPackage = "com.google.android.gms",
+            certificates = R.array.com_google_android_gms_fonts_certs
+        )
+        val googleFont = GoogleFont("Titan One")
+        FontFamily(Font(googleFont = googleFont, fontProvider = provider))
+    }
+    
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(MaterialTheme.colorScheme.background)
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(24.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
+        ) {
+            // Title
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Text(
+                    text = "Welcome to",
+                    fontSize = 24.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colorScheme.onBackground,
+                    fontFamily = titanOneFont,
+                    textAlign = androidx.compose.ui.text.style.TextAlign.Center
+                )
+                Spacer(modifier = Modifier.height(8.dp))
+                Text(
+                    text = "HelloGoodbye",
+                    fontSize = 32.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colorScheme.onBackground,
+                    fontFamily = titanOneFont,
+                    textAlign = androidx.compose.ui.text.style.TextAlign.Center
+                )
+            }
+            
+            Spacer(modifier = Modifier.height(48.dp))
+            
+            // Sign In/Sign Up Button
+            Button(
+                onClick = onSignIn,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(80.dp),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = MaterialTheme.colorScheme.primary,
+                    contentColor = MaterialTheme.colorScheme.onPrimary
+                ),
+                shape = RoundedCornerShape(16.dp)
+            ) {
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Text(
+                        text = "LOG IN OR SIGN UP",
+                        fontSize = 20.sp,
+                        fontWeight = FontWeight.Bold,
+                        fontFamily = titanOneFont
+                    )
+                    Spacer(modifier = Modifier.height(4.dp))
+                    Text(
+                        text = "Sync across devices, access leaderboard and more",
+                        fontSize = 14.sp,
+                        color = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.8f)
+                    )
+                }
+            }
+            
+            Spacer(modifier = Modifier.height(24.dp))
+            
+            // Anonymous Start Button
+            Button(
+                onClick = onAnonymousStart,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(80.dp),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = MaterialTheme.colorScheme.secondary,
+                    contentColor = MaterialTheme.colorScheme.onSecondary
+                ),
+                shape = RoundedCornerShape(16.dp)
+            ) {
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Text(
+                        text = "START LEARNING",
+                        fontSize = 20.sp,
+                        fontWeight = FontWeight.Bold,
+                        fontFamily = titanOneFont
+                    )
+                    Spacer(modifier = Modifier.height(4.dp))
+                    Text(
+                        text = "Your progress will be saved on this device",
+                        fontSize = 14.sp,
+                        color = MaterialTheme.colorScheme.onSecondary.copy(alpha = 0.8f)
+                    )
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun AuthGate(
+    onBackToChoice: () -> Unit = {},
+    content: @Composable () -> Unit
+) {
+    val context = LocalContext.current
+    val auth = remember { FirebaseAuth.getInstance() }
+    var currentUser by remember { mutableStateOf(auth.currentUser) }
+
+    DisposableEffect(auth) {
+        val listener = FirebaseAuth.AuthStateListener { firebaseAuth ->
+            currentUser = firebaseAuth.currentUser
+        }
+        auth.addAuthStateListener(listener)
+        onDispose { auth.removeAuthStateListener(listener) }
+    }
+
+    if (currentUser == null) {
+        SignInScreen(
+            onSignedIn = {
+                Toast.makeText(context, "Signed in", Toast.LENGTH_SHORT).show()
+            },
+            onBack = onBackToChoice
+        )
+    } else {
+        content()
+    }
+}
+
+@Composable
+fun SignInScreen(
+    onSignedIn: () -> Unit,
+    onBack: () -> Unit = {}
+) {
+    val context = LocalContext.current
+    val auth = remember { FirebaseAuth.getInstance() }
+    var email by remember { mutableStateOf("") }
+    var password by remember { mutableStateOf("") }
+    var isLoading by remember { mutableStateOf(false) }
+    var errorMessage by remember { mutableStateOf<String?>(null) }
+
+    fun signIn(email: String, password: String) {
+        if (email.isBlank() || password.isBlank()) {
+            errorMessage = "Email and password required"
+            return
+        }
+        isLoading = true
+        errorMessage = null
+        auth.signInWithEmailAndPassword(email.trim(), password)
+            .addOnCompleteListener { task ->
+                isLoading = false
+                if (task.isSuccessful) {
+                    onSignedIn()
+                } else {
+                    errorMessage = task.exception?.localizedMessage ?: "Sign-in failed"
+                }
+            }
+    }
+
+    fun signUp(email: String, password: String) {
+        if (email.isBlank() || password.isBlank()) {
+            errorMessage = "Email and password required"
+            return
+        }
+        isLoading = true
+        errorMessage = null
+        auth.createUserWithEmailAndPassword(email.trim(), password)
+            .addOnCompleteListener { task ->
+                isLoading = false
+                if (task.isSuccessful) {
+                    onSignedIn()
+                } else {
+                    errorMessage = task.exception?.localizedMessage ?: "Sign-up failed"
+                }
+            }
+    }
+
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(MaterialTheme.colorScheme.background)
+    ) {
+        // X button in top-right corner
+        IconButton(
+            onClick = onBack,
+            modifier = Modifier
+                .align(Alignment.TopEnd)
+                .padding(16.dp)
+        ) {
+            Icon(
+                imageVector = Icons.Default.Close,
+                contentDescription = "Close",
+                tint = MaterialTheme.colorScheme.onBackground,
+                modifier = Modifier.size(24.dp)
+            )
+        }
+        
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(24.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
+        ) {
+            Text(
+                text = "Sign in",
+                style = MaterialTheme.typography.headlineMedium,
+                fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colorScheme.onBackground
+            )
+            Spacer(modifier = Modifier.height(32.dp))
+            
+            OutlinedTextField(
+                value = email,
+                onValueChange = { email = it },
+                label = { Text("Email") },
+                singleLine = true,
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
+                modifier = Modifier.fillMaxWidth()
+            )
+            Spacer(modifier = Modifier.height(16.dp))
+            
+            OutlinedTextField(
+                value = password,
+                onValueChange = { password = it },
+                label = { Text("Password") },
+                singleLine = true,
+                visualTransformation = PasswordVisualTransformation(),
+                modifier = Modifier.fillMaxWidth()
+            )
+            
+            if (errorMessage != null) {
+                Spacer(modifier = Modifier.height(16.dp))
+                Text(
+                    text = errorMessage!!, 
+                    color = MaterialTheme.colorScheme.error,
+                    textAlign = androidx.compose.ui.text.style.TextAlign.Center
+                )
+            }
+            
+            Spacer(modifier = Modifier.height(32.dp))
+            
+            // Sign in button styled like practice button
+            Button(
+                onClick = { if (!isLoading) signIn(email, password) },
+                enabled = !isLoading,
+                modifier = Modifier.wrapContentWidth(),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = MaterialTheme.colorScheme.primary,
+                    contentColor = MaterialTheme.colorScheme.onPrimary,
+                    disabledContainerColor = Color(0xFFE0E0E0),
+                    disabledContentColor = Color(0xFF7A7A7A)
+                ),
+                shape = RoundedCornerShape(12.dp)
+            ) {
+                val provider = GoogleFont.Provider(
+                    providerAuthority = "com.google.android.gms.fonts",
+                    providerPackage = "com.google.android.gms",
+                    certificates = R.array.com_google_android_gms_fonts_certs
+                )
+                val titanOne = remember {
+                    val googleFont = GoogleFont("Titan One")
+                    FontFamily(Font(googleFont = googleFont, fontProvider = provider))
+                }
+                Text(
+                    text = if (isLoading) "SIGNING IN..." else "SIGN IN",
+                    fontSize = 24.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = if (isLoading) Color(0xFF7A7A7A) else MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.92f),
+                    fontFamily = titanOne
+                )
+            }
+            
+            Spacer(modifier = Modifier.height(16.dp))
+            
+            TextButton(
+                onClick = { if (!isLoading) signUp(email, password) },
+                enabled = !isLoading,
+                modifier = Modifier.wrapContentWidth()
+            ) {
+                Text(
+                    text = "Create account",
+                    color = MaterialTheme.colorScheme.primary
+                )
+            }
+        }
+    }
+}
+
+@Composable
 fun MainScreen() {
     val context = LocalContext.current
+    val auth = remember { FirebaseAuth.getInstance() }
+    var currentUser by remember { mutableStateOf(auth.currentUser) }
+    var showSignInScreen by remember { mutableStateOf(false) }
+    
     LaunchedEffect(Unit) {
         // Developer safety: ensure metadata and corpus stay aligned
         assertCorpusAndMetadataAligned(context)
         // Mark that the app has been launched
         markAppLaunched(context)
     }
+    
+    DisposableEffect(auth) {
+        val listener = FirebaseAuth.AuthStateListener { firebaseAuth ->
+            currentUser = firebaseAuth.currentUser
+        }
+        auth.addAuthStateListener(listener)
+        onDispose { auth.removeAuthStateListener(listener) }
+    }
+    
     var currency by remember { mutableStateOf(loadCurrency(context)) }
     var selectedCountries by remember { mutableStateOf(loadSelectedLanguages(context)) }
     var currentScreen by remember { mutableStateOf("home") }
@@ -234,10 +577,22 @@ fun MainScreen() {
                         println("DEBUG: Progress cleared, shouldShowWelcomeScreen = $shouldShow")
                     }
                     showWelcome = shouldShow
-                }
+                },
+                onSignIn = { showSignInScreen = true }
             )
         }
         }
+    }
+    
+    // Show sign-in screen overlay when requested
+    if (showSignInScreen) {
+        SignInScreen(
+            onSignedIn = { 
+                showSignInScreen = false
+                Toast.makeText(context, "Signed in successfully!", Toast.LENGTH_SHORT).show()
+            },
+            onBack = { showSignInScreen = false }
+        )
     }
 }
 

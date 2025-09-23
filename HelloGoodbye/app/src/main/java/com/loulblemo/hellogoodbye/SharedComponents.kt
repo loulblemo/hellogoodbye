@@ -58,6 +58,7 @@ import androidx.compose.foundation.border
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.geometry.CornerRadius
+import com.google.firebase.auth.FirebaseAuth
 
 // Helper function to determine if text contains Thai or Vietnamese characters
 fun needsLilitaFont(text: String): Boolean {
@@ -1024,11 +1025,23 @@ fun BadgeOverlay(
 @Composable
 fun SettingsScreen(
     onBack: () -> Unit,
-    onProgressCleared: () -> Unit = {}
+    onProgressCleared: () -> Unit = {},
+    onSignIn: () -> Unit = {}
 ) {
     val context = LocalContext.current
+    val auth = remember { FirebaseAuth.getInstance() }
+    var currentUser by remember { mutableStateOf(auth.currentUser) }
     var showConfirmDialog by remember { mutableStateOf(false) }
+    var showSignOutDialog by remember { mutableStateOf(false) }
     var debugModeEnabled by remember { mutableStateOf(loadDebugMode(context)) }
+
+    DisposableEffect(auth) {
+        val listener = FirebaseAuth.AuthStateListener { firebaseAuth ->
+            currentUser = firebaseAuth.currentUser
+        }
+        auth.addAuthStateListener(listener)
+        onDispose { auth.removeAuthStateListener(listener) }
+    }
     
     Column(
         modifier = Modifier
@@ -1177,6 +1190,80 @@ fun SettingsScreen(
             }
         }
         
+        Spacer(modifier = Modifier.height(24.dp))
+        
+        // Account Section
+        Card(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp),
+            colors = CardDefaults.cardColors(
+                containerColor = MaterialTheme.colorScheme.secondaryContainer
+            ),
+            shape = RoundedCornerShape(12.dp)
+        ) {
+            Column(
+                modifier = Modifier.padding(16.dp)
+            ) {
+                Text(
+                    text = "🔐 Account",
+                    fontSize = 18.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colorScheme.onSecondaryContainer
+                )
+                
+                Spacer(modifier = Modifier.height(16.dp))
+                
+                if (currentUser != null) {
+                    // Show user email and sign out button for authenticated users
+                    Text(
+                        text = "Signed in as: ${currentUser?.email ?: "Unknown"}",
+                        fontSize = 14.sp,
+                        color = MaterialTheme.colorScheme.onSecondaryContainer.copy(alpha = 0.8f)
+                    )
+                    Spacer(modifier = Modifier.height(12.dp))
+                    Button(
+                        onClick = { showSignOutDialog = true },
+                        modifier = Modifier.fillMaxWidth(),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = MaterialTheme.colorScheme.secondary,
+                            contentColor = MaterialTheme.colorScheme.onSecondary
+                        ),
+                        shape = RoundedCornerShape(8.dp)
+                    ) {
+                        Text(
+                            text = "Sign Out",
+                            fontSize = 16.sp,
+                            fontWeight = FontWeight.Bold
+                        )
+                    }
+                } else {
+                    // Show sign in button for anonymous users
+                    Text(
+                        text = "You're learning as a guest",
+                        fontSize = 14.sp,
+                        color = MaterialTheme.colorScheme.onSecondaryContainer.copy(alpha = 0.8f)
+                    )
+                    Spacer(modifier = Modifier.height(12.dp))
+                    Button(
+                        onClick = onSignIn,
+                        modifier = Modifier.fillMaxWidth(),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = MaterialTheme.colorScheme.primary,
+                            contentColor = MaterialTheme.colorScheme.onPrimary
+                        ),
+                        shape = RoundedCornerShape(8.dp)
+                    ) {
+                        Text(
+                            text = "Sign In",
+                            fontSize = 16.sp,
+                            fontWeight = FontWeight.Bold
+                        )
+                    }
+                }
+            }
+        }
+        
         Spacer(modifier = Modifier.weight(1f))
         
         // App info at bottom
@@ -1191,7 +1278,7 @@ fun SettingsScreen(
         )
     }
     
-    // Confirmation dialog
+    // Confirmation dialog for clearing progress
     if (showConfirmDialog) {
         AlertDialog(
             onDismissRequest = { showConfirmDialog = false },
@@ -1213,6 +1300,33 @@ fun SettingsScreen(
             },
             dismissButton = {
                 TextButton(onClick = { showConfirmDialog = false }) {
+                    Text("Cancel")
+                }
+            }
+        )
+    }
+    
+    // Sign out confirmation dialog
+    if (showSignOutDialog) {
+        AlertDialog(
+            onDismissRequest = { showSignOutDialog = false },
+            title = { Text("Sign Out?") },
+            text = { 
+                Text("You will need to sign in again to access your account.")
+            },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        FirebaseAuth.getInstance().signOut()
+                        showSignOutDialog = false
+                        // AuthGate will automatically detect sign-out and show SignInScreen
+                    }
+                ) {
+                    Text("Sign Out", color = MaterialTheme.colorScheme.primary)
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { showSignOutDialog = false }) {
                     Text("Cancel")
                 }
             }
