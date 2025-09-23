@@ -119,45 +119,67 @@ private fun updateTravelSectionsWithMixedLanguages(
 ): List<TravelSection> {
     return basicSections.map { section ->
         if (section.isMixed) {
-            // For mixed sections, work exactly like practice mode
-            val startLangCode = section.id.split("_")[0] // Extract start language from section ID
-            val isLevel2Exercise3 = section.id.endsWith("level2_exercise3")
+            // Check if this quest is completed and has saved languages
+            val questProgress = questProgresses[section.id]
+            val isCompleted = questProgress?.isCompleted == true
+            val savedLanguages = questProgress?.languagesUsed ?: emptyList()
             
-            val availableLanguagesForMixed = mutableListOf<String>()
-            availableLanguagesForMixed.add(startLangCode)
-            
-            // Find other languages that have at least bronze medal (completed at least 1 quest)
-            val languagesWithBronzeMedal = allLangCodes.filter { langCode ->
-                langCode != startLangCode && 
-                langCode != "en" && 
-                getLanguageQuestCount(context, langCode) >= 1
-            }
-            
-            if (isLevel2Exercise3) {
-                // Level 2 Exercise 3 needs 3 languages total
-                if (languagesWithBronzeMedal.size >= 2) {
-                    // Randomly select 2 additional languages
-                    availableLanguagesForMixed.addAll(languagesWithBronzeMedal.shuffled().take(2))
+            if (isCompleted && savedLanguages.isNotEmpty()) {
+                // Use the saved languages from when the quest was completed
+                val startLangCode = section.id.split("_")[0]
+                val additionalLangNames = if (savedLanguages.size > 1) {
+                    savedLanguages.drop(1).joinToString(" + ") { langCode ->
+                        languageCodeToName(langCode) ?: langCode
+                    }
+                } else {
+                    "Mixed"
                 }
+                
+                section.copy(
+                    languages = savedLanguages,
+                    name = "Mixed: ${languageCodeToName(startLangCode) ?: startLangCode} + $additionalLangNames"
+                )
             } else {
-                // Other mixed quests need 2 languages total
-                if (languagesWithBronzeMedal.isNotEmpty()) {
-                    availableLanguagesForMixed.add(languagesWithBronzeMedal.random())
+                // For incomplete mixed sections, work exactly like practice mode
+                val startLangCode = section.id.split("_")[0] // Extract start language from section ID
+                val isLevel2Exercise3 = section.id.endsWith("level2_exercise3")
+                
+                val availableLanguagesForMixed = mutableListOf<String>()
+                availableLanguagesForMixed.add(startLangCode)
+                
+                // Find other languages that have at least bronze medal (completed at least 1 quest)
+                val languagesWithBronzeMedal = allLangCodes.filter { langCode ->
+                    langCode != startLangCode && 
+                    langCode != "en" && 
+                    getLanguageQuestCount(context, langCode) >= 1
                 }
-            }
-            
-            val additionalLangNames = if (availableLanguagesForMixed.size > 1) {
-                availableLanguagesForMixed.drop(1).joinToString(" + ") { langCode ->
-                    languageCodeToName(langCode) ?: langCode
+                
+                if (isLevel2Exercise3) {
+                    // Level 2 Exercise 3 needs 3 languages total
+                    if (languagesWithBronzeMedal.size >= 2) {
+                        // Randomly select 2 additional languages
+                        availableLanguagesForMixed.addAll(languagesWithBronzeMedal.shuffled().take(2))
+                    }
+                } else {
+                    // Other mixed quests need 2 languages total
+                    if (languagesWithBronzeMedal.isNotEmpty()) {
+                        availableLanguagesForMixed.add(languagesWithBronzeMedal.random())
+                    }
                 }
-            } else {
-                "Mixed"
+                
+                val additionalLangNames = if (availableLanguagesForMixed.size > 1) {
+                    availableLanguagesForMixed.drop(1).joinToString(" + ") { langCode ->
+                        languageCodeToName(langCode) ?: langCode
+                    }
+                } else {
+                    "Mixed"
+                }
+                
+                section.copy(
+                    languages = availableLanguagesForMixed,
+                    name = "Mixed: ${languageCodeToName(startLangCode) ?: startLangCode} + $additionalLangNames"
+                )
             }
-            
-            section.copy(
-                languages = availableLanguagesForMixed,
-                name = "Mixed: ${languageCodeToName(startLangCode) ?: startLangCode} + $additionalLangNames"
-            )
         } else {
             section
         }
@@ -374,7 +396,8 @@ fun TravelScreen(
                             currentSection.id,
                             completedStepKey,
                             travelSections,
-                            questExercises
+                            questExercises,
+                            langCodes
                         )
                         onAwardCoin()
                         // Refresh local display from storage to avoid double-counting
@@ -390,6 +413,14 @@ fun TravelScreen(
                             langCodes.forEach { languageCode ->
                                 incrementLanguageQuestCount(context, languageCode)
                             }
+                            
+                            // Update travel sections to reflect new progress (important for mixed quests)
+                            travelSections = updateTravelSectionsWithMixedLanguages(
+                                context,
+                                basicTravelSections,
+                                travelState.questProgresses,
+                                supportedLangCodes
+                            )
                             
                             // Quest completed, return to list
                             travelState = travelState.copy(currentQuestId = null)
@@ -410,6 +441,14 @@ fun TravelScreen(
                             "${currentSection.id}#${index}"
                         } ?: emptyList()
                         
+                        // Get languages used for this quest
+                        val languages = if (currentSection.isMixed) {
+                            currentSection.languages
+                        } else {
+                            listOf(languageNameToCode(currentSection.language) ?: startLanguageCode)
+                        }
+                        val langCodes = languages.filterNotNull()
+                        
                         // Mark all exercises as completed
                         allExerciseIds.forEach { exerciseId ->
                             travelState = updateQuestProgress(
@@ -418,7 +457,8 @@ fun TravelScreen(
                                 currentSection.id,
                                 exerciseId,
                                 travelSections,
-                                questExercises
+                                questExercises,
+                                langCodes
                             )
                         }
                         
@@ -428,12 +468,6 @@ fun TravelScreen(
                         currency = loadCurrency(context)
                         
                         // Track encountered words from this quest (same as real completion)
-                        val languages = if (currentSection.isMixed) {
-                            currentSection.languages
-                        } else {
-                            listOf(languageNameToCode(currentSection.language) ?: startLanguageCode)
-                        }
-                        val langCodes = languages.filterNotNull()
                         trackWordsFromExercise(context, currentSection, corpus, langCodes)
                         
                         // Track badge progress for debug completion (quest completed) - same as real completion
@@ -447,15 +481,12 @@ fun TravelScreen(
                         }
                         
                         // Update travel sections to reflect new progress (important for mixed quests)
-                        val updatedSections = updateTravelSectionsWithMixedLanguages(
+                        travelSections = updateTravelSectionsWithMixedLanguages(
                             context,
                             basicTravelSections,
                             travelState.questProgresses,
                             supportedLangCodes
                         )
-                        
-                        // Force recomposition to update the UI with new mixed language selections
-                        // This ensures the practice button shows up when it should
                         
                         // Quest completed, return to list
                         travelState = travelState.copy(currentQuestId = null)

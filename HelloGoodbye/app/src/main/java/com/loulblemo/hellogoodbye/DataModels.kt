@@ -31,7 +31,8 @@ data class QuestProgress(
     val questId: String,
     val completedExercises: Set<String> = emptySet(),
     val isUnlocked: Boolean = false,
-    val isCompleted: Boolean = false
+    val isCompleted: Boolean = false,
+    val languagesUsed: List<String> = emptyList()
 )
 
 data class TravelState(
@@ -527,7 +528,8 @@ fun updateQuestProgress(
     questId: String,
     completedExerciseId: String,
     travelSections: List<TravelSection>,
-    questExercises: Map<String, List<ExerciseType>>
+    questExercises: Map<String, List<ExerciseType>>,
+    languagesUsed: List<String> = emptyList()
 ): TravelState {
     val currentProgress = travelState.questProgresses[questId] ?: return travelState
     
@@ -537,7 +539,8 @@ fun updateQuestProgress(
     
     val updatedProgress = currentProgress.copy(
         completedExercises = newCompletedExercises,
-        isCompleted = isQuestCompleted
+        isCompleted = isQuestCompleted,
+        languagesUsed = if (isQuestCompleted && languagesUsed.isNotEmpty()) languagesUsed else currentProgress.languagesUsed
     )
     
     // Unlock next quest if current one is completed
@@ -711,6 +714,8 @@ fun saveQuestProgress(context: Context, questProgress: Map<String, QuestProgress
         editor.putStringSet("quest_${questId}_completed", progress.completedExercises)
         editor.putBoolean("quest_${questId}_unlocked", progress.isUnlocked)
         editor.putBoolean("quest_${questId}_completed_flag", progress.isCompleted)
+        // Save languages used as a string set
+        editor.putStringSet("quest_${questId}_languages", progress.languagesUsed.toSet())
     }
     
     editor.apply()
@@ -724,12 +729,14 @@ fun loadQuestProgress(context: Context, questIds: List<String>): Map<String, Que
         val completedExercises = prefs.getStringSet("quest_${questId}_completed", emptySet()) ?: emptySet()
         val isUnlocked = prefs.getBoolean("quest_${questId}_unlocked", false)
         val isCompleted = prefs.getBoolean("quest_${questId}_completed_flag", false)
+        val languagesUsed = prefs.getStringSet("quest_${questId}_languages", emptySet())?.toList() ?: emptyList()
         
         progressMap[questId] = QuestProgress(
             questId = questId,
             completedExercises = completedExercises,
             isUnlocked = isUnlocked,
-            isCompleted = isCompleted
+            isCompleted = isCompleted,
+            languagesUsed = languagesUsed
         )
     }
     
