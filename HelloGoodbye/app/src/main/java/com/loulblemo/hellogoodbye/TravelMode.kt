@@ -229,7 +229,7 @@ fun TravelScreen(
     }
     
     // Phase 2: Update travel sections with dynamic mixed language selection based on quest progress
-    val travelSections = remember(basicTravelSections, travelState.questProgresses) {
+    var travelSections = remember(basicTravelSections, travelState.questProgresses) {
         updateTravelSectionsWithMixedLanguages(context, basicTravelSections, travelState.questProgresses, supportedLangCodes)
     }
     
@@ -606,7 +606,102 @@ fun TravelQuestListScreen(
                 Spacer(modifier = Modifier.height(16.dp))
             }
         }
+        
+        // Debug word tracking display - only show in debug mode
+        if (loadDebugMode(context)) {
+            item {
+                DebugWordTrackingDisplay(context = context)
+            }
+        }
 
+    }
+}
+
+@Composable
+private fun DebugWordTrackingDisplay(context: Context) {
+    val supportedLangCodes = remember { getSupportedLanguageCodesFromMetadata(context) }
+    val corpus = remember { loadCorpusFromAssets(context) }
+    
+    // Filter to only show languages with non-zero encountered words
+    val languagesWithWords = remember(supportedLangCodes) {
+        supportedLangCodes.filter { langCode ->
+            getEncounteredWordsCount(context, langCode) > 0
+        }
+    }
+    
+    if (languagesWithWords.isEmpty()) {
+        return // Don't show anything if no languages have encountered words
+    }
+    
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(16.dp),
+        colors = CardDefaults.cardColors(
+            containerColor = Color(0xFF2D2D2D).copy(alpha = 0.9f)
+        ),
+        shape = RoundedCornerShape(12.dp)
+    ) {
+        Column(
+            modifier = Modifier.padding(16.dp)
+        ) {
+            Text(
+                text = "🐛 Debug: Encountered Words (English)",
+                fontSize = 16.sp,
+                fontWeight = FontWeight.Bold,
+                color = Color.White
+            )
+            
+            Spacer(modifier = Modifier.height(8.dp))
+            
+            languagesWithWords.forEach { langCode ->
+                val encounteredWords = remember(langCode) {
+                    getEncounteredWords(context, langCode)
+                }
+                val wordCount = encounteredWords.size
+                
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 4.dp),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = "${getLanguageNameFromMetadata(context, langCode) ?: langCode}:",
+                        fontSize = 14.sp,
+                        fontWeight = FontWeight.Medium,
+                        color = Color.White
+                    )
+                    Text(
+                        text = "$wordCount words",
+                        fontSize = 12.sp,
+                        color = Color(0xFF4CAF50)
+                    )
+                }
+                
+                // Show first few words in English as examples
+                val sampleWords = encounteredWords.take(5)
+                if (sampleWords.isNotEmpty()) {
+                    val englishWords = sampleWords.mapNotNull { word ->
+                        // Find the corresponding WordEntry in corpus and get the original (English) word
+                        corpus.find { entry ->
+                            entry.byLang[langCode]?.word == word || 
+                            entry.byLang[langCode]?.text == word
+                        }?.original
+                    }
+                    
+                    if (englishWords.isNotEmpty()) {
+                        Text(
+                            text = "  ${englishWords.joinToString(", ")}${if (wordCount > 5) "..." else ""}",
+                            fontSize = 11.sp,
+                            color = Color(0xFFB0B0B0),
+                            modifier = Modifier.padding(start = 8.dp)
+                        )
+                    }
+                }
+            }
+        }
     }
 }
 
@@ -1026,7 +1121,8 @@ fun LockedMixedQuestBubble(
         val explanationText = if (isLevel2Exercise3) {
             "Mixed mode requires:\n• Previous quest completed\n• First quest completed in 3 different languages"
         } else {
-            "Mixed mode requires:\n• Previous quest completed\n• First quest completed in another language"
+            val currentWordCount = getEncounteredWordsCount(context, currentLanguageCode)
+            "Mixed mode requires:\n• Previous quest completed\n• $currentWordCount words encountered in another language"
         }
         Text(
             text = explanationText,

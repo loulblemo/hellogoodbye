@@ -500,8 +500,8 @@ fun initializeTravelState(context: Context, travelSections: List<TravelSection>,
                     hasCompletedQuestsInAtLeast3Languages(context)
                 }
                 else -> {
-                    // Other mixed quests require at least one other language
-                    currentLanguageCode == null || hasCompletedQuestInOtherLanguage(context, currentLanguageCode)
+                    // Other mixed quests require equal or higher encountered words in another language
+                    currentLanguageCode == null || hasEqualOrHigherEncounteredWordsInOtherLanguage(context, currentLanguageCode)
                 }
             }
             
@@ -578,8 +578,8 @@ fun updateQuestProgress(
                             hasCompletedQuestsInAtLeast3Languages(context)
                         }
                         else -> {
-                            // Other mixed quests require at least one other language
-                            currentLanguageCode == null || hasCompletedQuestInOtherLanguage(context, currentLanguageCode)
+                            // Other mixed quests require equal or higher encountered words in another language
+                            currentLanguageCode == null || hasEqualOrHigherEncounteredWordsInOtherLanguage(context, currentLanguageCode)
                         }
                     }
                     
@@ -766,6 +766,14 @@ fun hasCompletedQuestInOtherLanguage(context: Context, currentLanguageCode: Stri
     return getSupportedLanguageCodesFromMetadata(context)
         .filter { it != currentLanguageCode }
         .any { langCode -> getLanguageQuestCount(context, langCode) > 0 }
+}
+
+// Check if user has encountered words in another language with equal or higher count than current language
+fun hasEqualOrHigherEncounteredWordsInOtherLanguage(context: Context, currentLanguageCode: String): Boolean {
+    val currentWordCount = getEncounteredWordsCount(context, currentLanguageCode)
+    return getSupportedLanguageCodesFromMetadata(context)
+        .filter { it != currentLanguageCode }
+        .any { langCode -> getEncounteredWordsCount(context, langCode) >= currentWordCount }
 }
 
 // Check if user has completed at least one quest in at least 3 different languages
