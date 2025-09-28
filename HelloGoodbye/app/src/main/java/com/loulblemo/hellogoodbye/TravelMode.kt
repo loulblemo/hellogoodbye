@@ -810,6 +810,7 @@ fun CircleQuestBubble(
     questProgress: QuestProgress?,
     onClick: () -> Unit
 ) {
+    val context = LocalContext.current
     val isCompleted = questProgress?.isCompleted == true
     val isUnlocked = questProgress?.isUnlocked == true
     
@@ -832,16 +833,43 @@ fun CircleQuestBubble(
                         containerColor = backgroundColor
                     ),
                     shape = CircleShape,
-                    border = BorderStroke(6.dp, borderColor) // Thicker border
+                    border = BorderStroke(10.dp, borderColor) // Same width as completed green bubbles
                 ) {
                     Box(
                         modifier = Modifier.fillMaxSize(),
                         contentAlignment = Alignment.Center
                     ) {
-                        Text(
-                            text = section.flag, // 🥈 silver medal or 🥉 bronze medal
-                            fontSize = 60.sp
-                        )
+                        if (isLevel2Complete) {
+                            // Silver medal - use SVG cup
+                            val imageLoader = remember(context) {
+                                ImageLoader.Builder(context)
+                                    .components { add(SvgDecoder.Factory()) }
+                                    .build()
+                            }
+                            AsyncImage(
+                                model = ImageRequest.Builder(context)
+                                    .data("file:///android_asset/cup_silver.svg")
+                                    .build(),
+                                contentDescription = "Silver Cup",
+                                imageLoader = imageLoader,
+                                modifier = Modifier.size(60.dp)
+                            )
+                        } else {
+                            // Bronze medal - use SVG cup
+                            val imageLoader = remember(context) {
+                                ImageLoader.Builder(context)
+                                    .components { add(SvgDecoder.Factory()) }
+                                    .build()
+                            }
+                            AsyncImage(
+                                model = ImageRequest.Builder(context)
+                                    .data("file:///android_asset/cup_bronze.svg")
+                                    .build(),
+                                contentDescription = "Bronze Cup",
+                                imageLoader = imageLoader,
+                                modifier = Modifier.size(60.dp)
+                            )
+                        }
                     }
                 }
             } else {
@@ -1122,7 +1150,7 @@ fun LockedMixedQuestBubble(
             "Mixed mode requires:\n• Previous quest completed\n• First quest completed in 3 different languages"
         } else {
             val currentWordCount = getEncounteredWordsCount(context, currentLanguageCode)
-            "Mixed mode requires:\n• Previous quest completed\n• $currentWordCount words encountered in another language"
+            "Mixed mode requires:\n• Previous quest completed\n• $currentWordCount words encountered in two languages"
         }
         Text(
             text = explanationText,

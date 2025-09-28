@@ -203,14 +203,14 @@ fun AuthChoiceScreen(
                 ) {
                     Text(
                         text = "LOG IN OR SIGN UP",
-                        fontSize = 20.sp,
+                        fontSize = 28.sp,
                         fontWeight = FontWeight.Bold,
                         fontFamily = titanOneFont
                     )
                     Spacer(modifier = Modifier.height(4.dp))
                     Text(
                         text = "Sync across devices, access leaderboard and more",
-                        fontSize = 14.sp,
+                        fontSize = 10.sp,
                         color = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.8f)
                     )
                 }
@@ -235,14 +235,14 @@ fun AuthChoiceScreen(
                 ) {
                     Text(
                         text = "START LEARNING",
-                        fontSize = 20.sp,
+                        fontSize = 28.sp,
                         fontWeight = FontWeight.Bold,
                         fontFamily = titanOneFont
                     )
                     Spacer(modifier = Modifier.height(4.dp))
                     Text(
                         text = "Your progress will be saved on this device",
-                        fontSize = 14.sp,
+                        fontSize = 10.sp,
                         color = MaterialTheme.colorScheme.onSecondary.copy(alpha = 0.8f)
                     )
                 }
@@ -369,7 +369,9 @@ fun SignInScreen(
                 label = { Text("Email") },
                 singleLine = true,
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier
+                    .fillMaxWidth(0.8f)
+                    .wrapContentWidth(Alignment.CenterHorizontally)
             )
             Spacer(modifier = Modifier.height(16.dp))
             
@@ -379,7 +381,9 @@ fun SignInScreen(
                 label = { Text("Password") },
                 singleLine = true,
                 visualTransformation = PasswordVisualTransformation(),
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier
+                    .fillMaxWidth(0.8f)
+                    .wrapContentWidth(Alignment.CenterHorizontally)
             )
             
             if (errorMessage != null) {

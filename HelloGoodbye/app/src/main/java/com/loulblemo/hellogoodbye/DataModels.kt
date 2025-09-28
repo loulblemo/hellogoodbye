@@ -384,7 +384,7 @@ fun generateTravelSequenceForLanguage(startLangCode: String, allLangCodes: List<
     sections.add(
         TravelSection(
             id = "${startLangCode}_complete",
-            flag = "🥉",
+            flag = "🏆", // Changed to trophy emoji to indicate cup
             name = "Level 1 Complete!",
             language = "Completion",
             isMixed = false,
