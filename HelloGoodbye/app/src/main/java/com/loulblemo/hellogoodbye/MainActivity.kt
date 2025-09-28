@@ -542,7 +542,11 @@ fun MainScreen() {
         "practice" -> {
             PracticeScreen(
                 selectedCountries = selectedCountries,
-                onExit = { currentScreen = "home" },
+                onExit = { 
+                    // Refresh currency from storage when returning to home
+                    currency = loadCurrency(context)
+                    currentScreen = "home" 
+                },
                 onAwardCoin = { 
                     val newCurrency = currency + 1
                     currency = newCurrency
@@ -554,7 +558,11 @@ fun MainScreen() {
             val startLang = travelStartLang ?: "es"
             TravelScreen(
                 startLanguageCode = startLang,
-                onExit = { currentScreen = "home" },
+                onExit = { 
+                    // Refresh currency from storage when returning to home
+                    currency = loadCurrency(context)
+                    currentScreen = "home" 
+                },
                 onAwardCoin = { 
                     val newCurrency = currency + 1
                     currency = newCurrency
