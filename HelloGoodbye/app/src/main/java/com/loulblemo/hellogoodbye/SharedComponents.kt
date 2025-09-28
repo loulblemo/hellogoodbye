@@ -26,9 +26,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.googlefonts.Font
 import androidx.compose.ui.text.googlefonts.GoogleFont
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.graphics.Shadow
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.unit.Dp
@@ -700,22 +700,41 @@ fun ExerciseCompletionScreen(
         
         Spacer(modifier = Modifier.height(48.dp))
         
-        // Continue Button - immediate advance, no special states/colors
-        Button(
-            onClick = onContinue,
-            colors = ButtonDefaults.buttonColors(
-                containerColor = GreenMain
-            ),
+        // Continue Button - rectangular style like PronunciationWordBubble
+        Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(56.dp)
+                .padding(horizontal = 16.dp),
+            contentAlignment = Alignment.Center
         ) {
-            Text(
-                text = "Continue",
-                fontSize = 18.sp,
-                fontWeight = FontWeight.Bold,
-                color = Color.White
-            )
+            val titanOneFont = remember {
+                val provider = GoogleFont.Provider(
+                    providerAuthority = "com.google.android.gms.fonts",
+                    providerPackage = "com.google.android.gms",
+                    certificates = R.array.com_google_android_gms_fonts_certs
+                )
+                val googleFont = GoogleFont("Titan One")
+                FontFamily(Font(googleFont = googleFont, fontProvider = provider))
+            }
+            
+            Box(
+                modifier = Modifier
+                    .wrapContentWidth()
+                    .clip(RoundedCornerShape(12.dp))
+                    .background(GreenMain)
+                    .clickable { onContinue() }
+                    .padding(horizontal = 20.dp, vertical = 12.dp),
+                contentAlignment = Alignment.Center
+            ) {
+                Text(
+                    text = "CONTINUE",
+                    fontSize = 40.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = Color.White,
+                    textAlign = TextAlign.Center,
+                    fontFamily = titanOneFont
+                )
+            }
         }
     }
 }
