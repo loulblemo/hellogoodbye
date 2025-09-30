@@ -59,6 +59,7 @@ import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.geometry.CornerRadius
 import com.google.firebase.auth.FirebaseAuth
+import androidx.compose.ui.res.colorResource
 
 // Helper function to determine if text contains Thai or Vietnamese characters
 fun needsLilitaFont(text: String): Boolean {
@@ -134,7 +135,7 @@ fun TopBarSection(currency: Int, onSettingsClick: () -> Unit) {
             Card(
                 modifier = Modifier.size(60.dp),
                 colors = CardDefaults.cardColors(
-                    containerColor = MaterialTheme.colorScheme.primaryContainer
+                    containerColor = colorResource(id = R.color.primary_container_purple)
                 ),
                 shape = RoundedCornerShape(12.dp)
             ) {
@@ -146,7 +147,7 @@ fun TopBarSection(currency: Int, onSettingsClick: () -> Unit) {
                         text = "$currency",
                         fontSize = 18.sp,
                         fontWeight = FontWeight.Bold,
-                        color = MaterialTheme.colorScheme.onPrimaryContainer
+                        color = colorResource(id = R.color.purple_black)
                     )
                 }
             }
@@ -179,12 +180,12 @@ fun TopBarSection(currency: Int, onSettingsClick: () -> Unit) {
             modifier = Modifier
                 .size(48.dp)
                 .clip(CircleShape)
-                .background(MaterialTheme.colorScheme.secondaryContainer)
+                .background(colorResource(id = R.color.secondary_container_purple))
         ) {
             Icon(
                 imageVector = Icons.Default.Settings,
                 contentDescription = "Settings",
-                tint = MaterialTheme.colorScheme.onSecondaryContainer
+                tint = colorResource(id = R.color.purple_black)
             )
         }
     }
@@ -224,7 +225,7 @@ fun CentralGridSection(
                         .fillMaxSize()
                         .clickable { onFlagClick(country) },
                     colors = CardDefaults.cardColors(
-                        containerColor = MaterialTheme.colorScheme.background
+                        containerColor = colorResource(id = R.color.background_light_purple)
                     ),
                     shape = RoundedCornerShape(12.dp)
                 ) {
@@ -261,7 +262,7 @@ fun CentralGridSection(
                                         cornerRadius = CornerRadius(baseRadius, baseRadius)
                                     )
                                 }
-                                .border(3.dp, MaterialTheme.colorScheme.primary.copy(alpha = 0.7f), RoundedCornerShape(12.dp)),
+                                .border(3.dp, colorResource(id = R.color.primary_purple).copy(alpha = 0.7f), RoundedCornerShape(12.dp)),
                             contentAlignment = Alignment.Center
                         ) {
                             if (flagAsset != null) {
@@ -306,7 +307,7 @@ fun CentralGridSection(
                             .fillMaxSize()
                             .clickable(enabled = true) { onAddFlag() },
                         colors = CardDefaults.cardColors(
-                            containerColor = MaterialTheme.colorScheme.background
+                            containerColor = colorResource(id = R.color.background_light_purple)
                         ),
                         shape = RoundedCornerShape(12.dp)
                     ) {
@@ -320,15 +321,15 @@ fun CentralGridSection(
                                     .fillMaxWidth(0.86f)
                                     .aspectRatio(4f / 3f)
                                     .clip(RoundedCornerShape(12.dp))
-                                    .background(MaterialTheme.colorScheme.primary)
-                                    .border(3.dp, MaterialTheme.colorScheme.primary.copy(alpha = 0.7f), RoundedCornerShape(12.dp)),
+                                    .background(colorResource(id = R.color.primary_purple))
+                                    .border(3.dp, colorResource(id = R.color.primary_purple).copy(alpha = 0.7f), RoundedCornerShape(12.dp)),
                                 contentAlignment = Alignment.Center
                             ) {
                                 Icon(
                                     imageVector = Icons.Default.Add,
                                     contentDescription = "Add flag",
                                     modifier = Modifier.size(36.dp),
-                                    tint = MaterialTheme.colorScheme.onPrimary
+                                    tint = colorResource(id = R.color.white)
                                 )
                             }
                         }
@@ -351,7 +352,7 @@ fun ResponsiveRedCross(
             // Round outline like the settings cog (same circular style)
             .size(48.dp)
             .clip(CircleShape)
-            .background(MaterialTheme.colorScheme.secondaryContainer)
+            .background(colorResource(id = R.color.secondary_container_purple))
             .clickable(
                 interactionSource = remember { MutableInteractionSource() },
                 indication = LocalIndication.current
@@ -362,8 +363,7 @@ fun ResponsiveRedCross(
             .animateContentSize(),
         contentAlignment = Alignment.Center
     ) {
-        // Purple X with rounded stroke caps
-        val xColor = MaterialTheme.colorScheme.onSecondaryContainer
+        val xColor = colorResource(id = R.color.purple_black) // Move xColor definition here
         Canvas(modifier = Modifier.fillMaxSize()) {
             val strokeWidth = size.minDimension * 0.09f
             val padding = size.minDimension * 0.30f
@@ -473,8 +473,8 @@ fun PracticeButtonSection(onClick: () -> Unit, modifier: Modifier = Modifier, en
         modifier = modifier
             .wrapContentWidth(),
         colors = ButtonDefaults.buttonColors(
-            containerColor = MaterialTheme.colorScheme.primary,
-            contentColor = MaterialTheme.colorScheme.onPrimary,
+            containerColor = colorResource(id = R.color.primary_purple),
+            contentColor = colorResource(id = R.color.white),
             disabledContainerColor = Color(0xFFE0E0E0),
             disabledContentColor = Color(0xFF7A7A7A)
         ),
@@ -499,7 +499,7 @@ fun PracticeButtonSection(onClick: () -> Unit, modifier: Modifier = Modifier, en
             text = "PRACTICE",
             fontSize = 40.sp,
             fontWeight = FontWeight.Bold,
-            color = if (enabled) MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.92f) else Color(0xFF7A7A7A),
+            color = if (enabled) colorResource(id = R.color.white).copy(alpha = 0.92f) else Color(0xFF7A7A7A),
             fontFamily = titanOne
         )
     }
@@ -510,7 +510,8 @@ fun PronunciationWordBubble(
     text: String,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
-    containerColor: Color = MaterialTheme.colorScheme.primary
+    containerColor: Color = colorResource(id = R.color.primary_purple),
+    textColor: Color = colorResource(id = R.color.white)
 ) {
     // Button-like bubble styled like Practice: primary background, appropriate font, white text
     val appropriateFont = getAppropriateFontFamily(text)
@@ -542,7 +543,7 @@ fun PronunciationWordBubble(
                 text = text,
                 fontSize = fontSp,
                 fontWeight = FontWeight.Bold,
-                color = Color.White,
+                color = textColor,
                 textAlign = TextAlign.Center,
                 fontFamily = appropriateFont
             )
@@ -905,15 +906,15 @@ fun PracticeBubbleFlag(
     onClick: () -> Unit
 ) {
     val containerColor = when {
-        error -> MaterialTheme.colorScheme.errorContainer
+        error -> colorResource(id = R.color.primary_container_purple)
         solved -> GreenLight
-        selected -> MaterialTheme.colorScheme.primaryContainer
-        else -> MaterialTheme.colorScheme.surface
+        selected -> colorResource(id = R.color.primary_container_purple)
+        else -> colorResource(id = R.color.surface_light_purple)
     }
     val borderColor = when {
         error -> FlagRed
         solved -> GreenDark
-        selected -> MaterialTheme.colorScheme.primary
+        selected -> colorResource(id = R.color.primary_purple)
         else -> Color.Transparent
     }
     Card(
@@ -944,22 +945,22 @@ fun PracticeBubble(
     onClick: () -> Unit
 ) {
     val containerColor = when {
-        error -> MaterialTheme.colorScheme.errorContainer
+        error -> colorResource(id = R.color.primary_container_purple)
         solved -> GreenLight // light green
-        selected -> MaterialTheme.colorScheme.primaryContainer // purple selection
-        else -> MaterialTheme.colorScheme.surface
+        selected -> colorResource(id = R.color.primary_container_purple) // purple selection
+        else -> colorResource(id = R.color.surface_light_purple)
     }
     val borderColor = when {
         error -> FlagRed
         solved -> GreenDark // dark green outline
-        selected -> MaterialTheme.colorScheme.primary
+        selected -> colorResource(id = R.color.primary_purple)
         else -> Color.Transparent
     }
     val textColor = when {
-        error -> MaterialTheme.colorScheme.onErrorContainer
+        error -> colorResource(id = R.color.purple_black)
         solved -> GreenDarker
-        selected -> MaterialTheme.colorScheme.onPrimaryContainer
-        else -> MaterialTheme.colorScheme.onSurface
+        selected -> colorResource(id = R.color.purple_black)
+        else -> colorResource(id = R.color.purple_black)
     }
     Card(
         modifier = Modifier
@@ -1065,7 +1066,7 @@ fun SettingsScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(MaterialTheme.colorScheme.background)
+            .background(colorResource(id = R.color.background_light_purple))
     ) {
         // Header
         Row(
@@ -1078,9 +1079,10 @@ fun SettingsScreen(
             Text(
                 text = "Settings",
                 fontSize = 20.sp,
-                fontWeight = FontWeight.Bold
+                fontWeight = FontWeight.Bold,
+                color = colorResource(id = R.color.purple_black)
             )
-            TextButton(onClick = onBack) { Text("Back") }
+            TextButton(onClick = onBack) { Text("Back", color = colorResource(id = R.color.purple_black)) }
         }
         
         Spacer(modifier = Modifier.height(24.dp))
@@ -1091,7 +1093,7 @@ fun SettingsScreen(
                 .fillMaxWidth()
                 .padding(horizontal = 16.dp),
             colors = CardDefaults.cardColors(
-                containerColor = MaterialTheme.colorScheme.errorContainer
+                containerColor = colorResource(id = R.color.primary_container_purple)
             ),
             shape = RoundedCornerShape(12.dp)
         ) {
@@ -1102,7 +1104,7 @@ fun SettingsScreen(
                     text = "⚠️ Danger Zone",
                     fontSize = 18.sp,
                     fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colorScheme.onErrorContainer
+                    color = colorResource(id = R.color.purple_black)
                 )
                 
                 Spacer(modifier = Modifier.height(8.dp))
@@ -1110,7 +1112,7 @@ fun SettingsScreen(
                 Text(
                     text = "This will clear all your progress including:",
                     fontSize = 14.sp,
-                    color = MaterialTheme.colorScheme.onErrorContainer
+                    color = colorResource(id = R.color.purple_black)
                 )
                 
                 Spacer(modifier = Modifier.height(4.dp))
@@ -1118,10 +1120,10 @@ fun SettingsScreen(
                 Column(
                     modifier = Modifier.padding(start = 16.dp)
                 ) {
-                    Text("• Quest progress and completions", fontSize = 12.sp, color = MaterialTheme.colorScheme.onErrorContainer)
-                    Text("• Badge progress (bronze/silver)", fontSize = 12.sp, color = MaterialTheme.colorScheme.onErrorContainer)
-                    Text("• Learned words and counters", fontSize = 12.sp, color = MaterialTheme.colorScheme.onErrorContainer)
-                    Text("• All saved data", fontSize = 12.sp, color = MaterialTheme.colorScheme.onErrorContainer)
+                    Text("• Quest progress and completions", fontSize = 12.sp, color = colorResource(id = R.color.purple_black))
+                    Text("• Badge progress (bronze/silver)", fontSize = 12.sp, color = colorResource(id = R.color.purple_black))
+                    Text("• Learned words and counters", fontSize = 12.sp, color = colorResource(id = R.color.purple_black))
+                    Text("• All saved data", fontSize = 12.sp, color = colorResource(id = R.color.purple_black))
                 }
                 
                 Spacer(modifier = Modifier.height(16.dp))
@@ -1130,8 +1132,8 @@ fun SettingsScreen(
                     onClick = { showConfirmDialog = true },
                     modifier = Modifier.fillMaxWidth(),
                     colors = ButtonDefaults.buttonColors(
-                        containerColor = MaterialTheme.colorScheme.error,
-                        contentColor = MaterialTheme.colorScheme.onError
+                        containerColor = FlagRed,
+                        contentColor = colorResource(id = R.color.white)
                     ),
                     shape = RoundedCornerShape(8.dp)
                 ) {
@@ -1152,7 +1154,7 @@ fun SettingsScreen(
                 .fillMaxWidth()
                 .padding(horizontal = 16.dp),
             colors = CardDefaults.cardColors(
-                containerColor = MaterialTheme.colorScheme.secondaryContainer
+                containerColor = colorResource(id = R.color.secondary_container_purple)
             ),
             shape = RoundedCornerShape(12.dp)
         ) {
@@ -1163,7 +1165,7 @@ fun SettingsScreen(
                     text = "🔧 Developer Options",
                     fontSize = 18.sp,
                     fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colorScheme.onSecondaryContainer
+                    color = colorResource(id = R.color.purple_black)
                 )
                 
                 Spacer(modifier = Modifier.height(16.dp))
@@ -1177,12 +1179,13 @@ fun SettingsScreen(
                         Text(
                             text = "Debug Mode",
                             fontSize = 16.sp,
-                            fontWeight = FontWeight.Medium
+                            fontWeight = FontWeight.Medium,
+                            color = colorResource(id = R.color.purple_black)
                         )
                         Text(
                             text = "Show debug buttons and developer tools",
                             fontSize = 14.sp,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                            color = colorResource(id = R.color.purple_black).copy(alpha = 0.8f)
                         )
                         if (debugModeEnabled) {
                             Text(
@@ -1201,8 +1204,8 @@ fun SettingsScreen(
                             saveDebugMode(context, enabled)
                         },
                         colors = SwitchDefaults.colors(
-                            checkedThumbColor = MaterialTheme.colorScheme.primary,
-                            checkedTrackColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.5f)
+                            checkedThumbColor = colorResource(id = R.color.primary_purple),
+                            checkedTrackColor = colorResource(id = R.color.primary_purple).copy(alpha = 0.5f)
                         )
                     )
                 }
@@ -1217,7 +1220,7 @@ fun SettingsScreen(
                 .fillMaxWidth()
                 .padding(horizontal = 16.dp),
             colors = CardDefaults.cardColors(
-                containerColor = MaterialTheme.colorScheme.secondaryContainer
+                containerColor = colorResource(id = R.color.secondary_container_purple)
             ),
             shape = RoundedCornerShape(12.dp)
         ) {
@@ -1228,7 +1231,7 @@ fun SettingsScreen(
                     text = "🔐 Account",
                     fontSize = 18.sp,
                     fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colorScheme.onSecondaryContainer
+                    color = colorResource(id = R.color.purple_black)
                 )
                 
                 Spacer(modifier = Modifier.height(16.dp))
@@ -1238,15 +1241,15 @@ fun SettingsScreen(
                     Text(
                         text = "Signed in as: ${currentUser?.email ?: "Unknown"}",
                         fontSize = 14.sp,
-                        color = MaterialTheme.colorScheme.onSecondaryContainer.copy(alpha = 0.8f)
+                        color = colorResource(id = R.color.purple_black).copy(alpha = 0.8f)
                     )
                     Spacer(modifier = Modifier.height(12.dp))
                     Button(
                         onClick = { showSignOutDialog = true },
                         modifier = Modifier.fillMaxWidth(),
                         colors = ButtonDefaults.buttonColors(
-                            containerColor = MaterialTheme.colorScheme.secondary,
-                            contentColor = MaterialTheme.colorScheme.onSecondary
+                            containerColor = colorResource(id = R.color.primary_purple),
+                            contentColor = colorResource(id = R.color.white)
                         ),
                         shape = RoundedCornerShape(8.dp)
                     ) {
@@ -1261,15 +1264,15 @@ fun SettingsScreen(
                     Text(
                         text = "You're learning as a guest",
                         fontSize = 14.sp,
-                        color = MaterialTheme.colorScheme.onSecondaryContainer.copy(alpha = 0.8f)
+                        color = colorResource(id = R.color.purple_black).copy(alpha = 0.8f)
                     )
                     Spacer(modifier = Modifier.height(12.dp))
                     Button(
                         onClick = onSignIn,
                         modifier = Modifier.fillMaxWidth(),
                         colors = ButtonDefaults.buttonColors(
-                            containerColor = MaterialTheme.colorScheme.primary,
-                            contentColor = MaterialTheme.colorScheme.onPrimary
+                            containerColor = colorResource(id = R.color.primary_purple),
+                            contentColor = colorResource(id = R.color.white)
                         ),
                         shape = RoundedCornerShape(8.dp)
                     ) {
@@ -1293,7 +1296,7 @@ fun SettingsScreen(
                 .padding(16.dp),
             textAlign = TextAlign.Center,
             fontSize = 12.sp,
-            color = MaterialTheme.colorScheme.onSurfaceVariant
+            color = colorResource(id = R.color.purple_black).copy(alpha = 0.8f)
         )
     }
     
@@ -1303,7 +1306,7 @@ fun SettingsScreen(
             onDismissRequest = { showConfirmDialog = false },
             title = { Text("Clear All Progress?") },
             text = { 
-                Text("This action cannot be undone. All your progress, badges, and learned words will be permanently deleted.")
+                Text("This action cannot be undone. All your progress, badges, and learned words will be permanently deleted.", color = colorResource(id = R.color.purple_black))
             },
             confirmButton = {
                 TextButton(
@@ -1314,7 +1317,7 @@ fun SettingsScreen(
                         // Don't call onBack() - let the parent handle the welcome screen redirect
                     }
                 ) {
-                    Text("Clear", color = MaterialTheme.colorScheme.error)
+                    Text("Clear", color = FlagRed)
                 }
             },
             dismissButton = {
@@ -1331,7 +1334,7 @@ fun SettingsScreen(
             onDismissRequest = { showSignOutDialog = false },
             title = { Text("Sign Out?") },
             text = { 
-                Text("You will need to sign in again to access your account.")
+                Text("You will need to sign in again to access your account.", color = colorResource(id = R.color.purple_black))
             },
             confirmButton = {
                 TextButton(
@@ -1341,7 +1344,7 @@ fun SettingsScreen(
                         // AuthGate will automatically detect sign-out and show SignInScreen
                     }
                 ) {
-                    Text("Sign Out", color = MaterialTheme.colorScheme.primary)
+                    Text("Sign Out", color = colorResource(id = R.color.primary_purple))
                 }
             },
             dismissButton = {
@@ -1357,8 +1360,11 @@ fun SettingsScreen(
 fun HelloGoodbyeTheme(content: @Composable () -> Unit) {
     MaterialTheme(
         colorScheme = lightColorScheme(
-            // Subtle purple background across the app
-            background = Color(0xFFF5F0FF)
+            primary = colorResource(id = R.color.primary_purple),
+            primaryContainer = colorResource(id = R.color.primary_container_purple),
+            secondaryContainer = colorResource(id = R.color.secondary_container_purple),
+            background = colorResource(id = R.color.background_light_purple),
+            surface = colorResource(id = R.color.surface_light_purple)
         ),
         content = content
     )
@@ -1391,7 +1397,8 @@ fun PronunciationAudioToEnglishExercise(
         PronunciationWordBubble(
             text = pronunciation,
             onClick = { if (audioFile != null) playAssetAudio(context, audioFile) },
-            modifier = Modifier
+            modifier = Modifier,
+            textColor = colorResource(id = R.color.white)
         )
 
         Spacer(modifier = Modifier.height(16.dp))
@@ -1464,7 +1471,8 @@ fun PronunciationAudioToTypeEnglishExercise(
         PronunciationWordBubble(
             text = pronunciation,
             onClick = { if (audioFile != null) playAssetAudio(context, audioFile) },
-            modifier = Modifier
+            modifier = Modifier,
+            textColor = colorResource(id = R.color.white)
         )
 
         Spacer(modifier = Modifier.height(16.dp))

@@ -8,4 +8,15 @@
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
     <color name="icon_background">#FFFFFFFF</color>
+
+    <!-- Custom colors based on the provided image -->
+    <color name="primary_purple">#673AB7</color>
+    <color name="primary_container_purple">#D1C4E9</color>
+    <color name="secondary_container_purple">#D1C4E9</color>
+    <color name="surface_light_purple">#F8F5FF</color>
+    <color name="background_light_purple">#F5F0FF</color>
+    <color name="dark_purple_background">#2D1B69</color>
+    <color name="medium_purple">#8B68C7</color>
+    <color name="purple_black">#1A0A3D</color>
+    <color name="light_grey_purple">#6C588A</color>
 </resources>

@@ -34,6 +34,7 @@ import com.google.firebase.auth.FirebaseAuth
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.res.colorResource
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -95,7 +96,7 @@ fun SplashScreen() {
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(MaterialTheme.colorScheme.background),
+            .background(colorResource(id = R.color.background_light_purple)),
         contentAlignment = Alignment.Center
     ) {
         Column(
@@ -116,7 +117,7 @@ fun SplashScreen() {
                 text = "Where to today?",
                 fontSize = 30.sp,
                 fontWeight = FontWeight.Bold,
-                color = MaterialTheme.colorScheme.onBackground,
+                color = colorResource(id = R.color.purple_black),
                 fontFamily = run {
                     val provider = GoogleFont.Provider(
                         providerAuthority = "com.google.android.gms.fonts",
@@ -152,7 +153,7 @@ fun AuthChoiceScreen(
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(MaterialTheme.colorScheme.background)
+            .background(colorResource(id = R.color.background_light_purple))
     ) {
         Column(
             modifier = Modifier
@@ -169,7 +170,7 @@ fun AuthChoiceScreen(
                     text = "Welcome to",
                     fontSize = 24.sp,
                     fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colorScheme.onBackground,
+                    color = colorResource(id = R.color.purple_black),
                     fontFamily = titanOneFont,
                     textAlign = androidx.compose.ui.text.style.TextAlign.Center
                 )
@@ -178,7 +179,7 @@ fun AuthChoiceScreen(
                     text = "HelloGoodbye",
                     fontSize = 32.sp,
                     fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colorScheme.onBackground,
+                    color = colorResource(id = R.color.purple_black),
                     fontFamily = titanOneFont,
                     textAlign = androidx.compose.ui.text.style.TextAlign.Center
                 )
@@ -193,8 +194,8 @@ fun AuthChoiceScreen(
                     .fillMaxWidth()
                     .height(80.dp),
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = MaterialTheme.colorScheme.primary,
-                    contentColor = MaterialTheme.colorScheme.onPrimary
+                    containerColor = colorResource(id = R.color.medium_purple),
+                    contentColor = colorResource(id = R.color.white)
                 ),
                 shape = RoundedCornerShape(16.dp)
             ) {
@@ -225,8 +226,8 @@ fun AuthChoiceScreen(
                     .fillMaxWidth()
                     .height(80.dp),
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = MaterialTheme.colorScheme.secondary,
-                    contentColor = MaterialTheme.colorScheme.onSecondary
+                    containerColor = colorResource(id = R.color.primary_purple),
+                    contentColor = colorResource(id = R.color.white)
                 ),
                 shape = RoundedCornerShape(16.dp)
             ) {
@@ -243,7 +244,7 @@ fun AuthChoiceScreen(
                     Text(
                         text = "Your progress will be saved on this device",
                         fontSize = 10.sp,
-                        color = MaterialTheme.colorScheme.onSecondary.copy(alpha = 0.8f)
+                        color = colorResource(id = R.color.white).copy(alpha = 0.8f)
                     )
                 }
             }
@@ -343,7 +344,7 @@ fun SignInScreen(
             Icon(
                 imageVector = Icons.Default.Close,
                 contentDescription = "Close",
-                tint = MaterialTheme.colorScheme.onBackground,
+                tint = colorResource(id = R.color.white),
                 modifier = Modifier.size(24.dp)
             )
         }
@@ -359,7 +360,7 @@ fun SignInScreen(
                 text = "Sign in",
                 style = MaterialTheme.typography.headlineMedium,
                 fontWeight = FontWeight.Bold,
-                color = MaterialTheme.colorScheme.onBackground
+                color = colorResource(id = R.color.purple_black)
             )
             Spacer(modifier = Modifier.height(32.dp))
             
@@ -437,7 +438,7 @@ fun SignInScreen(
             ) {
                 Text(
                     text = "Create account",
-                    color = MaterialTheme.colorScheme.primary
+                    color = colorResource(id = R.color.primary_purple)
                 )
             }
         }
@@ -709,7 +710,7 @@ fun WelcomeScreen(onComplete: (List<Country>) -> Unit) {
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color(0xFF2D1B69)) // Dark purple background
+            .background(colorResource(id = R.color.dark_purple_background))
     ) {
         Column(
             modifier = Modifier
@@ -724,7 +725,7 @@ fun WelcomeScreen(onComplete: (List<Country>) -> Unit) {
                 text = "Select your first 5 languages",
                 fontSize = 28.sp,
                 fontWeight = FontWeight.Bold,
-                color = Color.White,
+                color = colorResource(id = R.color.white),
                 fontFamily = titanOneFont,
                 textAlign = androidx.compose.ui.text.style.TextAlign.Center,
                 modifier = Modifier.padding(horizontal = 20.dp)
@@ -769,8 +770,8 @@ fun WelcomeScreen(onComplete: (List<Country>) -> Unit) {
                             brush = Brush.verticalGradient(
                                 colors = listOf(
                                     Color.Transparent,
-                                    Color(0xFF2D1B69).copy(alpha = 0.8f),
-                                    Color(0xFF2D1B69)
+                                    colorResource(id = R.color.dark_purple_background).copy(alpha = 0.8f),
+                                    colorResource(id = R.color.dark_purple_background)
                                 ),
                                 startY = 0f,
                                 endY = Float.POSITIVE_INFINITY
@@ -785,7 +786,7 @@ fun WelcomeScreen(onComplete: (List<Country>) -> Unit) {
             Text(
                 text = "${selectedLanguages.size}/5 languages selected",
                 fontSize = 18.sp,
-                color = Color.White.copy(alpha = 0.8f),
+                color = colorResource(id = R.color.white).copy(alpha = 0.8f),
                 fontFamily = titanOneFont
             )
             
@@ -799,8 +800,10 @@ fun WelcomeScreen(onComplete: (List<Country>) -> Unit) {
                     .fillMaxWidth()
                     .height(60.dp),
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = if (selectedLanguages.size == 5) GreenMain else Color.Gray,
-                    contentColor = Color.White
+                    containerColor = if (selectedLanguages.size == 5) GreenMain else colorResource(id = R.color.primary_container_purple),
+                    contentColor = colorResource(id = R.color.white),
+                    disabledContainerColor = colorResource(id = R.color.medium_purple).copy(alpha = 0.4f),
+                    disabledContentColor = colorResource(id = R.color.white).copy(alpha = 0.4f)
                 ),
                 shape = RoundedCornerShape(12.dp)
             ) {
@@ -831,9 +834,9 @@ fun WelcomeLanguageCard(
         modifier = Modifier
             .aspectRatio(1f)
             .clickable(enabled = isEnabled) { onClick() },
-        colors = CardDefaults.cardColors(
-            containerColor = if (isSelected) GreenMain.copy(alpha = 0.2f) else Color.White.copy(alpha = 0.1f)
-        ),
+                colors = CardDefaults.cardColors(
+                    containerColor = if (isSelected) GreenMain.copy(alpha = 0.2f) else colorResource(id = R.color.medium_purple)
+                ),
         shape = RoundedCornerShape(12.dp)
     ) {
         Box(
@@ -876,7 +879,7 @@ fun WelcomeLanguageCard(
                 Text(
                     text = country.language,
                     fontSize = 12.sp,
-                    color = if (isEnabled) Color.White else Color.White.copy(alpha = 0.5f),
+                    color = if (isEnabled) colorResource(id = R.color.white) else colorResource(id = R.color.light_grey_purple),
                     textAlign = androidx.compose.ui.text.style.TextAlign.Center,
                     maxLines = 2,
                     overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis
