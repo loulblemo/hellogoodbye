@@ -36,10 +36,11 @@ android {
                 "proguard-rules.pro"
             )
             signingConfig = signingConfigs.getByName("release")
+            buildConfigField("boolean", "ENABLE_SIGN_IN", "false")
         }
         debug {
             isDebuggable = true
-            applicationIdSuffix = ".debug"
+            buildConfigField("boolean", "ENABLE_SIGN_IN", "true")
         }
     }
     
@@ -55,6 +56,7 @@ android {
     
     buildFeatures {
         compose = true
+        buildConfig = true
     }
     
     packaging {

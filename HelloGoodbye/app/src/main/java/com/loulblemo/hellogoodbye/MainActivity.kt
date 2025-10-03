@@ -56,12 +56,16 @@ class MainActivity : ComponentActivity() {
                     LaunchedEffect(Unit) {
                         delay(2750) // Wait for animation to complete (~1.75s) + 1s pause on last frame
                         showSplash = false
-                        showAuthChoice = true
+                        if (BuildConfig.ENABLE_SIGN_IN) {
+                            showAuthChoice = true
+                        } else {
+                            useAnonymousMode = true
+                        }
                     }
                     
                     when {
                         showSplash -> SplashScreen()
-                        showAuthChoice -> AuthChoiceScreen(
+                        showAuthChoice && BuildConfig.ENABLE_SIGN_IN -> AuthChoiceScreen(
                             onSignIn = { 
                                 showAuthChoice = false
                                 useAnonymousMode = false
@@ -71,7 +75,7 @@ class MainActivity : ComponentActivity() {
                                 useAnonymousMode = true
                             }
                         )
-                        useAnonymousMode -> MainScreen()
+                        useAnonymousMode || !BuildConfig.ENABLE_SIGN_IN -> MainScreen()
                         else -> AuthGate(
                             onBackToChoice = { 
                                 showAuthChoice = true
@@ -269,6 +273,12 @@ fun AuthGate(
     onBackToChoice: () -> Unit = {},
     content: @Composable () -> Unit
 ) {
+    // If sign-in is disabled, skip authentication and go directly to content
+    if (!BuildConfig.ENABLE_SIGN_IN) {
+        content()
+        return
+    }
+    
     val context = LocalContext.current
     val auth = remember { FirebaseAuth.getInstance() }
     var currentUser by remember { mutableStateOf(auth.currentUser) }
@@ -609,8 +619,8 @@ fun MainScreen() {
         }
     }
     
-    // Show sign-in screen overlay when requested
-    if (showSignInScreen) {
+    // Show sign-in screen overlay when requested (only if sign-in is enabled)
+    if (showSignInScreen && BuildConfig.ENABLE_SIGN_IN) {
         SignInScreen(
             onSignedIn = { 
                 showSignInScreen = false

@@ -1093,40 +1093,61 @@ fun SettingsScreen(
                 .fillMaxWidth()
                 .padding(horizontal = 16.dp),
             colors = CardDefaults.cardColors(
-                containerColor = colorResource(id = R.color.primary_container_purple)
+                containerColor = colorResource(id = R.color.white)
             ),
-            shape = RoundedCornerShape(12.dp)
+            shape = RoundedCornerShape(16.dp),
+            elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
         ) {
             Column(
-                modifier = Modifier.padding(16.dp)
+                modifier = Modifier.padding(20.dp)
             ) {
-                Text(
-                    text = "⚠️ Danger Zone",
-                    fontSize = 18.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = colorResource(id = R.color.purple_black)
-                )
-                
-                Spacer(modifier = Modifier.height(8.dp))
-                
-                Text(
-                    text = "This will clear all your progress including:",
-                    fontSize = 14.sp,
-                    color = colorResource(id = R.color.purple_black)
-                )
-                
-                Spacer(modifier = Modifier.height(4.dp))
-                
-                Column(
-                    modifier = Modifier.padding(start = 16.dp)
+                Row(
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Text("• Quest progress and completions", fontSize = 12.sp, color = colorResource(id = R.color.purple_black))
-                    Text("• Badge progress (bronze/silver)", fontSize = 12.sp, color = colorResource(id = R.color.purple_black))
-                    Text("• Learned words and counters", fontSize = 12.sp, color = colorResource(id = R.color.purple_black))
-                    Text("• All saved data", fontSize = 12.sp, color = colorResource(id = R.color.purple_black))
+                    Box(
+                        modifier = Modifier
+                            .size(32.dp)
+                            .background(
+                                color = FlagRed.copy(alpha = 0.1f),
+                                shape = RoundedCornerShape(8.dp)
+                            ),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text(
+                            text = "⚠",
+                            fontSize = 16.sp
+                        )
+                    }
+                    Spacer(modifier = Modifier.width(12.dp))
+                    Text(
+                        text = "Reset Progress",
+                        fontSize = 20.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = colorResource(id = R.color.purple_black)
+                    )
                 }
                 
+                Spacer(modifier = Modifier.height(12.dp))
+                
+                Text(
+                    text = "Permanently delete all your learning progress and data",
+                    fontSize = 14.sp,
+                    color = colorResource(id = R.color.purple_black).copy(alpha = 0.7f),
+                    lineHeight = 20.sp
+                )
+                
                 Spacer(modifier = Modifier.height(16.dp))
+                
+                Column(
+                    modifier = Modifier.padding(start = 8.dp)
+                ) {
+                    ProgressItem("Quest completions", fontSize = 13.sp)
+                    ProgressItem("Badge achievements", fontSize = 13.sp)
+                    ProgressItem("Learned vocabulary", fontSize = 13.sp)
+                    ProgressItem("All saved preferences", fontSize = 13.sp)
+                }
+                
+                Spacer(modifier = Modifier.height(20.dp))
                 
                 Button(
                     onClick = { showConfirmDialog = true },
@@ -1135,152 +1156,206 @@ fun SettingsScreen(
                         containerColor = FlagRed,
                         contentColor = colorResource(id = R.color.white)
                     ),
-                    shape = RoundedCornerShape(8.dp)
+                    shape = RoundedCornerShape(12.dp)
                 ) {
                     Text(
-                        text = "🗑️ Clear All Progress",
+                        text = "Reset All Data",
                         fontSize = 16.sp,
-                        fontWeight = FontWeight.Bold
+                        fontWeight = FontWeight.SemiBold
                     )
                 }
             }
         }
         
-        Spacer(modifier = Modifier.height(24.dp))
-        
-        // Debug Mode Section
-        Card(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 16.dp),
-            colors = CardDefaults.cardColors(
-                containerColor = colorResource(id = R.color.secondary_container_purple)
-            ),
-            shape = RoundedCornerShape(12.dp)
-        ) {
-            Column(
-                modifier = Modifier.padding(16.dp)
+        // Only show Debug Mode Section in debug builds
+        if (BuildConfig.DEBUG) {
+            Spacer(modifier = Modifier.height(24.dp))
+            
+            // Debug Mode Section
+            Card(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp),
+                colors = CardDefaults.cardColors(
+                    containerColor = colorResource(id = R.color.white)
+                ),
+                shape = RoundedCornerShape(16.dp),
+                elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
             ) {
-                Text(
-                    text = "🔧 Developer Options",
-                    fontSize = 18.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = colorResource(id = R.color.purple_black)
-                )
-                
-                Spacer(modifier = Modifier.height(16.dp))
-                
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
+                Column(
+                    modifier = Modifier.padding(20.dp)
                 ) {
-                    Column {
-                        Text(
-                            text = "Debug Mode",
-                            fontSize = 16.sp,
-                            fontWeight = FontWeight.Medium,
-                            color = colorResource(id = R.color.purple_black)
-                        )
-                        Text(
-                            text = "Show debug buttons and developer tools",
-                            fontSize = 14.sp,
-                            color = colorResource(id = R.color.purple_black).copy(alpha = 0.8f)
-                        )
-                        if (debugModeEnabled) {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Box(
+                            modifier = Modifier
+                                .size(32.dp)
+                                .background(
+                                    color = colorResource(id = R.color.primary_purple).copy(alpha = 0.1f),
+                                    shape = RoundedCornerShape(8.dp)
+                                ),
+                            contentAlignment = Alignment.Center
+                        ) {
                             Text(
-                                text = "💰 +500 credits enabled",
-                                fontSize = 12.sp,
-                                color = GreenMain,
-                                fontWeight = FontWeight.Bold
+                                text = "⚙",
+                                fontSize = 16.sp
                             )
                         }
+                        Spacer(modifier = Modifier.width(12.dp))
+                        Text(
+                            text = "Developer Tools",
+                            fontSize = 20.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = colorResource(id = R.color.purple_black)
+                        )
                     }
                     
-                    Switch(
-                        checked = debugModeEnabled,
-                        onCheckedChange = { enabled ->
-                            debugModeEnabled = enabled
-                            saveDebugMode(context, enabled)
-                        },
-                        colors = SwitchDefaults.colors(
-                            checkedThumbColor = colorResource(id = R.color.primary_purple),
-                            checkedTrackColor = colorResource(id = R.color.primary_purple).copy(alpha = 0.5f)
+                    Spacer(modifier = Modifier.height(16.dp))
+                    
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Column(
+                            modifier = Modifier.weight(1f)
+                        ) {
+                            Text(
+                                text = "Debug Mode",
+                                fontSize = 16.sp,
+                                fontWeight = FontWeight.SemiBold,
+                                color = colorResource(id = R.color.purple_black)
+                            )
+                            Text(
+                                text = "Enable developer tools and debug features",
+                                fontSize = 14.sp,
+                                color = colorResource(id = R.color.purple_black).copy(alpha = 0.7f),
+                                lineHeight = 18.sp
+                            )
+                            if (debugModeEnabled) {
+                                Spacer(modifier = Modifier.height(4.dp))
+                                Text(
+                                    text = "Bonus credits enabled",
+                                    fontSize = 12.sp,
+                                    color = GreenMain,
+                                    fontWeight = FontWeight.Medium
+                                )
+                            }
+                        }
+                        
+                        Switch(
+                            checked = debugModeEnabled,
+                            onCheckedChange = { enabled ->
+                                debugModeEnabled = enabled
+                                saveDebugMode(context, enabled)
+                            },
+                            colors = SwitchDefaults.colors(
+                                checkedThumbColor = colorResource(id = R.color.white),
+                                checkedTrackColor = colorResource(id = R.color.primary_purple),
+                                uncheckedThumbColor = colorResource(id = R.color.white),
+                                uncheckedTrackColor = colorResource(id = R.color.purple_black).copy(alpha = 0.3f)
+                            )
                         )
-                    )
+                    }
                 }
             }
         }
         
-        Spacer(modifier = Modifier.height(24.dp))
-        
-        // Account Section
-        Card(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 16.dp),
-            colors = CardDefaults.cardColors(
-                containerColor = colorResource(id = R.color.secondary_container_purple)
-            ),
-            shape = RoundedCornerShape(12.dp)
-        ) {
-            Column(
-                modifier = Modifier.padding(16.dp)
+        // Only show Account Section if sign-in is enabled
+        if (BuildConfig.ENABLE_SIGN_IN) {
+            Spacer(modifier = Modifier.height(24.dp))
+            
+            // Account Section
+            Card(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp),
+                colors = CardDefaults.cardColors(
+                    containerColor = colorResource(id = R.color.white)
+                ),
+                shape = RoundedCornerShape(16.dp),
+                elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
             ) {
-                Text(
-                    text = "🔐 Account",
-                    fontSize = 18.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = colorResource(id = R.color.purple_black)
-                )
-                
-                Spacer(modifier = Modifier.height(16.dp))
-                
-                if (currentUser != null) {
-                    // Show user email and sign out button for authenticated users
-                    Text(
-                        text = "Signed in as: ${currentUser?.email ?: "Unknown"}",
-                        fontSize = 14.sp,
-                        color = colorResource(id = R.color.purple_black).copy(alpha = 0.8f)
-                    )
-                    Spacer(modifier = Modifier.height(12.dp))
-                    Button(
-                        onClick = { showSignOutDialog = true },
-                        modifier = Modifier.fillMaxWidth(),
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor = colorResource(id = R.color.primary_purple),
-                            contentColor = colorResource(id = R.color.white)
-                        ),
-                        shape = RoundedCornerShape(8.dp)
+                Column(
+                    modifier = Modifier.padding(20.dp)
+                ) {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically
                     ) {
+                        Box(
+                            modifier = Modifier
+                                .size(32.dp)
+                                .background(
+                                    color = colorResource(id = R.color.primary_purple).copy(alpha = 0.1f),
+                                    shape = RoundedCornerShape(8.dp)
+                                ),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Text(
+                                text = "👤",
+                                fontSize = 16.sp
+                            )
+                        }
+                        Spacer(modifier = Modifier.width(12.dp))
                         Text(
-                            text = "Sign Out",
-                            fontSize = 16.sp,
-                            fontWeight = FontWeight.Bold
+                            text = "Account",
+                            fontSize = 20.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = colorResource(id = R.color.purple_black)
                         )
                     }
-                } else {
-                    // Show sign in button for anonymous users
-                    Text(
-                        text = "You're learning as a guest",
-                        fontSize = 14.sp,
-                        color = colorResource(id = R.color.purple_black).copy(alpha = 0.8f)
-                    )
-                    Spacer(modifier = Modifier.height(12.dp))
-                    Button(
-                        onClick = onSignIn,
-                        modifier = Modifier.fillMaxWidth(),
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor = colorResource(id = R.color.primary_purple),
-                            contentColor = colorResource(id = R.color.white)
-                        ),
-                        shape = RoundedCornerShape(8.dp)
-                    ) {
+                    
+                    Spacer(modifier = Modifier.height(16.dp))
+                    
+                    if (currentUser != null) {
+                        // Show user email and sign out button for authenticated users
                         Text(
-                            text = "Sign In",
-                            fontSize = 16.sp,
-                            fontWeight = FontWeight.Bold
+                            text = "Signed in as ${currentUser?.email ?: "Unknown"}",
+                            fontSize = 14.sp,
+                            color = colorResource(id = R.color.purple_black).copy(alpha = 0.7f),
+                            lineHeight = 18.sp
                         )
+                        Spacer(modifier = Modifier.height(16.dp))
+                        Button(
+                            onClick = { showSignOutDialog = true },
+                            modifier = Modifier.fillMaxWidth(),
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = colorResource(id = R.color.purple_black).copy(alpha = 0.1f),
+                                contentColor = colorResource(id = R.color.purple_black)
+                            ),
+                            shape = RoundedCornerShape(12.dp)
+                        ) {
+                            Text(
+                                text = "Sign Out",
+                                fontSize = 16.sp,
+                                fontWeight = FontWeight.SemiBold
+                            )
+                        }
+                    } else {
+                        // Show sign in button for anonymous users
+                        Text(
+                            text = "Continue learning as a guest or sign in to sync your progress",
+                            fontSize = 14.sp,
+                            color = colorResource(id = R.color.purple_black).copy(alpha = 0.7f),
+                            lineHeight = 18.sp
+                        )
+                        Spacer(modifier = Modifier.height(16.dp))
+                        Button(
+                            onClick = onSignIn,
+                            modifier = Modifier.fillMaxWidth(),
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = colorResource(id = R.color.primary_purple),
+                                contentColor = colorResource(id = R.color.white)
+                            ),
+                            shape = RoundedCornerShape(12.dp)
+                        ) {
+                            Text(
+                                text = "Sign In",
+                                fontSize = 16.sp,
+                                fontWeight = FontWeight.SemiBold
+                            )
+                        }
                     }
                 }
             }
@@ -1352,6 +1427,32 @@ fun SettingsScreen(
                     Text("Cancel")
                 }
             }
+        )
+    }
+}
+
+@Composable
+fun ProgressItem(
+    text: String,
+    fontSize: androidx.compose.ui.unit.TextUnit = 12.sp
+) {
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = Modifier.padding(vertical = 2.dp)
+    ) {
+        Box(
+            modifier = Modifier
+                .size(4.dp)
+                .background(
+                    color = colorResource(id = R.color.purple_black).copy(alpha = 0.3f),
+                    shape = RoundedCornerShape(2.dp)
+                )
+        )
+        Spacer(modifier = Modifier.width(8.dp))
+        Text(
+            text = text,
+            fontSize = fontSize,
+            color = colorResource(id = R.color.purple_black).copy(alpha = 0.6f)
         )
     }
 }
