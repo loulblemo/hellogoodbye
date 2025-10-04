@@ -1635,6 +1635,27 @@ fun QuestPracticeScreen(
                             }
                         )
                     }
+                    "flashcards" -> {
+                        val pool = if (eligiblePronunciationWords.isNotEmpty()) eligiblePronunciationWords else getWordsForQuest(corpus)
+                        val words = if (section.isMixed) pool else pool.take(5) // Use 5 words for flashcards
+                        val code = languageCodes.firstOrNull {
+                            val v = words.firstOrNull()?.byLang[it]
+                            v?.audio != null && (v.googlePronunciation != null || v.word != null)
+                        } ?: languageCodes.first()
+                        FlashcardsExercise(
+                            words = words,
+                            languageCode = code,
+                            onDone = { perfect ->
+                                if (perfect) {
+                                    // Perfect: show completion animation
+                                    triggerCompletion(stepKey)
+                                } else {
+                                    // Not perfect: advance inline without animation
+                                    onExerciseComplete(stepKey)
+                                }
+                            }
+                        )
+                    }
                 }
             }
             

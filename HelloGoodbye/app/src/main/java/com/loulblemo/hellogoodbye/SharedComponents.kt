@@ -40,6 +40,9 @@ import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.gestures.detectDragGestures
+import androidx.compose.foundation.layout.offset
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
@@ -1454,6 +1457,384 @@ fun ProgressItem(
             fontSize = fontSize,
             color = colorResource(id = R.color.purple_black).copy(alpha = 0.6f)
         )
+    }
+}
+
+@Composable
+fun FlashcardsExercise(
+    words: List<WordEntry>,
+    languageCode: String,
+    onDone: (Boolean) -> Unit
+) {
+    val context = LocalContext.current
+    val wordIndices = remember(words) { words.indices.toList() }
+    var cardPile by remember(words) { mutableStateOf(words.zip(wordIndices).shuffled()) }
+    var doneWords by remember { mutableStateOf(setOf<Int>()) }
+    var showCompletion by remember { mutableStateOf(false) }
+    var isProcessingSwipe by remember { mutableStateOf(false) }
+    var textColor by remember { mutableStateOf(Color.Unspecified) }
+    var swipeDirection by remember { mutableStateOf<String?>(null) }
+    
+    val currentCard = cardPile.firstOrNull()
+    val currentWord = currentCard?.first
+    val currentIndex = currentCard?.second ?: -1
+    
+    // Function to handle swipe feedback with delay (like HiraKata)
+    fun moveToNextCard(success: Boolean) {
+        if (isProcessingSwipe) return
+        isProcessingSwipe = true
+        
+        // Set visual feedback
+        textColor = if (success) Color(0xFF4CAF50) else Color(0xFFD14C4C) // Green for success, red for failure
+        swipeDirection = if (success) "right" else "left"
+        
+        // Delay before moving to next card (like HiraKata)
+        kotlinx.coroutines.CoroutineScope(kotlinx.coroutines.Dispatchers.Main).launch {
+            delay(500)
+            val card = cardPile.firstOrNull()
+            if (card != null) {
+                val (_, index) = card
+                if (success) {
+                    // Mark as done - remove from pile permanently
+                    doneWords = doneWords + index
+                    cardPile = cardPile.drop(1)
+                } else {
+                    // Skip this word - move it to the bottom of the pile (only if not done)
+                    cardPile = cardPile.drop(1)
+                    // Only add back to pile if not already marked as done
+                    if (index !in doneWords) {
+                        cardPile = cardPile + card
+                    }
+                }
+            }
+            // Reset visual feedback
+            textColor = Color.Unspecified
+            swipeDirection = null
+            isProcessingSwipe = false
+        }
+    }
+    
+    // When pile is empty, all words are done
+    LaunchedEffect(cardPile.isEmpty()) {
+        if (cardPile.isEmpty() && !showCompletion) {
+            showCompletion = true
+            onDone(true) // Perfect score since user worked through all cards
+        }
+    }
+    
+    
+    // If pile is empty, render an empty box to allow parent to show completion screen
+    if (cardPile.isEmpty() && showCompletion) {
+        Box(modifier = Modifier.fillMaxSize())
+        return
+    }
+    
+    if (currentWord != null) {
+        val wordVariant = currentWord.byLang[languageCode]
+        val pronunciation = wordVariant?.googlePronunciation ?: (wordVariant?.word ?: "")
+        val audioFile = wordVariant?.audio
+        
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(bottom = 80.dp) // Add bottom padding to account for debug button
+        ) {
+            // Top section - Progress indicator
+            Column(
+                modifier = Modifier.align(Alignment.TopCenter),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Spacer(modifier = Modifier.height(40.dp))
+                
+                // Progress indicator
+                Text(
+                    text = "${doneWords.size} / ${words.size} completed",
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight.Medium,
+                    color = colorResource(id = R.color.purple_black).copy(alpha = 0.7f),
+                    modifier = Modifier.padding(bottom = 16.dp)
+                )
+            }
+            
+            // Center section - Flashcard (PERFECTLY CENTERED)
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .align(Alignment.Center), // This centers it PERFECTLY
+                contentAlignment = Alignment.Center
+            ) {
+                SwipeableCard(
+                    onSwipeLeft = {
+                        moveToNextCard(false) // Skip - show red feedback
+                    },
+                    onSwipeRight = {
+                        moveToNextCard(true) // Got it - show green feedback
+                    }
+                ) { swipeDirection, dragProgress, currentDragDirection ->
+                    var isFlipped by remember { mutableStateOf(false) }
+                    
+                    Card(
+                        modifier = Modifier
+                            .fillMaxWidth(0.9f)
+                            .aspectRatio(1.2f)
+                            .clickable { isFlipped = !isFlipped }
+                            .border(
+                                width = 8.dp,
+                                color = colorResource(id = R.color.primary_purple).copy(alpha = 0.6f),
+                                shape = RoundedCornerShape(20.dp)
+                            )
+                            .align(Alignment.Center), // Explicitly center the card
+                        colors = CardDefaults.cardColors(
+                            containerColor = colorResource(id = R.color.white)
+                        ),
+                        shape = RoundedCornerShape(20.dp),
+                        elevation = CardDefaults.cardElevation(defaultElevation = 8.dp)
+                    ) {
+                        Box(modifier = Modifier.fillMaxSize()) { // This Box is for the color overlay
+                            // Color feedback exactly like hirakata - no card movement, just overlay
+                            if (swipeDirection != null) {
+                                Box(
+                                    modifier = Modifier
+                                        .fillMaxSize()
+                                        .background(
+                                            color = when (swipeDirection) {
+                                                "right" -> colorResource(id = R.color.primary_purple).copy(alpha = 0.1f)
+                                                "left" -> Color(0xFFD14C4C).copy(alpha = 0.1f)
+                                                else -> Color.Transparent
+                                            }
+                                        )
+                                )
+                            } else if (dragProgress > 0.1f && currentDragDirection != null) {
+                                Box(
+                                    modifier = Modifier
+                                        .fillMaxSize()
+                                        .background(
+                                            color = when (currentDragDirection) {
+                                                "right" -> colorResource(id = R.color.primary_purple).copy(alpha = dragProgress * 0.08f)
+                                                "left" -> Color(0xFFD14C4C).copy(alpha = dragProgress * 0.08f)
+                                                else -> Color(0xFFCCCCCC).copy(alpha = dragProgress * 0.1f)
+                                            }
+                                        )
+                                )
+                            }
+                            
+                            Column(
+                                modifier = Modifier
+                                    .fillMaxSize()
+                                    .padding(24.dp),
+                                horizontalAlignment = Alignment.CenterHorizontally,
+                                verticalArrangement = Arrangement.Center
+                            ) {
+                                if (isFlipped) {
+                                    // Translation (back of card)
+                                    val translation = currentWord?.byLang?.values?.firstOrNull()?.word ?: "Translation not available"
+                                    Text(
+                                        text = translation,
+                                        fontSize = 24.sp,
+                                        fontWeight = FontWeight.Bold,
+                                        color = if (textColor == Color.Unspecified) colorResource(id = R.color.primary_purple) else textColor,
+                                        textAlign = androidx.compose.ui.text.style.TextAlign.Center,
+                                        modifier = Modifier.padding(bottom = 16.dp)
+                                    )
+                                    
+                                    // Tap instruction for back
+                                    Text(
+                                        text = "Tap to see pronunciation",
+                                        fontSize = 14.sp,
+                                        color = colorResource(id = R.color.purple_black).copy(alpha = 0.6f),
+                                        textAlign = androidx.compose.ui.text.style.TextAlign.Center
+                                    )
+                                } else {
+                                    // Pronunciation (front of card)
+                                    Text(
+                                        text = pronunciation,
+                                        fontSize = 28.sp,
+                                        fontWeight = FontWeight.Bold,
+                                        color = if (textColor == Color.Unspecified) colorResource(id = R.color.purple_black) else textColor,
+                                        textAlign = androidx.compose.ui.text.style.TextAlign.Center,
+                                        modifier = Modifier.padding(bottom = 16.dp)
+                                    )
+                                    
+                                    // Audio button
+                                    if (audioFile != null) {
+                                        Button(
+                                            onClick = { playAssetAudio(context, audioFile) },
+                                            colors = ButtonDefaults.buttonColors(
+                                                containerColor = colorResource(id = R.color.primary_purple).copy(alpha = 0.1f),
+                                                contentColor = colorResource(id = R.color.primary_purple)
+                                            ),
+                                            shape = RoundedCornerShape(12.dp),
+                                            modifier = Modifier.padding(bottom = 16.dp)
+                                        ) {
+                                            Text(
+                                                text = "🔊 Play Audio",
+                                                fontSize = 16.sp,
+                                                fontWeight = FontWeight.Medium
+                                            )
+                                        }
+                                    }
+                                    
+                                    // Tap instruction for front
+                                    Text(
+                                        text = "Tap to see translation",
+                                        fontSize = 14.sp,
+                                        color = colorResource(id = R.color.purple_black).copy(alpha = 0.6f),
+                                        textAlign = androidx.compose.ui.text.style.TextAlign.Center
+                                    )
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            
+            // Bottom section - Action buttons
+            Column(
+                modifier = Modifier.align(Alignment.BottomCenter),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                // Bumble-style action buttons
+                Row(
+                    horizontalArrangement = Arrangement.spacedBy(24.dp),
+                    modifier = Modifier.padding(horizontal = 32.dp)
+                ) {
+                    // Again button (swipe left equivalent)
+                    Button(
+                        onClick = {
+                            moveToNextCard(false) // Skip - show red feedback
+                        },
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = colorResource(id = R.color.purple_black).copy(alpha = 0.1f),
+                            contentColor = colorResource(id = R.color.purple_black)
+                        ),
+                        shape = RoundedCornerShape(16.dp),
+                        modifier = Modifier.weight(1f)
+                    ) {
+                        Text(
+                            text = "Again",
+                            fontSize = 16.sp,
+                            fontWeight = FontWeight.Medium
+                        )
+                    }
+                    
+                    // Got it button (swipe right equivalent)
+                    Button(
+                        onClick = {
+                            moveToNextCard(true) // Got it - show green feedback
+                        },
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = colorResource(id = R.color.primary_purple),
+                            contentColor = colorResource(id = R.color.white)
+                        ),
+                        shape = RoundedCornerShape(16.dp),
+                        modifier = Modifier.weight(1f)
+                    ) {
+                        Text(
+                            text = "Got it",
+                            fontSize = 16.sp,
+                            fontWeight = FontWeight.Medium
+                        )
+                    }
+                }
+                
+                Spacer(modifier = Modifier.height(32.dp))
+            }
+        }
+    }
+    // Note: When cardPile becomes empty (all cards processed), the LaunchedEffect triggers
+    // completion and the early return at the top shows the completion screen.
+}
+
+@Composable
+fun SwipeableCard(
+    onSwipeLeft: () -> Unit,
+    onSwipeRight: () -> Unit,
+    content: @Composable (swipeDirection: String?, dragProgress: Float, currentDragDirection: String?) -> Unit
+) {
+    var totalDragX by remember { mutableStateOf(0f) }
+    var dragProgress by remember { mutableStateOf(0f) }
+    var currentDragDirection by remember { mutableStateOf<String?>(null) }
+    var isProcessingSwipe by remember { mutableStateOf(false) }
+    var swipeDirection by remember { mutableStateOf<String?>(null) } // This will be set on swipe completion
+
+    // Reset swipe direction after a delay, simulating hirakata's behavior
+    LaunchedEffect(swipeDirection) {
+        if (swipeDirection != null) {
+            delay(500) // This matches the 500ms delay in hirakata before resetting visual feedback
+            swipeDirection = null
+        }
+    }
+
+    Box(
+        modifier = Modifier
+            .fillMaxSize() // Ensure the box fills the space to capture gestures
+            .pointerInput(Unit) {
+                detectDragGestures(
+                    onDragStart = {
+                        totalDragX = 0f
+                        dragProgress = 0f
+                        currentDragDirection = null
+                        swipeDirection = null // Reset swipeDirection on new drag start
+                        isProcessingSwipe = false
+                    },
+                    onDragEnd = {
+                        if (!isProcessingSwipe) { // Only process if not already processed
+                            if (totalDragX > 100f) { // Right swipe threshold
+                                swipeDirection = "right"
+                                onSwipeRight()
+                            } else if (totalDragX < -100f) { // Left swipe threshold
+                                swipeDirection = "left"
+                                onSwipeLeft()
+                            }
+                        }
+                        // Reset drag states regardless of whether a swipe occurred
+                        totalDragX = 0f
+                        dragProgress = 0f
+                        currentDragDirection = null
+                        isProcessingSwipe = false // Ensure it's reset
+                    },
+                    onDragCancel = {
+                        totalDragX = 0f
+                        dragProgress = 0f
+                        currentDragDirection = null
+                        swipeDirection = null
+                        isProcessingSwipe = false
+                    },
+                    onDrag = { _, dragAmount ->
+                        val (x, y) = dragAmount
+                        totalDragX += x
+
+                        // Only proceed if not already processing a swipe
+                        if (!isProcessingSwipe) {
+                            // Calculate dragProgress for visual feedback
+                            dragProgress = (kotlin.math.abs(totalDragX) / 100f).coerceAtMost(1f)
+
+                            // Determine current drag direction for immediate feedback
+                            if (kotlin.math.abs(totalDragX) > 35) { // Threshold for determining direction
+                                currentDragDirection = if (totalDragX > 0) "right" else "left"
+                            } else {
+                                currentDragDirection = null // No clear direction yet
+                            }
+
+                            // Trigger swipe completion if thresholds are met, matching hirakata's logic
+                            // Hirakata uses a combination of totalDragX > 100 and horizontal dominance
+                            if (kotlin.math.abs(totalDragX) > 100 && kotlin.math.abs(totalDragX) > kotlin.math.abs(y) * 1.5) {
+                                isProcessingSwipe = true // Set to true to prevent further drag processing
+                                if (totalDragX > 0) {
+                                    swipeDirection = "right"
+                                    onSwipeRight()
+                                } else {
+                                    swipeDirection = "left"
+                                    onSwipeLeft()
+                                }
+                            }
+                        }
+                    }
+                )
+            }
+    ) {
+        // Pass swipe direction and drag progress to content for rendering background
+        content(swipeDirection, dragProgress, currentDragDirection)
     }
 }
 

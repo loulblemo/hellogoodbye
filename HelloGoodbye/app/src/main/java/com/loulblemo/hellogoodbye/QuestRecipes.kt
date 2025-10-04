@@ -21,6 +21,7 @@ fun defaultQuestRecipes(): List<QuestRecipe> {
         type = QuestType.SINGLE,
         languageCount = 1,
         exerciseOrder = listOf(
+            "flashcards",
             "pronunciation_audio_to_english",
             "pronunciation_audio_to_english",
             "pronunciation_audio_to_english",
@@ -327,6 +328,11 @@ fun mapExerciseIdToType(section: TravelSection, id: String): ExerciseType {
             id = id,
             title = "Pronunciation to Translation (5 pairs)",
             description = "See pronunciation, hear audio, match to the correct meaning"
+        )
+        "flashcards" -> ExerciseType(
+            id = id,
+            title = "Flashcards",
+            description = "Swipe through all words to complete the exercise"
         )
         else -> ExerciseType(
             id = id,
