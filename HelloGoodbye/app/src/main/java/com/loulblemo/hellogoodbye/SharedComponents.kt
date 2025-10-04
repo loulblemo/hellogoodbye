@@ -1580,7 +1580,7 @@ fun FlashcardsExercise(
                 
                 // Progress indicator
                 Text(
-                    text = "${doneWords.size} / ${words.size} completed",
+                    text = "${doneWords.size} / ${words.size} cards completed",
                     fontSize = 16.sp,
                     fontWeight = FontWeight.Medium,
                     color = colorResource(id = R.color.purple_black).copy(alpha = 0.7f),
@@ -1617,7 +1617,13 @@ fun FlashcardsExercise(
                             )
                             .align(Alignment.Center), // Explicitly center the card
                         colors = CardDefaults.cardColors(
-                            containerColor = colorResource(id = R.color.white)
+                            containerColor = if (textColor == Color.Unspecified) {
+                                colorResource(id = R.color.white)
+                            } else if (textColor == Color(0xFF4CAF50)) {
+                                Color(0xFFE8F5E8) // Light green background for correct
+                            } else {
+                                Color(0xFFFFEBEE) // Light red background for incorrect
+                            }
                         ),
                         shape = RoundedCornerShape(20.dp),
                         elevation = CardDefaults.cardElevation(defaultElevation = 8.dp)
@@ -1630,8 +1636,8 @@ fun FlashcardsExercise(
                                         .fillMaxSize()
                                         .background(
                                             color = when (swipeDirection) {
-                                                "right" -> colorResource(id = R.color.primary_purple).copy(alpha = 0.1f)
-                                                "left" -> Color(0xFFD14C4C).copy(alpha = 0.1f)
+                                                "right" -> Color(0xFF4CAF50).copy(alpha = 0.15f) // More prominent green
+                                                "left" -> Color(0xFFD14C4C).copy(alpha = 0.15f) // More prominent red
                                                 else -> Color.Transparent
                                             }
                                         )
@@ -1642,8 +1648,8 @@ fun FlashcardsExercise(
                                         .fillMaxSize()
                                         .background(
                                             color = when (currentDragDirection) {
-                                                "right" -> colorResource(id = R.color.primary_purple).copy(alpha = dragProgress * 0.08f)
-                                                "left" -> Color(0xFFD14C4C).copy(alpha = dragProgress * 0.08f)
+                                                "right" -> Color(0xFF4CAF50).copy(alpha = dragProgress * 0.12f) // More prominent green
+                                                "left" -> Color(0xFFD14C4C).copy(alpha = dragProgress * 0.12f) // More prominent red
                                                 else -> Color(0xFFCCCCCC).copy(alpha = dragProgress * 0.1f)
                                             }
                                         )
@@ -1720,12 +1726,13 @@ fun FlashcardsExercise(
                             containerColor = colorResource(id = R.color.purple_black).copy(alpha = 0.1f),
                             contentColor = colorResource(id = R.color.purple_black)
                         ),
-                        shape = RoundedCornerShape(16.dp),
+                        shape = RoundedCornerShape(8.dp),
                         modifier = Modifier.weight(1f)
                     ) {
                         Text(
-                            text = "Again",
+                            text = "AGAIN",
                             fontSize = 16.sp,
+                            fontFamily = getAppropriateFontFamily("AGAIN"),
                             fontWeight = FontWeight.Medium
                         )
                     }
@@ -1739,12 +1746,13 @@ fun FlashcardsExercise(
                             containerColor = colorResource(id = R.color.primary_purple),
                             contentColor = colorResource(id = R.color.white)
                         ),
-                        shape = RoundedCornerShape(16.dp),
+                        shape = RoundedCornerShape(8.dp),
                         modifier = Modifier.weight(1f)
                     ) {
                         Text(
-                            text = "Got it",
+                            text = "GOT IT",
                             fontSize = 16.sp,
+                            fontFamily = getAppropriateFontFamily("GOT IT"),
                             fontWeight = FontWeight.Medium
                         )
                     }
