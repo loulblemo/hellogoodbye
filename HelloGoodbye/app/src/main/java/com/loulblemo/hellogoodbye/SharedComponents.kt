@@ -1460,6 +1460,23 @@ fun ProgressItem(
     }
 }
 
+// Helper functions for flashcard tutorial
+fun hasSeenFlashcardTutorial(context: Context): Boolean {
+    val prefs = context.getSharedPreferences("flashcard_tutorial", Context.MODE_PRIVATE)
+    return prefs.getBoolean("has_seen_tutorial", false)
+}
+
+fun markTutorialSeen(context: Context) {
+    val prefs = context.getSharedPreferences("flashcard_tutorial", Context.MODE_PRIVATE)
+    prefs.edit().putBoolean("has_seen_tutorial", true).apply()
+}
+
+// Session-based tutorial memory
+private var sessionTutorialSeen = false
+
+fun getSessionTutorialSeen(): Boolean = sessionTutorialSeen
+fun setSessionTutorialSeen() { sessionTutorialSeen = true }
+
 @Composable
 fun FlashcardsExercise(
     words: List<WordEntry>,
@@ -1474,6 +1491,7 @@ fun FlashcardsExercise(
     var isProcessingSwipe by remember { mutableStateOf(false) }
     var textColor by remember { mutableStateOf(Color.Unspecified) }
     var swipeDirection by remember { mutableStateOf<String?>(null) }
+    var showTutorial by remember { mutableStateOf(!hasSeenFlashcardTutorial(context) && !getSessionTutorialSeen()) }
     
     val currentCard = cardPile.firstOrNull()
     val currentWord = currentCard?.first
@@ -1519,6 +1537,20 @@ fun FlashcardsExercise(
         if (cardPile.isEmpty() && !showCompletion) {
             showCompletion = true
             onDone(true) // Perfect score since user worked through all cards
+        }
+    }
+    
+    // Auto-play audio when new card appears
+    LaunchedEffect(currentCard) {
+        currentCard?.let { card ->
+            val word = card.first
+            val wordVariant = word.byLang[languageCode]
+            val audioFile = wordVariant?.audio
+            
+            if (audioFile != null) {
+                delay(200) // Small delay to let card appear first
+                playAssetAudio(context, audioFile)
+            }
         }
     }
     
@@ -1630,8 +1662,8 @@ fun FlashcardsExercise(
                                     val translation = currentWord?.byLang?.values?.firstOrNull()?.word ?: "Translation not available"
                                     Text(
                                         text = translation,
-                                        fontSize = 24.sp,
-                                        fontWeight = FontWeight.Bold,
+                                        fontSize = 40.sp,
+                                        fontFamily = getAppropriateFontFamily(translation),
                                         color = if (textColor == Color.Unspecified) colorResource(id = R.color.primary_purple) else textColor,
                                         textAlign = androidx.compose.ui.text.style.TextAlign.Center,
                                         modifier = Modifier.padding(bottom = 16.dp)
@@ -1648,31 +1680,12 @@ fun FlashcardsExercise(
                                     // Pronunciation (front of card)
                                     Text(
                                         text = pronunciation,
-                                        fontSize = 28.sp,
-                                        fontWeight = FontWeight.Bold,
+                                        fontSize = 48.sp,
+                                        fontFamily = getAppropriateFontFamily(pronunciation),
                                         color = if (textColor == Color.Unspecified) colorResource(id = R.color.purple_black) else textColor,
                                         textAlign = androidx.compose.ui.text.style.TextAlign.Center,
                                         modifier = Modifier.padding(bottom = 16.dp)
                                     )
-                                    
-                                    // Audio button
-                                    if (audioFile != null) {
-                                        Button(
-                                            onClick = { playAssetAudio(context, audioFile) },
-                                            colors = ButtonDefaults.buttonColors(
-                                                containerColor = colorResource(id = R.color.primary_purple).copy(alpha = 0.1f),
-                                                contentColor = colorResource(id = R.color.primary_purple)
-                                            ),
-                                            shape = RoundedCornerShape(12.dp),
-                                            modifier = Modifier.padding(bottom = 16.dp)
-                                        ) {
-                                            Text(
-                                                text = "🔊 Play Audio",
-                                                fontSize = 16.sp,
-                                                fontWeight = FontWeight.Medium
-                                            )
-                                        }
-                                    }
                                     
                                     // Tap instruction for front
                                     Text(
@@ -1741,6 +1754,76 @@ fun FlashcardsExercise(
             }
         }
     }
+    
+    // Tutorial dialog
+    if (showTutorial) {
+        AlertDialog(
+            onDismissRequest = { showTutorial = false },
+            title = {
+                Text(
+                    text = "How to Use Flashcards",
+                    fontSize = 20.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = colorResource(id = R.color.purple_black)
+                )
+            },
+            text = {
+                Column {
+                    Text(
+                        text = "• Tap the card to see the translation",
+                        fontSize = 16.sp,
+                        color = colorResource(id = R.color.purple_black),
+                        modifier = Modifier.padding(bottom = 8.dp)
+                    )
+                    Text(
+                        text = "• Swipe right or tap 'Got it' if you remember the word",
+                        fontSize = 16.sp,
+                        color = colorResource(id = R.color.purple_black),
+                        modifier = Modifier.padding(bottom = 8.dp)
+                    )
+                    Text(
+                        text = "• Swipe left or tap 'Again' if you want to review it",
+                        fontSize = 16.sp,
+                        color = colorResource(id = R.color.purple_black),
+                        modifier = Modifier.padding(bottom = 8.dp)
+                    )
+                    Text(
+                        text = "• Audio plays automatically for each word",
+                        fontSize = 16.sp,
+                        color = colorResource(id = R.color.purple_black)
+                    )
+                }
+            },
+            confirmButton = {
+                Button(
+                    onClick = {
+                        showTutorial = false
+                        setSessionTutorialSeen() // Mark tutorial as seen for this session
+                    },
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = colorResource(id = R.color.primary_purple),
+                        contentColor = colorResource(id = R.color.white)
+                    )
+                ) {
+                    Text("OK")
+                }
+            },
+            dismissButton = {
+                OutlinedButton(
+                    onClick = {
+                        showTutorial = false
+                        markTutorialSeen(context)
+                    },
+                    colors = ButtonDefaults.outlinedButtonColors(
+                        contentColor = colorResource(id = R.color.purple_black)
+                    )
+                ) {
+                    Text("Don't show again")
+                }
+            }
+        )
+    }
+    
     // Note: When cardPile becomes empty (all cards processed), the LaunchedEffect triggers
     // completion and the early return at the top shows the completion screen.
 }
