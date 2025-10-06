@@ -7,4 +7,6 @@ tqdm>=4.66
 urllib3<2.0
 # Image processing
 Pillow>=10.0.0
+# Chinese romanization
+pypinyin
 
