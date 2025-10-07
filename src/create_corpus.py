@@ -1,10 +1,6 @@
-
 import json
-import asyncio
-from googletrans import Translator
-from tqdm import tqdm
-from phonemizer import phonemize
-from phonemizer.separator import Separator
+from concurrent.futures import ThreadPoolExecutor, as_completed
+from tools.google_api import process_word_and_generate_audio, PROJECT_ID
 
 # Input words to translate
 the_words = [
@@ -37,97 +33,96 @@ target_langs = [
     "zh-cn",   # Chinese (Simplified)
 ]
 
-def get_ipa(lang_code, text):
-    # Best-effort IPA using epitran when available
-    # Replaced by phonemizer/espeak-ng backend for improved quality and coverage
-    phonemizer_lang_map = {
-        "en": "en-us",
-        "es": "es",
-        "fr": "fr-fr", 
-        "de": "de",
-        "it": "it",
-        "pt": "pt",
-        "ru": "ru",
-        "ja": "ja",
-        "ko": "ko",
-        "zh-cn": "cmn",
-    }
-    ph_code = phonemizer_lang_map.get(lang_code, lang_code)
-    ipa = phonemize(
-        text,
-        language=ph_code,
-        backend="espeak",
-        separator=Separator(phone="", word=" "),
-        strip=True,
-        preserve_punctuation=False,
-        with_stress=True,
-    )
-    return ipa if ipa.strip() else None
+
+def process_word_language(word, lang):
+    """Process a single word for a single language"""
+    try:
+        # Use the new unified function
+        processing_results = process_word_and_generate_audio(
+            project_id=PROJECT_ID,
+            text=word,
+            target_language_code=lang
+        )
+
+        return {
+            "word": word,
+            "lang": lang,
+            "result": {
+                "word": processing_results["translated_text"],
+                "respelling": processing_results["respelling"],
+                "audio_file": processing_results["audio"],
+            }
+        }
+    except Exception as e:
+        print(f"Error processing '{word}' for language '{lang}': {e}")
+        return {
+            "word": word,
+            "lang": lang,
+            "result": {
+                "word": None,
+                "respelling": None,
+                "audio_file": None,
+                "error": str(e)
+            }
+        }
 
 
-
-async def build_corpus(words, langs):
-    translator = Translator(service_urls=["translate.googleapis.com"], timeout=15.0)  # stable endpoint + longer timeout
-    results = []
-    for w in tqdm(words):
-        entry = {"original": w}
+def build_corpus(words, langs, max_workers=10):
+    """Build corpus using multi-threading to process all word-language combinations in parallel"""
+    # Create all word-language combinations
+    tasks = []
+    for word in words:
         for lang in langs:
-            # Retry logic for ConnectTimeout
-            max_retries = 3
-            retry_count = 0
-            while retry_count < max_retries:
-                try:
-                    t = await translator.translate(w, src="en", dest=lang)
-                    text = t.text
-                    ipa = get_ipa(lang, text)
-                    
-                    # Try to get Google Translate pronunciation when available
-                    google_pronunciation = None
-                    try:
-                        # Check if pronunciation is available in the translation object
-                        if hasattr(t, 'pronunciation') and t.pronunciation:
-                            google_pronunciation = t.pronunciation
-                        # Also check for extra_data which might contain pronunciation
-                        # elif hasattr(t, 'extra_data') and t.extra_data:
-                        #     if 'translation' in t.extra_data and len(t.extra_data['translation']) > 0:
-                        #         translation_data = t.extra_data['translation'][0]
-                        #         if 'translation' in translation_data and len(translation_data['translation']) > 0:
-                        #             # Look for pronunciation in the translation data
-                        #             for item in translation_data['translation']:
-                        #                 if 'pronunciation' in item:
-                        #                     google_pronunciation = item['pronunciation']
-                        #                     break
-                    except Exception as e:
-                        # If we can't get pronunciation, continue without it
-                        print(f"Could not get pronunciation for {w} -> {lang}: {e}")
-                    
-                    entry[lang] = {
-                        "word": text,
-                        "IPA": ipa,
-                        "text": text,
-                    }
-                    
-                    # Add Google Translate pronunciation if available
-                    if google_pronunciation:
-                        entry[lang]["google_pronunciation"] = google_pronunciation
-                    
-                    break  # Success, exit retry loop
-                except Exception as e:
-                    if "ConnectTimeout" in str(e) and retry_count < max_retries - 1:
-                        retry_count += 1
-                        wait_time = 2 ** retry_count  # Exponential backoff: 2, 4, 8 seconds
-                        print(f"ConnectTimeout for {w} -> {lang}, retrying in {wait_time}s (attempt {retry_count}/{max_retries})")
-                        await asyncio.sleep(wait_time)
-                        continue
-                    else:
-                        # Either not a ConnectTimeout or max retries reached
-                        raise e
-
-        results.append(entry)
-    return results
+            tasks.append((word, lang))
+    
+    print(f"Processing {len(tasks)} word-language combinations with {max_workers} workers...")
+    
+    # Process all combinations in parallel
+    results = {}
+    with ThreadPoolExecutor(max_workers=max_workers) as executor:
+        # Submit all tasks
+        future_to_task = {
+            executor.submit(process_word_language, word, lang): (word, lang) 
+            for word, lang in tasks
+        }
+        
+        # Collect results as they complete
+        completed = 0
+        for future in as_completed(future_to_task):
+            word, lang = future_to_task[future]
+            try:
+                result = future.result()
+                word = result["word"]
+                lang = result["lang"]
+                lang_result = result["result"]
+                
+                # Initialize word entry if not exists
+                if word not in results:
+                    results[word] = {"original": word}
+                
+                # Add language result
+                results[word][lang] = lang_result
+                
+                completed += 1
+                print(f"Completed {completed}/{len(tasks)}: '{word}' -> {lang}")
+                
+            except Exception as e:
+                print(f"Unexpected error processing '{word}' for '{lang}': {e}")
+                completed += 1
+    
+    # Convert results dict to list in original order
+    final_results = []
+    for word in words:
+        if word in results:
+            final_results.append(results[word])
+        else:
+            # Fallback if word wasn't processed
+            final_results.append({"original": word})
+    
+    return final_results
 
 if __name__ == "__main__":
-    data = asyncio.run(build_corpus(the_words, target_langs))
+    data = build_corpus(the_words, target_langs)
     with open(corpus_file, "w", encoding="utf-8") as f:
         json.dump(data, f, ensure_ascii=False, indent=2)
     print(f"Wrote {len(data)} entries to {corpus_file}")

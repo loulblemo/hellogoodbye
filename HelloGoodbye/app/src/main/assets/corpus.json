@@ -2,1683 +2,1351 @@
   {
     "original": "hello",
     "en": {
-      "word": "hello",
-      "IPA": "həlˈoʊ",
-      "text": "hello",
-      "audio": "hello_en_hello.mp3"
-    },
-    "es": {
-      "word": "hola",
-      "IPA": "ˈola",
-      "text": "Hola",
-      "audio": "hello_es_Hola.mp3"
-    },
-    "fr": {
-      "word": "bonjour",
-      "IPA": "bɔ̃ʒˈuʁ",
-      "text": "Bonjour",
-      "audio": "hello_fr_Bonjour.mp3"
-    },
-    "de": {
-      "word": "hallo",
-      "IPA": "hˈaloː",
-      "text": "Hallo",
-      "audio": "hello_de_Hallo.mp3"
-    },
-    "it": {
-      "word": "ciao",
-      "IPA": "tʃˈao",
-      "text": "Ciao",
-      "audio": "hello_it_Ciao.mp3"
-    },
-    "pt": {
-      "word": "olá",
-      "IPA": "ɔlˈa",
-      "text": "olá",
-      "audio": "hello_pt_olá.mp3"
+      "word": null,
+      "respelling": null,
+      "audio_file": null,
+      "error": "400 Target language can't be equal to source language. [field_violations {\n  field: \"source_language_code\"\n  description: \"Source language: en\"\n}\nfield_violations {\n  field: \"target_language_code\"\n  description: \"Target language: en\"\n}\n]"
     },
     "ru": {
       "word": "привет",
-      "IPA": "prʲivʲˈet",
-      "text": "привет",
-      "google_pronunciation": "privet",
-      "audio": "hello_ru_привет.mp3"
+      "respelling": "pree-VYET",
+      "audio_file": "ru_hello_audio.mp3"
+    },
+    "pt": {
+      "word": "olá",
+      "respelling": "oh-LAH",
+      "audio_file": "pt_hello_audio.mp3"
+    },
+    "it": {
+      "word": "Ciao",
+      "respelling": "chow",
+      "audio_file": "it_hello_audio.mp3"
     },
     "ja": {
       "word": "こんにちは",
-      "IPA": "kˌo̞nnitɕˈihä",
-      "text": "こんにちは",
-      "google_pronunciation": "Kon'nichiwa",
-      "audio": "hello_ja_こんにちは.mp3"
+      "respelling": "kon-nee-chee-wah",
+      "audio_file": "ja_hello_audio.mp3"
     },
-    "ko": {
-      "word": "안녕하세요",
-      "IPA": "ˈɐnnjʌŋhˌɐsejˌo",
-      "text": "안녕하세요",
-      "google_pronunciation": "annyeonghaseyo",
-      "audio": "hello_ko_안녕하세요.mp3"
+    "de": {
+      "word": "Hallo",
+      "respelling": "HAH-lo",
+      "audio_file": "de_hello_audio.mp3"
     },
     "zh-cn": {
       "word": "你好",
-      "IPA": "ni2χˈɑu2",
-      "text": "你好",
-      "google_pronunciation": "Nǐ hǎo",
-      "audio": "hello_zh-cn_你好.mp3"
+      "respelling": "NEE-how",
+      "audio_file": "zh-cn_hello_audio.mp3"
     },
-    "th": {
-      "word": "สวัสดี",
-      "IPA": "sˈa5wmsaɜds",
-      "text": "สวัสดี",
-      "google_pronunciation": "S̄wạs̄dī",
-      "audio": "hello_th_สวสด.mp3"
+    "es": {
+      "word": "Hola",
+      "respelling": "OH-lah",
+      "audio_file": "es_hello_audio.mp3"
     },
-    "vi": {
-      "word": "xin chào",
-      "IPA": "sˈin tʃˈaː2w",
-      "text": "Xin chào",
-      "audio": "hello_vi_Xin_chào.mp3"
+    "fr": {
+      "word": "Bonjour",
+      "respelling": "Bohn-ZHOOR",
+      "audio_file": "fr_hello_audio.mp3"
     },
-    "id": {
-      "word": "halo",
-      "IPA": "hˈalo",
-      "text": "Halo",
-      "audio": "hello_id_Halo.mp3"
-    },
-    "ms": {
-      "word": "helo",
-      "IPA": "hˈɛlo",
-      "text": "Helo",
-      "audio": "hello_ms_Helo.mp3"
-    },
-    "tl": {
-      "word": "kumusta",
-      "IPA": null,
-      "text": "Kumusta",
-      "audio": "hello_tl_Kumusta.mp3"
-    },
-    "el": {
-      "word": "γειά σου",
-      "IPA": "jˈa su",
-      "text": "Γειά σου",
-      "google_pronunciation": "Geiá sou",
-      "audio": "hello_el_Γειά_σου.mp3"
-    },
-    "sv": {
-      "word": "hej",
-      "IPA": "hˈɛj",
-      "text": "Hej",
-      "audio": "hello_sv_Hej.mp3"
-    },
-    "fi": {
-      "word": "hei",
-      "IPA": "hˈei",
-      "text": "Hei",
-      "audio": "hello_fi_Hei.mp3"
+    "ko": {
+      "word": "안녕하세요",
+      "respelling": "ahn-NYUNG-hah-SEH-yo",
+      "audio_file": "ko_hello_audio.mp3"
     },
     "ar": {
       "word": "مرحبًا",
-      "IPA": "murˈaħħibˌan",
-      "text": "مرحبًا",
-      "google_pronunciation": "mrhban",
-      "audio": "hello_ar_مرحبا.mp3"
+      "respelling": "MAR-ha-ban",
+      "audio_file": "ar_hello_audio.mp3"
+    },
+    "hu": {
+      "word": "Helló",
+      "respelling": "HEL-loh",
+      "audio_file": "hu_hello_audio.mp3"
     },
     "tr": {
-      "word": "merhaba",
-      "IPA": "mˈɛrhaba",
-      "text": "Merhaba",
-      "audio": "hello_tr_Merhaba.mp3"
+      "word": "Merhaba",
+      "respelling": "MAIR-hah-bah",
+      "audio_file": "tr_hello_audio.mp3"
+    },
+    "id": {
+      "word": "Halo",
+      "respelling": "HAH-loh",
+      "audio_file": "id_hello_audio.mp3"
+    },
+    "ms": {
+      "word": "hello",
+      "respelling": "Heh-LOH",
+      "audio_file": "ms_hello_audio.mp3"
+    },
+    "sw": {
+      "word": "habari",
+      "respelling": "hah-BAH-ree",
+      "audio_file": "sw_hello_audio.mp3"
+    },
+    "nl": {
+      "word": "Hallo",
+      "respelling": "HAH-loh",
+      "audio_file": "nl_hello_audio.mp3"
+    },
+    "ha": {
+      "word": null,
+      "respelling": null,
+      "audio_file": null,
+      "error": "Language 'ha' not supported by TTS"
+    },
+    "el": {
+      "word": "Γειά σου",
+      "respelling": "YEE-ah soo",
+      "audio_file": "el_hello_audio.mp3"
+    },
+    "sv": {
+      "word": "Hej",
+      "respelling": "Hey",
+      "audio_file": "sv_hello_audio.mp3"
+    },
+    "th": {
+      "word": "สวัสดี",
+      "respelling": "sah-wah-DEE",
+      "audio_file": "th_hello_audio.mp3"
+    },
+    "fi": {
+      "word": "Hei",
+      "respelling": "Hay",
+      "audio_file": "fi_hello_audio.mp3"
+    },
+    "tl": {
+      "word": "hello",
+      "respelling": "heh-LOH",
+      "audio_file": "tl_hello_audio.mp3"
     },
     "hi": {
       "word": "नमस्ते",
-      "IPA": "nəmˈʌsteː",
-      "text": "नमस्ते",
-      "google_pronunciation": "namaste",
-      "audio": "hello_hi_नमसत.mp3"
+      "respelling": "Nah-mah-STEH",
+      "audio_file": "hi_hello_audio.mp3"
     },
-    "nl": {
-      "word": "hallo",
-      "IPA": "hˈɑloː",
-      "text": "Hallo",
-      "audio": "hello_nl_Hallo.mp3"
+    "vi": {
+      "word": "Xin chào",
+      "respelling": "sin CHOW",
+      "audio_file": "vi_hello_audio.mp3"
     },
     "pl": {
-      "word": "witam",
-      "IPA": "vˈitam",
-      "text": "Witam",
-      "audio": "hello_pl_Witam.mp3"
-    },
-    "hu": {
-      "word": "helló",
-      "IPA": "hˈɛlloː",
-      "text": "Helló",
-      "audio": "hello_hu_Helló.mp3"
-    },
-    "sw": {
-      "word": "hello",
-      "IPA": "hˈello",
-      "text": "hello",
-      "audio": "hello_sw_hello.mp3"
-    },
-    "ha": {
-      "word": "sannu",
-      "IPA": null,
-      "text": "sannu",
-      "audio": "hello_ha_sannu.mp3"
+      "word": "Witam",
+      "respelling": "VEE-tahm",
+      "audio_file": "pl_hello_audio.mp3"
     }
   },
   {
     "original": "goodbye",
-    "en": {
-      "word": "goodbye",
-      "IPA": "ɡʊdbˈaɪ",
-      "text": "goodbye",
-      "audio": "goodbye_en_goodbye.mp3"
-    },
     "es": {
       "word": "adiós",
-      "IPA": "aðjˈos",
-      "text": "adiós",
-      "audio": "goodbye_es_adiós.mp3"
+      "respelling": "ah-dee-OHS",
+      "audio_file": "es_goodbye_audio.mp3"
+    },
+    "en": {
+      "word": null,
+      "respelling": null,
+      "audio_file": null,
+      "error": "400 Target language can't be equal to source language. [field_violations {\n  field: \"source_language_code\"\n  description: \"Source language: en\"\n}\nfield_violations {\n  field: \"target_language_code\"\n  description: \"Target language: en\"\n}\n]"
     },
     "fr": {
       "word": "au revoir",
-      "IPA": "o ʁəvwˈaʁ",
-      "text": "au revoir",
-      "audio": "goodbye_fr_au_revoir.mp3"
-    },
-    "de": {
-      "word": "verabschiedung",
-      "IPA": "fɛɾˈapʃˌiːdʊŋ",
-      "text": "Verabschiedung",
-      "audio": "goodbye_de_Verabschiedung.mp3"
+      "respelling": "oh ruh-VWOHR",
+      "audio_file": "fr_goodbye_audio.mp3"
     },
     "it": {
       "word": "arrivederci",
-      "IPA": "arɾivedˈɛrtʃɪ",
-      "text": "arrivederci",
-      "audio": "goodbye_it_arrivederci.mp3"
-    },
-    "pt": {
-      "word": "adeus",
-      "IPA": "ɐdˈeʊʃ",
-      "text": "adeus",
-      "audio": "goodbye_pt_adeus.mp3"
-    },
-    "ru": {
-      "word": "до свидания",
-      "IPA": "dˈo svʲidˈɑnʲija",
-      "text": "до свидания",
-      "google_pronunciation": "do svidaniya",
-      "audio": "goodbye_ru_до_свидания.mp3"
+      "respelling": "ahr-ree-veh-DEHR-chee",
+      "audio_file": "it_goodbye_audio.mp3"
     },
     "ja": {
       "word": "さようなら",
-      "IPA": "sˌäjo̞ɯᵝnˈäɽä",
-      "text": "さようなら",
-      "google_pronunciation": "Sayōnara",
-      "audio": "goodbye_ja_さようなら.mp3"
+      "respelling": "sah-yoh-NAH-rah",
+      "audio_file": "ja_goodbye_audio.mp3"
     },
-    "ko": {
-      "word": "안녕히 가세요",
-      "IPA": "ˈɐnnjʌŋhˌi ɡˈɐsejˌo",
-      "text": "안녕히 가세요",
-      "google_pronunciation": "annyeonghi gaseyo",
-      "audio": "goodbye_ko_안녕히_가세요.mp3"
+    "ru": {
+      "word": "до свидания",
+      "respelling": "doh svee-DAH-nee-yah",
+      "audio_file": "ru_goodbye_audio.mp3"
+    },
+    "de": {
+      "word": "Verabschiedung",
+      "respelling": "fer-up-SHEE-doong",
+      "audio_file": "de_goodbye_audio.mp3"
     },
     "zh-cn": {
       "word": "再见",
-      "IPA": "tsˈai5 tɕˈiɛ5n",
-      "text": "再见",
-      "google_pronunciation": "Zàijiàn",
-      "audio": "goodbye_zh-cn_再见.mp3"
+      "respelling": "ZIGH-jee-en",
+      "audio_file": "zh-cn_goodbye_audio.mp3"
     },
-    "th": {
-      "word": "ลาก่อน",
-      "IPA": "lˈaɜsk ʔˈa2n",
-      "text": "ลาก่อน",
-      "google_pronunciation": "Lā k̀xn",
-      "audio": "goodbye_th_ลากอน.mp3"
+    "ko": {
+      "word": "안녕히 가세요",
+      "respelling": "ahn-NYUNG-hee gah-SAY-yoh",
+      "audio_file": "ko_goodbye_audio.mp3"
     },
-    "vi": {
-      "word": "tạm biệt",
-      "IPA": "t̪ˈaː6m bˈiɛ6t̪",
-      "text": "tạm biệt",
-      "audio": "goodbye_vi_tạm_biệt.mp3"
-    },
-    "id": {
-      "word": "selamat tinggal",
-      "IPA": "səlˈamat tˈiŋɡal",
-      "text": "selamat tinggal",
-      "audio": "goodbye_id_selamat_tinggal.mp3"
-    },
-    "ms": {
-      "word": "selamat tinggal",
-      "IPA": "səlˈamat tˈiŋɡal",
-      "text": "Selamat tinggal",
-      "audio": "goodbye_ms_Selamat_tinggal.mp3"
-    },
-    "tl": {
-      "word": "paalam",
-      "IPA": null,
-      "text": "Paalam",
-      "audio": "goodbye_tl_Paalam.mp3"
-    },
-    "el": {
-      "word": "αντίο",
-      "IPA": "adˈio",
-      "text": "Αντίο",
-      "google_pronunciation": "Antío",
-      "audio": "goodbye_el_Αντίο.mp3"
-    },
-    "sv": {
-      "word": "adjö",
-      "IPA": "ˈadjøː",
-      "text": "adjö",
-      "audio": "goodbye_sv_adjö.mp3"
-    },
-    "fi": {
-      "word": "hyvästi",
-      "IPA": "hˈyvæstɪ",
-      "text": "Hyvästi",
-      "audio": "goodbye_fi_Hyvästi.mp3"
-    },
-    "ar": {
-      "word": "مع السلامة",
-      "IPA": "mˈaʕ ʔassˈalaːmˌa",
-      "text": "مع السلامة",
-      "google_pronunciation": "mae alsalama",
-      "audio": "goodbye_ar_مع_السلامة.mp3"
-    },
-    "tr": {
-      "word": "güle güle",
-      "IPA": "ɟˈylɛ ɟˈylɛ",
-      "text": "Güle güle",
-      "audio": "goodbye_tr_Güle_güle.mp3"
+    "pt": {
+      "word": "adeus",
+      "respelling": "ah-DAY-oos",
+      "audio_file": "pt_goodbye_audio.mp3"
     },
     "hi": {
       "word": "अलविदा",
-      "IPA": "ˈʌlʋˌɪdaː",
-      "text": "अलविदा",
-      "google_pronunciation": "alavida",
-      "audio": "goodbye_hi_अलवद.mp3"
+      "respelling": "Ahl-vi-DAH",
+      "audio_file": "hi_goodbye_audio.mp3"
     },
-    "nl": {
-      "word": "tot ziens",
-      "IPA": "tɔt zˈins",
-      "text": "tot ziens",
-      "audio": "goodbye_nl_tot_ziens.mp3"
-    },
-    "pl": {
-      "word": "do widzenia",
-      "IPA": "dɔ vidʑˈɛɲʲa",
-      "text": "do widzenia",
-      "audio": "goodbye_pl_do_widzenia.mp3"
+    "ha": {
+      "word": null,
+      "respelling": null,
+      "audio_file": null,
+      "error": "Language 'ha' not supported by TTS"
     },
     "hu": {
       "word": "búcsú",
-      "IPA": "bˈuːtʃuː",
-      "text": "búcsú",
-      "audio": "goodbye_hu_búcsú.mp3"
+      "respelling": "BOO-choo",
+      "audio_file": "hu_goodbye_audio.mp3"
     },
     "sw": {
       "word": "kwaheri",
-      "IPA": "kwahˈeri",
-      "text": "Kwaheri",
-      "audio": "goodbye_sw_Kwaheri.mp3"
+      "respelling": "kwah-HEH-ree",
+      "audio_file": "sw_goodbye_audio.mp3"
     },
-    "ha": {
-      "word": "ban kwana",
-      "IPA": null,
-      "text": "ban kwana",
-      "audio": "goodbye_ha_ban_kwana.mp3"
+    "nl": {
+      "word": "tot ziens",
+      "respelling": "tot ZEENS",
+      "audio_file": "nl_goodbye_audio.mp3"
+    },
+    "id": {
+      "word": "selamat tinggal",
+      "respelling": "seh-LAH-mat TING-gal",
+      "audio_file": "id_goodbye_audio.mp3"
+    },
+    "el": {
+      "word": "Αντίο",
+      "respelling": "an-TEE-oh",
+      "audio_file": "el_goodbye_audio.mp3"
+    },
+    "ms": {
+      "word": "selamat tinggal",
+      "respelling": "suh-LAH-mat TING-gal",
+      "audio_file": "ms_goodbye_audio.mp3"
+    },
+    "tl": {
+      "word": "paalam",
+      "respelling": "pah-AH-lahm",
+      "audio_file": "tl_goodbye_audio.mp3"
+    },
+    "th": {
+      "word": "ลาก่อน",
+      "respelling": "Lah-gawn",
+      "audio_file": "th_goodbye_audio.mp3"
+    },
+    "sv": {
+      "word": "adjö",
+      "respelling": "ah-YUH",
+      "audio_file": "sv_goodbye_audio.mp3"
+    },
+    "pl": {
+      "word": "do widzenia",
+      "respelling": "doh vee-JHEN-yah",
+      "audio_file": "pl_goodbye_audio.mp3"
+    },
+    "tr": {
+      "word": "Güle güle",
+      "respelling": "GOO-leh GOO-leh",
+      "audio_file": "tr_goodbye_audio.mp3"
+    },
+    "vi": {
+      "word": "tạm biệt",
+      "respelling": "TAHM bee-ET",
+      "audio_file": "vi_goodbye_audio.mp3"
+    },
+    "fi": {
+      "word": "Hyvästi",
+      "respelling": "HEW-veh-stee",
+      "audio_file": "fi_goodbye_audio.mp3"
+    },
+    "ar": {
+      "word": "مع السلامة",
+      "respelling": "Mah ah-sah-LAH-mah",
+      "audio_file": "ar_goodbye_audio.mp3"
     }
   },
   {
     "original": "please",
     "en": {
-      "word": "please",
-      "IPA": "plˈiːz",
-      "text": "please",
-      "audio": "please_en_please.mp3"
+      "word": null,
+      "respelling": null,
+      "audio_file": null,
+      "error": "400 Target language can't be equal to source language. [field_violations {\n  field: \"source_language_code\"\n  description: \"Source language: en\"\n}\nfield_violations {\n  field: \"target_language_code\"\n  description: \"Target language: en\"\n}\n]"
+    },
+    "de": {
+      "word": "Bitte",
+      "respelling": "BITT-uh",
+      "audio_file": "de_please_audio.mp3"
+    },
+    "it": {
+      "word": "Per favore",
+      "respelling": "Pair fah-VOH-ray",
+      "audio_file": "it_please_audio.mp3"
+    },
+    "fr": {
+      "word": "s&#39;il te plaît",
+      "respelling": "seel tuh PLAY",
+      "audio_file": "fr_please_audio.mp3"
     },
     "es": {
       "word": "por favor",
-      "IPA": "poɾ faβˈoɾ",
-      "text": "por favor",
-      "audio": "please_es_por_favor.mp3"
-    },
-    "fr": {
-      "word": "s'il te plaît",
-      "IPA": "sil tə- plˈɛ",
-      "text": "s'il te plaît",
-      "audio": "please_fr_sil_te_plaît.mp3"
-    },
-    "de": {
-      "word": "bitte",
-      "IPA": "bˈɪtə",
-      "text": "Bitte",
-      "audio": "please_de_Bitte.mp3"
-    },
-    "it": {
-      "word": "per favore",
-      "IPA": "per favˈore",
-      "text": "Per favore",
-      "audio": "please_it_Per_favore.mp3"
+      "respelling": "pore fah-VOHR",
+      "audio_file": "es_please_audio.mp3"
     },
     "pt": {
       "word": "por favor",
-      "IPA": "puɹ fɐvˈoɹ",
-      "text": "por favor",
-      "audio": "please_pt_por_favor.mp3"
-    },
-    "ru": {
-      "word": "пожалуйста",
-      "IPA": "pʌʒˈɑɭusta",
-      "text": "пожалуйста",
-      "google_pronunciation": "pozhaluysta",
-      "audio": "please_ru_пожалуйста.mp3"
-    },
-    "ja": {
-      "word": "お願いします",
-      "IPA": "ˈo̞ (en)tʃˈaɪniːz(ja)lˈe̞tə ˈi ɕˈi mˈä sˈɯᵝ",
-      "text": "お願いします",
-      "google_pronunciation": "Onegaishimasu",
-      "audio": "please_ja_お願いします.mp3"
-    },
-    "ko": {
-      "word": "제발",
-      "IPA": "tɕebˈɐɫ",
-      "text": "제발",
-      "google_pronunciation": "jebal",
-      "audio": "please_ko_제발.mp3"
+      "respelling": "poor fah-VOR",
+      "audio_file": "pt_please_audio.mp3"
     },
     "zh-cn": {
       "word": "请",
-      "IPA": "tɕhˈi2ŋ",
-      "text": "请",
-      "google_pronunciation": "Qǐng",
-      "audio": "please_zh-cn_请.mp3"
+      "respelling": "ching",
+      "audio_file": "zh-cn_please_audio.mp3"
     },
-    "th": {
-      "word": "โปรด",
-      "IPA": "oɜpˈa2ɹaɜd",
-      "text": "โปรด",
-      "google_pronunciation": "Pord",
-      "audio": "please_th_โปรด.mp3"
+    "ko": {
+      "word": "제발",
+      "respelling": "Jeh-BAHL",
+      "audio_file": "ko_please_audio.mp3"
     },
-    "vi": {
-      "word": "xin vui lòng",
-      "IPA": "sˈin vˈuj lˈɔ2ŋ",
-      "text": "Xin vui lòng",
-      "audio": "please_vi_Xin_vui_lòng.mp3"
+    "ja": {
+      "word": "お願いします",
+      "respelling": "oh-neh-GAI-shee-mahss",
+      "audio_file": "ja_please_audio.mp3"
     },
-    "id": {
-      "word": "tolong",
-      "IPA": "tˈoloŋ",
-      "text": "Tolong",
-      "audio": "please_id_Tolong.mp3"
-    },
-    "ms": {
-      "word": "tolong",
-      "IPA": "tˈoloŋ",
-      "text": "Tolong",
-      "audio": "please_ms_Tolong.mp3"
-    },
-    "tl": {
-      "word": "mangyaring",
-      "IPA": null,
-      "text": "Mangyaring",
-      "audio": "please_tl_Mangyaring.mp3"
-    },
-    "el": {
-      "word": "παρακαλώ",
-      "IPA": "pˌarakalˈo",
-      "text": "παρακαλώ",
-      "google_pronunciation": "parakaló",
-      "audio": "please_el_παρακαλώ.mp3"
-    },
-    "sv": {
-      "word": "behaga",
-      "IPA": "bəhˈɑːɡa",
-      "text": "behaga",
-      "audio": "please_sv_behaga.mp3"
-    },
-    "fi": {
-      "word": "ole hyvä",
-      "IPA": "ˌoleh hˈyvæ",
-      "text": "Ole hyvä",
-      "audio": "please_fi_Ole_hyvä.mp3"
+    "ru": {
+      "word": "пожалуйста",
+      "respelling": "pah-ZHAH-loo-stuh",
+      "audio_file": "ru_please_audio.mp3"
     },
     "ar": {
       "word": "لو سمحت",
-      "IPA": "lˈaw smħt",
-      "text": "لو سمحت",
-      "google_pronunciation": "law samaht",
-      "audio": "please_ar_لو_سمحت.mp3"
+      "respelling": "Low sah-MAHT",
+      "audio_file": "ar_please_audio.mp3"
     },
-    "tr": {
-      "word": "lütfen",
-      "IPA": "lˈøtfæn",
-      "text": "Lütfen",
-      "audio": "please_tr_Lütfen.mp3"
+    "nl": {
+      "word": "Alsjeblieft",
+      "respelling": "AHL-sheh-bleeft",
+      "audio_file": "nl_please_audio.mp3"
+    },
+    "pl": {
+      "word": "Proszę",
+      "respelling": "PROH-sheh",
+      "audio_file": "pl_please_audio.mp3"
+    },
+    "ha": {
+      "word": null,
+      "respelling": null,
+      "audio_file": null,
+      "error": "Language 'ha' not supported by TTS"
     },
     "hi": {
       "word": "कृपया",
-      "IPA": "kɾˈɪpjˌaː",
-      "text": "कृपया",
-      "google_pronunciation": "krpaya",
-      "audio": "please_hi_कपय.mp3"
+      "respelling": "Krip-YAH",
+      "audio_file": "hi_please_audio.mp3"
     },
-    "nl": {
-      "word": "alsjeblieft",
-      "IPA": "ˌɑlʃɛblˈift",
-      "text": "Alsjeblieft",
-      "audio": "please_nl_Alsjeblieft.mp3"
-    },
-    "pl": {
-      "word": "proszę",
-      "IPA": "prˈɔʃɛ",
-      "text": "Proszę",
-      "audio": "please_pl_Proszę.mp3"
-    },
-    "hu": {
-      "word": "kérem",
-      "IPA": "kˈeːrɛm",
-      "text": "Kérem",
-      "audio": "please_hu_Kérem.mp3"
+    "sv": {
+      "word": "behaga",
+      "respelling": "be-HAH-gah",
+      "audio_file": "sv_please_audio.mp3"
     },
     "sw": {
       "word": "tafadhali",
-      "IPA": "tˌafaðˈali",
-      "text": "Tafadhali",
-      "audio": "please_sw_Tafadhali.mp3"
+      "respelling": "tah-fah-DHAH-lee",
+      "audio_file": "sw_please_audio.mp3"
     },
-    "ha": {
-      "word": "don allah",
-      "IPA": null,
-      "text": "Don Allah",
-      "audio": "please_ha_Don_Allah.mp3"
+    "tr": {
+      "word": "Lütfen",
+      "respelling": "LYOOT-fen",
+      "audio_file": "tr_please_audio.mp3"
+    },
+    "ms": {
+      "word": "tolonglah",
+      "respelling": "toh-LONG-lah",
+      "audio_file": "ms_please_audio.mp3"
+    },
+    "hu": {
+      "word": "Kérem",
+      "respelling": "KAY-rem",
+      "audio_file": "hu_please_audio.mp3"
+    },
+    "el": {
+      "word": "παρακαλώ",
+      "respelling": "pah-rah-kah-LOH",
+      "audio_file": "el_please_audio.mp3"
+    },
+    "th": {
+      "word": "โปรด",
+      "respelling": "Prohd",
+      "audio_file": "th_please_audio.mp3"
+    },
+    "id": {
+      "word": "Tolong",
+      "respelling": "TOH-long",
+      "audio_file": "id_please_audio.mp3"
+    },
+    "tl": {
+      "word": "pakiusap",
+      "respelling": "pah-kee-OO-sahp",
+      "audio_file": "tl_please_audio.mp3"
+    },
+    "vi": {
+      "word": "Xin vui lòng",
+      "respelling": "Sin VOO-ee LAWNG",
+      "audio_file": "vi_please_audio.mp3"
+    },
+    "fi": {
+      "word": "Ole hyvä",
+      "respelling": "OH-leh HEW-vah",
+      "audio_file": "fi_please_audio.mp3"
     }
   },
   {
     "original": "thank you",
     "en": {
-      "word": "thank you",
-      "IPA": "θˈæŋk juː",
-      "text": "thank you",
-      "audio": "thank you_en_thank_you.mp3"
+      "word": null,
+      "respelling": null,
+      "audio_file": null,
+      "error": "400 Target language can't be equal to source language. [field_violations {\n  field: \"source_language_code\"\n  description: \"Source language: en\"\n}\nfield_violations {\n  field: \"target_language_code\"\n  description: \"Target language: en\"\n}\n]"
+    },
+    "de": {
+      "word": "Danke",
+      "respelling": "DAHN-kuh",
+      "audio_file": "de_thank_you_audio.mp3"
     },
     "es": {
       "word": "gracias",
-      "IPA": "ɡɾˈaθjas",
-      "text": "gracias",
-      "audio": "thank you_es_gracias.mp3"
+      "respelling": "GRAH-see-ahs",
+      "audio_file": "es_thank_you_audio.mp3"
     },
     "fr": {
       "word": "merci",
-      "IPA": "mɛʁsˈi",
-      "text": "merci",
-      "audio": "thank you_fr_merci.mp3"
-    },
-    "de": {
-      "word": "danke",
-      "IPA": "dˈaŋkə",
-      "text": "Danke",
-      "audio": "thank you_de_Danke.mp3"
-    },
-    "it": {
-      "word": "grazie",
-      "IPA": "ɡrˈatsje",
-      "text": "Grazie",
-      "audio": "thank you_it_Grazie.mp3"
+      "respelling": "mair-SEE",
+      "audio_file": "fr_thank_you_audio.mp3"
     },
     "pt": {
       "word": "obrigado",
-      "IPA": "ˌɔbɹiɡˈadʊ",
-      "text": "obrigado",
-      "audio": "thank you_pt_obrigado.mp3"
+      "respelling": "oh-bree-GAH-doh",
+      "audio_file": "pt_thank_you_audio.mp3"
+    },
+    "it": {
+      "word": "Grazie",
+      "respelling": "GRAHT-see-eh",
+      "audio_file": "it_thank_you_audio.mp3"
     },
     "ru": {
-      "word": "спасибо",
-      "IPA": "spasʲˈibʌ",
-      "text": "Спасибо",
-      "google_pronunciation": "Spasibo",
-      "audio": "thank you_ru_Спасибо.mp3"
+      "word": "Спасибо",
+      "respelling": "spah-SEE-boh",
+      "audio_file": "ru_thank_you_audio.mp3"
     },
     "ja": {
       "word": "ありがとう",
-      "IPA": "ˌäɽiɡätˈo̞ɯᵝ",
-      "text": "ありがとう",
-      "google_pronunciation": "Arigatō",
-      "audio": "thank you_ja_ありがとう.mp3"
+      "respelling": "Ah-ree-GAH-toh",
+      "audio_file": "ja_thank_you_audio.mp3"
     },
     "ko": {
       "word": "감사합니다",
-      "IPA": "ɡˈɐmsɐhˌɐpnidˌɐ",
-      "text": "감사합니다",
-      "google_pronunciation": "gamsahabnida",
-      "audio": "thank you_ko_감사합니다.mp3"
+      "respelling": "kahm-SAH-hahm-nee-dah",
+      "audio_file": "ko_thank_you_audio.mp3"
     },
     "zh-cn": {
       "word": "谢谢",
-      "IPA": "ɕiɛ5ɕˈiɛ1",
-      "text": "谢谢",
-      "google_pronunciation": "Xièxiè",
-      "audio": "thank you_zh-cn_谢谢.mp3"
-    },
-    "th": {
-      "word": "ขอบคุณ",
-      "IPA": "khˌa5ʔaɜbˈa2khu2n",
-      "text": "ขอบคุณ",
-      "google_pronunciation": "K̄hxbkhuṇ",
-      "audio": "thank you_th_ขอบคณ.mp3"
-    },
-    "vi": {
-      "word": "cảm ơn",
-      "IPA": "kˈaː4m ˈəːn",
-      "text": "Cảm ơn",
-      "audio": "thank you_vi_Cảm_ơn.mp3"
-    },
-    "id": {
-      "word": "terima kasih",
-      "IPA": "tərˈima kˈasih",
-      "text": "Terima kasih",
-      "audio": "thank you_id_Terima_kasih.mp3"
-    },
-    "ms": {
-      "word": "terima kasih",
-      "IPA": "təɾrˈimə kˈaseh",
-      "text": "Terima kasih",
-      "audio": "thank you_ms_Terima_kasih.mp3"
-    },
-    "tl": {
-      "word": "salamat",
-      "IPA": null,
-      "text": "Salamat",
-      "audio": "thank you_tl_Salamat.mp3"
-    },
-    "el": {
-      "word": "σας ευχαριστώ",
-      "IPA": "sas ˌefxaristˈo",
-      "text": "Σας ευχαριστώ",
-      "google_pronunciation": "Sas efcharistó",
-      "audio": "thank you_el_Σας_ευχαριστώ.mp3"
-    },
-    "sv": {
-      "word": "tack",
-      "IPA": "tˈak",
-      "text": "tack",
-      "audio": "thank you_sv_tack.mp3"
-    },
-    "fi": {
-      "word": "kiitos",
-      "IPA": "kˈiːtos",
-      "text": "Kiitos",
-      "audio": "thank you_fi_Kiitos.mp3"
+      "respelling": "SHYEH-shyeh",
+      "audio_file": "zh-cn_thank_you_audio.mp3"
     },
     "ar": {
       "word": "شكرًا لك",
-      "IPA": "ʃˈukran lkˈa",
-      "text": "شكرًا لك",
-      "google_pronunciation": "shkran lak",
-      "audio": "thank you_ar_شكرا_لك.mp3"
+      "respelling": "SHOOK-rahn lak",
+      "audio_file": "ar_thank_you_audio.mp3"
     },
-    "tr": {
-      "word": "teşekkürler",
-      "IPA": "teʃekːørlˈɛr",
-      "text": "Teşekkürler",
-      "audio": "thank you_tr_Teşekkürler.mp3"
+    "nl": {
+      "word": "Bedankt",
+      "respelling": "buh-DANKT",
+      "audio_file": "nl_thank_you_audio.mp3"
+    },
+    "fi": {
+      "word": "Kiitos",
+      "respelling": "KEY-toss",
+      "audio_file": "fi_thank_you_audio.mp3"
+    },
+    "pl": {
+      "word": "Dziękuję",
+      "respelling": "Jen-KOO-yeh",
+      "audio_file": "pl_thank_you_audio.mp3"
+    },
+    "ha": {
+      "word": null,
+      "respelling": null,
+      "audio_file": null,
+      "error": "Language 'ha' not supported by TTS"
     },
     "hi": {
       "word": "धन्यवाद",
-      "IPA": "dʰˌənjəʋˈaːd",
-      "text": "धन्यवाद",
-      "google_pronunciation": "dhanyavaad",
-      "audio": "thank you_hi_धनयवद.mp3"
+      "respelling": "dhun-yuh-VAHD",
+      "audio_file": "hi_thank_you_audio.mp3"
     },
-    "nl": {
-      "word": "bedankt",
-      "IPA": "bədˈɑŋkt",
-      "text": "Bedankt",
-      "audio": "thank you_nl_Bedankt.mp3"
+    "ms": {
+      "word": "terima kasih",
+      "respelling": "teh-REE-mah KAH-see",
+      "audio_file": "ms_thank_you_audio.mp3"
     },
-    "pl": {
-      "word": "dziękuję",
-      "IPA": "dʑɛŋkˈujɛ",
-      "text": "Dziękuję",
-      "audio": "thank you_pl_Dziękuję.mp3"
-    },
-    "hu": {
-      "word": "köszönöm",
-      "IPA": "kˌøsønøm",
-      "text": "Köszönöm",
-      "audio": "thank you_hu_Köszönöm.mp3"
+    "id": {
+      "word": "Terima kasih",
+      "respelling": "teh-REE-mah KAH-see",
+      "audio_file": "id_thank_you_audio.mp3"
     },
     "sw": {
       "word": "asante",
-      "IPA": "asˈante",
-      "text": "Asante",
-      "audio": "thank you_sw_Asante.mp3"
+      "respelling": "ah-SAHN-teh",
+      "audio_file": "sw_thank_you_audio.mp3"
     },
-    "ha": {
-      "word": "na gode",
-      "IPA": null,
-      "text": "na gode",
-      "audio": "thank you_ha_na_gode.mp3"
+    "sv": {
+      "word": "tack så mycket",
+      "respelling": "tahk saw MEW-ket",
+      "audio_file": "sv_thank_you_audio.mp3"
+    },
+    "th": {
+      "word": "ขอบคุณ",
+      "respelling": "kawp-KOON",
+      "audio_file": "th_thank_you_audio.mp3"
+    },
+    "tr": {
+      "word": "Teşekkürler",
+      "respelling": "Teh-sheh-KYOOR-lehr",
+      "audio_file": "tr_thank_you_audio.mp3"
+    },
+    "tl": {
+      "word": "salamat po",
+      "respelling": "sah-LAH-maht poh",
+      "audio_file": "tl_thank_you_audio.mp3"
+    },
+    "hu": {
+      "word": "Köszönöm",
+      "respelling": "KUSS-uh-num",
+      "audio_file": "hu_thank_you_audio.mp3"
+    },
+    "vi": {
+      "word": "Cảm ơn",
+      "respelling": "GAHM un",
+      "audio_file": "vi_thank_you_audio.mp3"
+    },
+    "el": {
+      "word": "Σας ευχαριστώ",
+      "respelling": "Sahs eff-khah-ree-STOH",
+      "audio_file": "el_thank_you_audio.mp3"
     }
   },
   {
     "original": "excuse me",
-    "en": {
-      "word": "excuse me",
-      "IPA": "ɛkskjˈuːs mˌiː",
-      "text": "excuse me",
-      "audio": "excuse me_en_excuse_me.mp3"
-    },
     "es": {
       "word": "disculpe",
-      "IPA": "diskˈulpe",
-      "text": "disculpe",
-      "audio": "excuse me_es_disculpe.mp3"
+      "respelling": "dees-KOOL-peh",
+      "audio_file": "es_excuse_me_audio.mp3"
     },
     "fr": {
       "word": "excusez-moi",
-      "IPA": "ɛkskyzˈemwˈa",
-      "text": "excusez-moi",
-      "audio": "excuse me_fr_excusez-moi.mp3"
-    },
-    "de": {
-      "word": "verzeihung",
-      "IPA": "fɛɾtsˈaɪhʊŋ",
-      "text": "Verzeihung",
-      "audio": "excuse me_de_Verzeihung.mp3"
+      "respelling": "ex-kyoo-ZAY mwah",
+      "audio_file": "fr_excuse_me_audio.mp3"
     },
     "it": {
-      "word": "mi scusi",
-      "IPA": "mɪ skˈuzɪ",
-      "text": "Mi scusi",
-      "audio": "excuse me_it_Mi_scusi.mp3"
+      "word": "Mi scusi",
+      "respelling": "Mee SKOO-zee",
+      "audio_file": "it_excuse_me_audio.mp3"
     },
-    "pt": {
-      "word": "com licença",
-      "IPA": "kˈom lˌisˈeɪŋsɐ",
-      "text": "com licença",
-      "audio": "excuse me_pt_com_licença.mp3"
-    },
-    "ru": {
-      "word": "прошу прощения",
-      "IPA": "prʌʃˈu prʌɕˈenʲija",
-      "text": "прошу прощения",
-      "google_pronunciation": "proshu proshcheniya",
-      "audio": "excuse me_ru_прошу_прощения.mp3"
+    "en": {
+      "word": null,
+      "respelling": null,
+      "audio_file": null,
+      "error": "400 Target language can't be equal to source language. [field_violations {\n  field: \"source_language_code\"\n  description: \"Source language: en\"\n}\nfield_violations {\n  field: \"target_language_code\"\n  description: \"Target language: en\"\n}\n]"
     },
     "ja": {
       "word": "すみません",
-      "IPA": "sˌɯᵝmimˈäse̞ɴ",
-      "text": "すみません",
-      "google_pronunciation": "Sumimasen",
-      "audio": "excuse me_ja_すみません.mp3"
+      "respelling": "soo-mee-MAH-sen",
+      "audio_file": "ja_excuse_me_audio.mp3"
+    },
+    "pt": {
+      "word": "com licença",
+      "respelling": "kohm lee-SEN-sah",
+      "audio_file": "pt_excuse_me_audio.mp3"
+    },
+    "de": {
+      "word": "Verzeihung",
+      "respelling": "fer-TSY-hoong",
+      "audio_file": "de_excuse_me_audio.mp3"
     },
     "ko": {
       "word": "실례합니다",
-      "IPA": "sˈiljehˌɐpnidˌɐ",
-      "text": "실례합니다",
-      "google_pronunciation": "sillyehabnida",
-      "audio": "excuse me_ko_실례합니다.mp3"
+      "respelling": "Shil-LYEH-hahm-nee-dah",
+      "audio_file": "ko_excuse_me_audio.mp3"
     },
     "zh-cn": {
       "word": "打扰一下",
-      "IPA": "tɑ2ʐˈɑu2 jiɜɕˈiɑ5",
-      "text": "打扰一下",
-      "google_pronunciation": "Dǎrǎo yīxià",
-      "audio": "excuse me_zh-cn_打扰一下.mp3"
+      "respelling": "Dah-raow ee-shyah",
+      "audio_file": "zh-cn_excuse_me_audio.mp3"
     },
-    "th": {
-      "word": "ขออนุญาต",
-      "IPA": "khˌa5ʔaʔa2nˈu2jaɜst",
-      "text": "ขออนุญาต",
-      "google_pronunciation": "K̄hx xnuỵāt",
-      "audio": "excuse me_th_ขออนญาต.mp3"
-    },
-    "vi": {
-      "word": "xin lỗi",
-      "IPA": "sˈin lˈo5j",
-      "text": "xin lỗi",
-      "google_pronunciation": "Xin loi",
-      "audio": "excuse me_vi_xin_lỗi.mp3"
-    },
-    "id": {
-      "word": "permisi",
-      "IPA": "pərmˈisi",
-      "text": "Permisi",
-      "google_pronunciation": "Permisi",
-      "audio": "excuse me_id_Permisi.mp3"
-    },
-    "ms": {
-      "word": "maafkan saya",
-      "IPA": "maˈafkan sˈajə",
-      "text": "maafkan saya",
-      "google_pronunciation": "Maafkan saya",
-      "audio": "excuse me_ms_maafkan_saya.mp3"
-    },
-    "tl": {
-      "word": "excuse me",
-      "IPA": null,
-      "text": "Excuse me",
-      "google_pronunciation": "excuse me",
-      "audio": "excuse me_tl_Excuse_me.mp3"
-    },
-    "el": {
-      "word": "με συγχωρείτε",
-      "IPA": "me sˌiŋxorˈite",
-      "text": "Με συγχωρείτε",
-      "google_pronunciation": "Me synchoreíte",
-      "audio": "excuse me_el_Με_συγχωρείτε.mp3"
-    },
-    "sv": {
-      "word": "ursäkta mig",
-      "IPA": "ˈɵʂəktˌa mˈɛj",
-      "text": "Ursäkta mig",
-      "google_pronunciation": "Ursäkta mig",
-      "audio": "excuse me_sv_Ursäkta_mig.mp3"
-    },
-    "fi": {
-      "word": "anteeksi",
-      "IPA": "ˈanteːksɪ",
-      "text": "Anteeksi",
-      "google_pronunciation": "Anteeksi",
-      "audio": "excuse me_fi_Anteeksi.mp3"
-    },
-    "ar": {
-      "word": "اعذرني",
-      "IPA": "ˈaʕðrniː",
-      "text": "اعذرني",
-      "google_pronunciation": "aiedhirni",
-      "audio": "excuse me_ar_اعذرني.mp3"
-    },
-    "tr": {
-      "word": "affedersin",
-      "IPA": "affedɛrsˈɪn",
-      "text": "Affedersin",
-      "google_pronunciation": "Affedersin",
-      "audio": "excuse me_tr_Affedersin.mp3"
-    },
-    "hi": {
-      "word": "माफ़ करें",
-      "IPA": "mˈaːf kˈʌɾẽː",
-      "text": "माफ़ करें",
-      "google_pronunciation": "maaf karen",
-      "audio": "excuse me_hi_मफ_कर.mp3"
+    "ru": {
+      "word": "прошу прощения",
+      "respelling": "prah-SHOO prah-SHYEH-nee-yah",
+      "audio_file": "ru_excuse_me_audio.mp3"
     },
     "nl": {
       "word": "pardon",
-      "IPA": "pɑrdˈɔn",
-      "text": "pardon",
-      "google_pronunciation": "pardon",
-      "audio": "excuse me_nl_pardon.mp3"
+      "respelling": "par-DON",
+      "audio_file": "nl_excuse_me_audio.mp3"
     },
-    "pl": {
-      "word": "przepraszam",
-      "IPA": "pʃɛprˈaʃam",
-      "text": "Przepraszam",
-      "google_pronunciation": "Przepraszam",
-      "audio": "excuse me_pl_Przepraszam.mp3"
+    "hi": {
+      "word": "माफ़ करें",
+      "respelling": "Mahf kah-REYN",
+      "audio_file": "hi_excuse_me_audio.mp3"
     },
-    "hu": {
-      "word": "elnézést",
-      "IPA": "ˈɛlneːzeːʃt",
-      "text": "Elnézést",
-      "google_pronunciation": "Elnézést",
-      "audio": "excuse me_hu_Elnézést.mp3"
+    "sv": {
+      "word": "ursäkta mig",
+      "respelling": "oor-SEK-tah mey",
+      "audio_file": "sv_excuse_me_audio.mp3"
+    },
+    "tr": {
+      "word": "Affedersin",
+      "respelling": "AH-feh-DAIR-sin",
+      "audio_file": "tr_excuse_me_audio.mp3"
+    },
+    "ha": {
+      "word": null,
+      "respelling": null,
+      "audio_file": null,
+      "error": "Language 'ha' not supported by TTS"
     },
     "sw": {
       "word": "samahani",
-      "IPA": "sˌamahˈani",
-      "text": "samahani",
-      "google_pronunciation": "samahani",
-      "audio": "excuse me_sw_samahani.mp3"
+      "respelling": "sah-mah-HAH-nee",
+      "audio_file": "sw_excuse_me_audio.mp3"
     },
-    "ha": {
-      "word": "gafara dai",
-      "IPA": null,
-      "text": "gafara dai",
-      "google_pronunciation": "gafara dai",
-      "audio": "excuse me_ha_gafara_dai.mp3"
+    "fi": {
+      "word": "Anteeksi",
+      "respelling": "ahn-TEHK-see",
+      "audio_file": "fi_excuse_me_audio.mp3"
+    },
+    "id": {
+      "word": "Permisi",
+      "respelling": "purr-MEE-see",
+      "audio_file": "id_excuse_me_audio.mp3"
+    },
+    "ms": {
+      "word": "maafkan saya",
+      "respelling": "mah-AHF-kahn SAH-yah",
+      "audio_file": "ms_excuse_me_audio.mp3"
+    },
+    "tl": {
+      "word": "pasensya na",
+      "respelling": "pah-SEN-shyah nah",
+      "audio_file": "tl_excuse_me_audio.mp3"
+    },
+    "vi": {
+      "word": "xin lỗi",
+      "respelling": "sin LOY",
+      "audio_file": "vi_excuse_me_audio.mp3"
+    },
+    "ar": {
+      "word": "اعذرني",
+      "respelling": "Uh-DTHIR-nee",
+      "audio_file": "ar_excuse_me_audio.mp3"
+    },
+    "hu": {
+      "word": "Elnézést",
+      "respelling": "EL-nay-zaysht",
+      "audio_file": "hu_excuse_me_audio.mp3"
+    },
+    "th": {
+      "word": "ขออนุญาต",
+      "respelling": "kaw-uh-NOO-yaht",
+      "audio_file": "th_excuse_me_audio.mp3"
+    },
+    "pl": {
+      "word": "Przepraszam",
+      "respelling": "psheh-PRAH-shahm",
+      "audio_file": "pl_excuse_me_audio.mp3"
+    },
+    "el": {
+      "word": "Με συγχωρείτε",
+      "respelling": "Meh seeng-kho-REE-teh",
+      "audio_file": "el_excuse_me_audio.mp3"
     }
   },
   {
     "original": "help",
     "en": {
-      "word": "help",
-      "IPA": "hˈɛlp",
-      "text": "help",
-      "audio": "help_en_help.mp3"
+      "word": null,
+      "respelling": null,
+      "audio_file": null,
+      "error": "400 Target language can't be equal to source language. [field_violations {\n  field: \"source_language_code\"\n  description: \"Source language: en\"\n}\nfield_violations {\n  field: \"target_language_code\"\n  description: \"Target language: en\"\n}\n]"
     },
     "es": {
       "word": "ayuda",
-      "IPA": "aʝˈuða",
-      "text": "ayuda",
-      "audio": "help_es_ayuda.mp3"
+      "respelling": "ah-YOO-dah",
+      "audio_file": "es_help_audio.mp3"
     },
     "fr": {
       "word": "aide",
-      "IPA": "ˈɛd",
-      "text": "aide",
-      "audio": "help_fr_aide.mp3"
+      "respelling": "aid",
+      "audio_file": "fr_help_audio.mp3"
     },
     "de": {
       "word": "helfen",
-      "IPA": "hˈɛlfən",
-      "text": "helfen",
-      "audio": "help_de_helfen.mp3"
+      "respelling": "HELL-fun",
+      "audio_file": "de_help_audio.mp3"
     },
     "it": {
       "word": "aiuto",
-      "IPA": "ajˈuto",
-      "text": "aiuto",
-      "audio": "help_it_aiuto.mp3"
-    },
-    "pt": {
-      "word": "ajuda",
-      "IPA": "ˌɐʒˈudɐ",
-      "text": "ajuda",
-      "audio": "help_pt_ajuda.mp3"
+      "respelling": "ah-YOO-toh",
+      "audio_file": "it_help_audio.mp3"
     },
     "ru": {
       "word": "помощь",
-      "IPA": "pˈomʌɕ",
-      "text": "помощь",
-      "google_pronunciation": "pomoshch'",
-      "audio": "help_ru_помощь.mp3"
+      "respelling": "POH-mosh",
+      "audio_file": "ru_help_audio.mp3"
     },
-    "ja": {
-      "word": "ヘルプ",
-      "IPA": "he̞ɽˈɯᵝpɯᵝ",
-      "text": "ヘルプ",
-      "google_pronunciation": "Herupu",
-      "audio": "help_ja_ヘルプ.mp3"
+    "pt": {
+      "word": "ajuda",
+      "respelling": "ah-ZHOO-dah",
+      "audio_file": "pt_help_audio.mp3"
     },
     "ko": {
       "word": "돕다",
-      "IPA": "dˈopt-ɐ",
-      "text": "돕다",
-      "google_pronunciation": "dobda",
-      "audio": "help_ko_돕다.mp3"
+      "respelling": "DOHP-dah",
+      "audio_file": "ko_help_audio.mp3"
+    },
+    "ja": {
+      "word": "ヘルプ",
+      "respelling": "help",
+      "audio_file": "ja_help_audio.mp3"
     },
     "zh-cn": {
       "word": "帮助",
-      "IPA": "pˈɑ5ŋ ts.ˈu5",
-      "text": "帮助",
-      "google_pronunciation": "Bāngzhù",
-      "audio": "help_zh-cn_帮助.mp3"
-    },
-    "th": {
-      "word": "ช่วย",
-      "IPA": "tɕʰˈuaj",
-      "text": "ช่วย",
-      "google_pronunciation": "Ch̀wy",
-      "audio": "help_th_ชวย.mp3"
-    },
-    "vi": {
-      "word": "giúp đỡ",
-      "IPA": "zˈuɜp ɗˈəː5",
-      "text": "giúp đỡ",
-      "audio": "help_vi_giúp_đỡ.mp3"
-    },
-    "id": {
-      "word": "membantu",
-      "IPA": "məmbˈantu",
-      "text": "membantu",
-      "audio": "help_id_membantu.mp3"
-    },
-    "ms": {
-      "word": "tolong",
-      "IPA": "tˈoloŋ",
-      "text": "tolong",
-      "audio": "help_ms_tolong.mp3"
-    },
-    "tl": {
-      "word": "tulong",
-      "IPA": null,
-      "text": "Tulong",
-      "audio": "help_tl_Tulong.mp3"
-    },
-    "el": {
-      "word": "βοήθεια",
-      "IPA": "voˈiθça",
-      "text": "βοήθεια",
-      "google_pronunciation": "voítheia",
-      "audio": "help_el_βοήθεια.mp3"
-    },
-    "sv": {
-      "word": "hjälp",
-      "IPA": "jˈɛlp",
-      "text": "hjälp",
-      "audio": "help_sv_hjälp.mp3"
-    },
-    "fi": {
-      "word": "auttaa",
-      "IPA": "ˈautːaː",
-      "text": "auttaa",
-      "audio": "help_fi_auttaa.mp3"
-    },
-    "ar": {
-      "word": "يساعد",
-      "IPA": "jsˈaːʕd",
-      "text": "يساعد",
-      "google_pronunciation": "yusaeid",
-      "audio": "help_ar_يساعد.mp3"
-    },
-    "tr": {
-      "word": "yardım",
-      "IPA": "jardˈɯm",
-      "text": "yardım",
-      "audio": "help_tr_yardım.mp3"
+      "respelling": "BAHNG-joo",
+      "audio_file": "zh-cn_help_audio.mp3"
     },
     "hi": {
       "word": "मदद",
-      "IPA": "mˈʌdəd",
-      "text": "मदद",
-      "google_pronunciation": "madad",
-      "audio": "help_hi_मदद.mp3"
-    },
-    "nl": {
-      "word": "hulp",
-      "IPA": "hˈɵlp",
-      "text": "hulp",
-      "audio": "help_nl_hulp.mp3"
+      "respelling": "mah-DUD",
+      "audio_file": "hi_help_audio.mp3"
     },
     "pl": {
       "word": "pomoc",
-      "IPA": "pˈɔmɔts",
-      "text": "pomoc",
-      "audio": "help_pl_pomoc.mp3"
+      "respelling": "POH-mots",
+      "audio_file": "pl_help_audio.mp3"
     },
-    "hu": {
-      "word": "segítség",
-      "IPA": "ʃˈɛɡiːtʃːeːɡ",
-      "text": "Segítség",
-      "audio": "help_hu_Segítség.mp3"
+    "ar": {
+      "word": "يساعد",
+      "respelling": "yoo-SAH-id",
+      "audio_file": "ar_help_audio.mp3"
+    },
+    "sv": {
+      "word": "hjälp",
+      "respelling": "YELP",
+      "audio_file": "sv_help_audio.mp3"
+    },
+    "ha": {
+      "word": null,
+      "respelling": null,
+      "audio_file": null,
+      "error": "Language 'ha' not supported by TTS"
+    },
+    "tr": {
+      "word": "yardım",
+      "respelling": "YAR-duhm",
+      "audio_file": "tr_help_audio.mp3"
+    },
+    "fi": {
+      "word": "auttaa",
+      "respelling": "OW-tah",
+      "audio_file": "fi_help_audio.mp3"
     },
     "sw": {
       "word": "msaada",
-      "IPA": "msaˈada",
-      "text": "Msaada",
-      "audio": "help_sw_Msaada.mp3"
+      "respelling": "m-SAH-dah",
+      "audio_file": "sw_help_audio.mp3"
     },
-    "ha": {
-      "word": "taimaka",
-      "IPA": null,
-      "text": "taimaka",
-      "audio": "help_ha_taimaka.mp3"
+    "nl": {
+      "word": "hulp",
+      "respelling": "HULP",
+      "audio_file": "nl_help_audio.mp3"
+    },
+    "tl": {
+      "word": "tulong",
+      "respelling": "TOO-long",
+      "audio_file": "tl_help_audio.mp3"
+    },
+    "th": {
+      "word": "ช่วย",
+      "respelling": "choo-ay",
+      "audio_file": "th_help_audio.mp3"
+    },
+    "id": {
+      "word": "membantu",
+      "respelling": "mem-BAN-too",
+      "audio_file": "id_help_audio.mp3"
+    },
+    "ms": {
+      "word": "membantu",
+      "respelling": "mem-BAHN-too",
+      "audio_file": "ms_help_audio.mp3"
+    },
+    "vi": {
+      "word": "giúp đỡ",
+      "respelling": "ZOOP DUH",
+      "audio_file": "vi_help_audio.mp3"
+    },
+    "el": {
+      "word": "βοήθεια",
+      "respelling": "voh-EETH-ee-ah",
+      "audio_file": "el_help_audio.mp3"
+    },
+    "hu": {
+      "word": "Segítség",
+      "respelling": "SHEH-geet-chayg",
+      "audio_file": "hu_help_audio.mp3"
     }
   },
   {
     "original": "sorry",
     "en": {
-      "word": "sorry",
-      "IPA": "sˈɑːɹi",
-      "text": "sorry",
-      "audio": "sorry_en_sorry.mp3"
+      "word": null,
+      "respelling": null,
+      "audio_file": null,
+      "error": "400 Target language can't be equal to source language. [field_violations {\n  field: \"source_language_code\"\n  description: \"Source language: en\"\n}\nfield_violations {\n  field: \"target_language_code\"\n  description: \"Target language: en\"\n}\n]"
     },
     "es": {
-      "word": "lo siento",
-      "IPA": "lo sjˈɛnto",
-      "text": "Lo siento",
-      "audio": "sorry_es_Lo_siento.mp3"
-    },
-    "fr": {
-      "word": "désolé",
-      "IPA": "dezolˈe",
-      "text": "Désolé",
-      "audio": "sorry_fr_Désolé.mp3"
-    },
-    "de": {
-      "word": "entschuldigung",
-      "IPA": "ɛntʃˈʊldɪɡˌʊŋ",
-      "text": "Entschuldigung",
-      "audio": "sorry_de_Entschuldigung.mp3"
+      "word": "Lo siento",
+      "respelling": "loh see-EN-toh",
+      "audio_file": "es_sorry_audio.mp3"
     },
     "it": {
-      "word": "scusa",
-      "IPA": "skˈuza",
-      "text": "Scusa",
-      "audio": "sorry_it_Scusa.mp3"
+      "word": "Scusa",
+      "respelling": "SKOO-sah",
+      "audio_file": "it_sorry_audio.mp3"
     },
-    "pt": {
-      "word": "desculpe",
-      "IPA": "dˌɨʃkˈuwpɨ",
-      "text": "desculpe",
-      "audio": "sorry_pt_desculpe.mp3"
-    },
-    "ru": {
-      "word": "извини",
-      "IPA": "ɪzvʲinʲˈɪ",
-      "text": "извини",
-      "google_pronunciation": "izvini",
-      "audio": "sorry_ru_извини.mp3"
+    "de": {
+      "word": "Entschuldigung",
+      "respelling": "Ent-SHOOL-dee-goong",
+      "audio_file": "de_sorry_audio.mp3"
     },
     "ja": {
       "word": "ごめん",
-      "IPA": "ɡˈo̞me̞ɴ",
-      "text": "ごめん",
-      "google_pronunciation": "Gomen",
-      "audio": "sorry_ja_ごめん.mp3"
-    },
-    "ko": {
-      "word": "죄송합니다",
-      "IPA": "tɕwesˈoŋhɐpnˌidɐ",
-      "text": "죄송합니다",
-      "google_pronunciation": "joesonghabnida",
-      "audio": "sorry_ko_죄송합니다.mp3"
+      "respelling": "GOH-men",
+      "audio_file": "ja_sorry_audio.mp3"
     },
     "zh-cn": {
       "word": "对不起",
-      "IPA": "tˌuei5pu1tɕhˈi2",
-      "text": "对不起",
-      "google_pronunciation": "Duìbùqǐ",
-      "audio": "sorry_zh-cn_对不起.mp3"
+      "respelling": "dway-boo-CHEE",
+      "audio_file": "zh-cn_sorry_audio.mp3"
     },
-    "th": {
-      "word": "ขอโทษ",
-      "IPA": "kha5ʔˈo2tha5s",
-      "text": "ขอโทษ",
-      "google_pronunciation": "K̄hxthos̄ʹ",
-      "audio": "sorry_th_ขอโทษ.mp3"
+    "ru": {
+      "word": "извини",
+      "respelling": "eez-vee-NEE",
+      "audio_file": "ru_sorry_audio.mp3"
     },
-    "vi": {
-      "word": "xin lỗi",
-      "IPA": "sˈin lˈo5j",
-      "text": "Xin lỗi",
-      "audio": "sorry_vi_Xin_lỗi.mp3"
+    "fr": {
+      "word": "Désolé",
+      "respelling": "day-zoh-LAY",
+      "audio_file": "fr_sorry_audio.mp3"
     },
-    "id": {
-      "word": "maaf",
-      "IPA": "mˈaaf",
-      "text": "Maaf",
-      "audio": "sorry_id_Maaf.mp3"
+    "pt": {
+      "word": "desculpe",
+      "respelling": "des-KOOL-peh",
+      "audio_file": "pt_sorry_audio.mp3"
     },
-    "ms": {
-      "word": "maaf",
-      "IPA": "mˈaaf",
-      "text": "Maaf",
-      "audio": "sorry_ms_Maaf.mp3"
-    },
-    "tl": {
-      "word": "pasensya na",
-      "IPA": null,
-      "text": "Pasensya na",
-      "audio": "sorry_tl_Pasensya_na.mp3"
-    },
-    "el": {
-      "word": "συγνώμη",
-      "IPA": "siɣnˈomi",
-      "text": "Συγνώμη",
-      "google_pronunciation": "Sygnómi",
-      "audio": "sorry_el_Συγνώμη.mp3"
-    },
-    "sv": {
-      "word": "ledsen",
-      "IPA": "lˈɛdsən",
-      "text": "ledsen",
-      "audio": "sorry_sv_ledsen.mp3"
-    },
-    "fi": {
-      "word": "pahoillani",
-      "IPA": "pˈahoillˌanɪ",
-      "text": "pahoillani",
-      "audio": "sorry_fi_pahoillani.mp3"
+    "ko": {
+      "word": "죄송합니다",
+      "respelling": "jweh-SONG-hahm-nee-dah",
+      "audio_file": "ko_sorry_audio.mp3"
     },
     "ar": {
       "word": "آسف",
-      "IPA": "ʔˈaːsif",
-      "text": "آسف",
-      "google_pronunciation": "asf",
-      "audio": "sorry_ar_آسف.mp3"
-    },
-    "tr": {
-      "word": "üzgünüm",
-      "IPA": "øzɟˈynøm",
-      "text": "Üzgünüm",
-      "audio": "sorry_tr_Üzgünüm.mp3"
+      "respelling": "AH-sif",
+      "audio_file": "ar_sorry_audio.mp3"
     },
     "hi": {
       "word": "क्षमा मांगना",
-      "IPA": "kʃˈʌmaː mˈãɡnˌaː",
-      "text": "क्षमा मांगना",
-      "google_pronunciation": "kshama maangana",
-      "audio": "sorry_hi_कषम_मगन.mp3"
+      "respelling": "kshuh-MAH MAHNG-guh-nah",
+      "audio_file": "hi_sorry_audio.mp3"
     },
-    "nl": {
-      "word": "sorry",
-      "IPA": "sˈɔɾri",
-      "text": "Sorry",
-      "audio": "sorry_nl_Sorry.mp3"
+    "ha": {
+      "word": null,
+      "respelling": null,
+      "audio_file": null,
+      "error": "Language 'ha' not supported by TTS"
     },
     "pl": {
-      "word": "przepraszam",
-      "IPA": "pʃɛprˈaʃam",
-      "text": "Przepraszam",
-      "audio": "sorry_pl_Przepraszam.mp3"
-    },
-    "hu": {
-      "word": "sajnál",
-      "IPA": "ʃˈɑjnaːl",
-      "text": "sajnál",
-      "audio": "sorry_hu_sajnál.mp3"
+      "word": "Przepraszam",
+      "respelling": "Psheh-PRAH-shahm",
+      "audio_file": "pl_sorry_audio.mp3"
     },
     "sw": {
       "word": "samahani",
-      "IPA": "sˌamahˈani",
-      "text": "Samahani",
-      "audio": "sorry_sw_Samahani.mp3"
+      "respelling": "sah-mah-HAH-nee",
+      "audio_file": "sw_sorry_audio.mp3"
     },
-    "ha": {
-      "word": "yi haƙuri",
-      "IPA": null,
-      "text": "yi haƙuri",
-      "audio": "sorry_ha_yi_haƙuri.mp3"
+    "hu": {
+      "word": "sajnálom",
+      "respelling": "shy-NAH-lohm",
+      "audio_file": "hu_sorry_audio.mp3"
+    },
+    "el": {
+      "word": "Συγνώμη",
+      "respelling": "sig-NOH-mee",
+      "audio_file": "el_sorry_audio.mp3"
+    },
+    "id": {
+      "word": "Maaf",
+      "respelling": "mah-AHF",
+      "audio_file": "id_sorry_audio.mp3"
+    },
+    "sv": {
+      "word": "ledsen",
+      "respelling": "LED-sen",
+      "audio_file": "sv_sorry_audio.mp3"
+    },
+    "ms": {
+      "word": "maaf",
+      "respelling": "mah-AHF",
+      "audio_file": "ms_sorry_audio.mp3"
+    },
+    "tr": {
+      "word": "Üzgünüm",
+      "respelling": "ooz-GOO-noom",
+      "audio_file": "tr_sorry_audio.mp3"
+    },
+    "tl": {
+      "word": "sorry",
+      "respelling": "SAH-ree",
+      "audio_file": "tl_sorry_audio.mp3"
+    },
+    "nl": {
+      "word": "Sorry",
+      "respelling": "SOH-ree",
+      "audio_file": "nl_sorry_audio.mp3"
+    },
+    "th": {
+      "word": "ขอโทษ",
+      "respelling": "KAW-toht",
+      "audio_file": "th_sorry_audio.mp3"
+    },
+    "fi": {
+      "word": "anteeksi",
+      "respelling": "AHN-tek-see",
+      "audio_file": "fi_sorry_audio.mp3"
+    },
+    "vi": {
+      "word": "Xin lỗi",
+      "respelling": "Seen Loy",
+      "audio_file": "vi_sorry_audio.mp3"
     }
   },
   {
     "original": "water",
     "en": {
-      "word": "water",
-      "IPA": "wˈɔːɾɚ",
-      "text": "water",
-      "audio": "water_en_water.mp3"
-    },
-    "es": {
-      "word": "agua",
-      "IPA": "ˈaɣwa",
-      "text": "agua",
-      "audio": "water_es_agua.mp3"
+      "word": null,
+      "respelling": null,
+      "audio_file": null,
+      "error": "400 Target language can't be equal to source language. [field_violations {\n  field: \"source_language_code\"\n  description: \"Source language: en\"\n}\nfield_violations {\n  field: \"target_language_code\"\n  description: \"Target language: en\"\n}\n]"
     },
     "fr": {
       "word": "eau",
-      "IPA": "ˈo",
-      "text": "eau",
-      "audio": "water_fr_eau.mp3"
+      "respelling": "oh",
+      "audio_file": "fr_water_audio.mp3"
+    },
+    "es": {
+      "word": "agua",
+      "respelling": "AH-gwah",
+      "audio_file": "es_water_audio.mp3"
     },
     "de": {
-      "word": "wasser",
-      "IPA": "vˈasɜ",
-      "text": "Wasser",
-      "audio": "water_de_Wasser.mp3"
+      "word": "Wasser",
+      "respelling": "VAH-suh",
+      "audio_file": "de_water_audio.mp3"
     },
     "it": {
       "word": "acqua",
-      "IPA": "ˈakːwa",
-      "text": "acqua",
-      "audio": "water_it_acqua.mp3"
-    },
-    "pt": {
-      "word": "água",
-      "IPA": "ˈaɡwɐ",
-      "text": "água",
-      "audio": "water_pt_água.mp3"
-    },
-    "ru": {
-      "word": "вода",
-      "IPA": "vʌdˈɑ",
-      "text": "вода",
-      "google_pronunciation": "voda",
-      "audio": "water_ru_вода.mp3"
+      "respelling": "AHK-kwah",
+      "audio_file": "it_water_audio.mp3"
     },
     "ja": {
       "word": "水",
-      "IPA": "mˈizɯᵝ",
-      "text": "水",
-      "google_pronunciation": "Mizu",
-      "audio": "water_ja_水.mp3"
+      "respelling": "mee-zoo",
+      "audio_file": "ja_water_audio.mp3"
+    },
+    "pt": {
+      "word": "água",
+      "respelling": "AH-gwuh",
+      "audio_file": "pt_water_audio.mp3"
+    },
+    "ru": {
+      "word": "вода",
+      "respelling": "vuh-DAH",
+      "audio_file": "ru_water_audio.mp3"
     },
     "ko": {
       "word": "물",
-      "IPA": "mˈuɫ",
-      "text": "물",
-      "google_pronunciation": "mul",
-      "audio": "water_ko_물.mp3"
+      "respelling": "mool",
+      "audio_file": "ko_water_audio.mp3"
     },
     "zh-cn": {
       "word": "水",
-      "IPA": "s.wˈei2",
-      "text": "水",
-      "google_pronunciation": "Shuǐ",
-      "audio": "water_zh-cn_水.mp3"
-    },
-    "th": {
-      "word": "น้ำ",
-      "IPA": "nˈaːm",
-      "text": "น้ำ",
-      "google_pronunciation": "N̂ả",
-      "audio": "water_th_นำ.mp3"
-    },
-    "vi": {
-      "word": "nước",
-      "IPA": "nˈyəɜc",
-      "text": "Nước",
-      "audio": "water_vi_Nước.mp3"
-    },
-    "id": {
-      "word": "air",
-      "IPA": "ˈaɪr",
-      "text": "air",
-      "audio": "water_id_air.mp3"
-    },
-    "ms": {
-      "word": "air",
-      "IPA": "ˈaɪr",
-      "text": "air",
-      "audio": "water_ms_air.mp3"
-    },
-    "tl": {
-      "word": "tubig",
-      "IPA": null,
-      "text": "Tubig",
-      "audio": "water_tl_Tubig.mp3"
-    },
-    "el": {
-      "word": "νερό",
-      "IPA": "nerˈo",
-      "text": "νερό",
-      "google_pronunciation": "neró",
-      "audio": "water_el_νερό.mp3"
-    },
-    "sv": {
-      "word": "vatten",
-      "IPA": "vˈatːən",
-      "text": "vatten",
-      "audio": "water_sv_vatten.mp3"
-    },
-    "fi": {
-      "word": "vettä",
-      "IPA": "vˈetːæ",
-      "text": "vettä",
-      "audio": "water_fi_vettä.mp3"
-    },
-    "ar": {
-      "word": "ماء",
-      "IPA": "mˈaːʔ",
-      "text": "ماء",
-      "google_pronunciation": "ma'",
-      "audio": "water_ar_ماء.mp3"
-    },
-    "tr": {
-      "word": "su",
-      "IPA": "sˈʊ",
-      "text": "su",
-      "audio": "water_tr_su.mp3"
+      "respelling": "shway",
+      "audio_file": "zh-cn_water_audio.mp3"
     },
     "hi": {
       "word": "पानी",
-      "IPA": "pˈaːni",
-      "text": "पानी",
-      "google_pronunciation": "paanee",
-      "audio": "water_hi_पन.mp3"
-    },
-    "nl": {
-      "word": "water",
-      "IPA": "ʋˈaːtər",
-      "text": "water",
-      "audio": "water_nl_water.mp3"
+      "respelling": "PAH-nee",
+      "audio_file": "hi_water_audio.mp3"
     },
     "pl": {
       "word": "woda",
-      "IPA": "vˈɔda",
-      "text": "woda",
-      "audio": "water_pl_woda.mp3"
+      "respelling": "VOH-dah",
+      "audio_file": "pl_water_audio.mp3"
     },
-    "hu": {
-      "word": "víz",
-      "IPA": "vˌiːz",
-      "text": "víz",
-      "audio": "water_hu_víz.mp3"
+    "tr": {
+      "word": "su",
+      "respelling": "soo",
+      "audio_file": "tr_water_audio.mp3"
+    },
+    "ha": {
+      "word": null,
+      "respelling": null,
+      "audio_file": null,
+      "error": "Language 'ha' not supported by TTS"
+    },
+    "ar": {
+      "word": "ماء",
+      "respelling": "Mah",
+      "audio_file": "ar_water_audio.mp3"
+    },
+    "nl": {
+      "word": "water",
+      "respelling": "WAH-ter",
+      "audio_file": "nl_water_audio.mp3"
     },
     "sw": {
       "word": "maji",
-      "IPA": "mˈaɟi",
-      "text": "maji",
-      "audio": "water_sw_maji.mp3"
+      "respelling": "MAH-jee",
+      "audio_file": "sw_water_audio.mp3"
     },
-    "ha": {
-      "word": "ruwa",
-      "IPA": null,
-      "text": "ruwa",
-      "audio": "water_ha_ruwa.mp3"
+    "el": {
+      "word": "νερό",
+      "respelling": "neh-ROH",
+      "audio_file": "el_water_audio.mp3"
+    },
+    "fi": {
+      "word": "vesi",
+      "respelling": "VEH-see",
+      "audio_file": "fi_water_audio.mp3"
+    },
+    "ms": {
+      "word": "air",
+      "respelling": "ah-yer",
+      "audio_file": "ms_water_audio.mp3"
+    },
+    "tl": {
+      "word": "tubig",
+      "respelling": "TOO-big",
+      "audio_file": "tl_water_audio.mp3"
+    },
+    "id": {
+      "word": "air",
+      "respelling": "EYE-ur",
+      "audio_file": "id_water_audio.mp3"
+    },
+    "th": {
+      "word": "น้ำ",
+      "respelling": "nahm",
+      "audio_file": "th_water_audio.mp3"
+    },
+    "hu": {
+      "word": "víz",
+      "respelling": "veez",
+      "audio_file": "hu_water_audio.mp3"
+    },
+    "sv": {
+      "word": "vatten",
+      "respelling": "VAHT-ten",
+      "audio_file": "sv_water_audio.mp3"
+    },
+    "vi": {
+      "word": "Nước",
+      "respelling": "Nook",
+      "audio_file": "vi_water_audio.mp3"
     }
   },
   {
     "original": "yes",
     "en": {
-      "word": "yes",
-      "IPA": "jˈɛs",
-      "text": "yes",
-      "audio": "yes_en_yes.mp3"
+      "word": null,
+      "respelling": null,
+      "audio_file": null,
+      "error": "400 Target language can't be equal to source language. [field_violations {\n  field: \"source_language_code\"\n  description: \"Source language: en\"\n}\nfield_violations {\n  field: \"target_language_code\"\n  description: \"Target language: en\"\n}\n]"
     },
     "es": {
-      "word": "sí",
-      "IPA": "sˈi",
-      "text": "Sí",
-      "audio": "yes_es_Sí.mp3"
+      "word": "Sí",
+      "respelling": "SEE",
+      "audio_file": "es_yes_audio.mp3"
     },
     "fr": {
-      "word": "oui",
-      "IPA": "wˈi",
-      "text": "Oui",
-      "audio": "yes_fr_Oui.mp3"
-    },
-    "de": {
-      "word": "ja",
-      "IPA": "jˈɑː",
-      "text": "Ja",
-      "audio": "yes_de_Ja.mp3"
-    },
-    "it": {
-      "word": "sì",
-      "IPA": "sˈiː",
-      "text": "SÌ",
-      "audio": "yes_it_SÌ.mp3"
+      "word": "Oui",
+      "respelling": "wee",
+      "audio_file": "fr_yes_audio.mp3"
     },
     "pt": {
       "word": "sim",
-      "IPA": "sˈiŋ",
-      "text": "sim",
-      "audio": "yes_pt_sim.mp3"
+      "respelling": "seem",
+      "audio_file": "pt_yes_audio.mp3"
     },
     "ru": {
       "word": "да",
-      "IPA": "dˈɑ",
-      "text": "да",
-      "google_pronunciation": "da",
-      "audio": "yes_ru_да.mp3"
+      "respelling": "dah",
+      "audio_file": "ru_yes_audio.mp3"
+    },
+    "it": {
+      "word": "SÌ",
+      "respelling": "See",
+      "audio_file": "it_yes_audio.mp3"
     },
     "ja": {
       "word": "はい",
-      "IPA": "hˈäi",
-      "text": "はい",
-      "google_pronunciation": "Hai",
-      "audio": "yes_ja_はい.mp3"
+      "respelling": "hai",
+      "audio_file": "ja_yes_audio.mp3"
+    },
+    "de": {
+      "word": "Ja",
+      "respelling": "yah",
+      "audio_file": "de_yes_audio.mp3"
     },
     "ko": {
       "word": "예",
-      "IPA": "jˈe",
-      "text": "예",
-      "google_pronunciation": "ye",
-      "audio": "yes_ko_예.mp3"
+      "respelling": "Yeh",
+      "audio_file": "ko_yes_audio.mp3"
     },
     "zh-cn": {
       "word": "是的",
-      "IPA": "s.ˈi.5 tˈə1",
-      "text": "是的",
-      "google_pronunciation": "Shì de",
-      "audio": "yes_zh-cn_是的.mp3"
-    },
-    "th": {
-      "word": "ใช่",
-      "IPA": "ˈai2ch",
-      "text": "ใช่",
-      "google_pronunciation": "Chı̀",
-      "audio": "yes_th_ใช.mp3"
-    },
-    "vi": {
-      "word": "đúng",
-      "IPA": "ɗˈuɜŋ",
-      "text": "Đúng",
-      "audio": "yes_vi_Đúng.mp3"
-    },
-    "id": {
-      "word": "ya",
-      "IPA": "jˈa",
-      "text": "Ya",
-      "audio": "yes_id_Ya.mp3"
-    },
-    "ms": {
-      "word": "ya",
-      "IPA": "jˈa",
-      "text": "Ya",
-      "audio": "yes_ms_Ya.mp3"
-    },
-    "tl": {
-      "word": "oo",
-      "IPA": null,
-      "text": "Oo",
-      "audio": "yes_tl_Oo.mp3"
-    },
-    "el": {
-      "word": "ναί",
-      "IPA": "nˈe",
-      "text": "Ναί",
-      "google_pronunciation": "Naí",
-      "audio": "yes_el_Ναί.mp3"
-    },
-    "sv": {
-      "word": "ja",
-      "IPA": "jˈɑː",
-      "text": "ja",
-      "audio": "yes_sv_ja.mp3"
-    },
-    "fi": {
-      "word": "kyllä",
-      "IPA": "kˈyllæ",
-      "text": "kyllä",
-      "audio": "yes_fi_kyllä.mp3"
+      "respelling": "SHER-duh",
+      "audio_file": "zh-cn_yes_audio.mp3"
     },
     "ar": {
       "word": "نعم",
-      "IPA": "nˈaʕam",
-      "text": "نعم",
-      "google_pronunciation": "naeam",
-      "audio": "yes_ar_نعم.mp3"
-    },
-    "tr": {
-      "word": "evet",
-      "IPA": "evˈɛt",
-      "text": "Evet",
-      "audio": "yes_tr_Evet.mp3"
-    },
-    "hi": {
-      "word": "हाँ",
-      "IPA": "hˈã",
-      "text": "हाँ",
-      "google_pronunciation": "haan",
-      "audio": "yes_hi_ह.mp3"
+      "respelling": "NAH-am",
+      "audio_file": "ar_yes_audio.mp3"
     },
     "nl": {
+      "word": "Ja",
+      "respelling": "yah",
+      "audio_file": "nl_yes_audio.mp3"
+    },
+    "ha": {
+      "word": null,
+      "respelling": null,
+      "audio_file": null,
+      "error": "Language 'ha' not supported by TTS"
+    },
+    "sv": {
       "word": "ja",
-      "IPA": "jˈaː",
-      "text": "Ja",
-      "audio": "yes_nl_Ja.mp3"
+      "respelling": "yah",
+      "audio_file": "sv_yes_audio.mp3"
     },
     "pl": {
-      "word": "tak",
-      "IPA": "tˈak",
-      "text": "Tak",
-      "audio": "yes_pl_Tak.mp3"
+      "word": "Tak",
+      "respelling": "Tahk",
+      "audio_file": "pl_yes_audio.mp3"
     },
-    "hu": {
-      "word": "igen",
-      "IPA": "ˌiɡɛn",
-      "text": "igen",
-      "audio": "yes_hu_igen.mp3"
+    "tr": {
+      "word": "Evet",
+      "respelling": "EH-vet",
+      "audio_file": "tr_yes_audio.mp3"
     },
     "sw": {
       "word": "ndio",
-      "IPA": "n̩dˈio",
-      "text": "Ndio",
-      "audio": "yes_sw_Ndio.mp3"
+      "respelling": "n-DEE-oh",
+      "audio_file": "sw_yes_audio.mp3"
     },
-    "ha": {
-      "word": "i",
-      "IPA": null,
-      "text": "i",
-      "audio": "yes_ha_i.mp3"
+    "ms": {
+      "word": "ya",
+      "respelling": "yah",
+      "audio_file": "ms_yes_audio.mp3"
+    },
+    "hu": {
+      "word": "igen",
+      "respelling": "EE-gen",
+      "audio_file": "hu_yes_audio.mp3"
+    },
+    "tl": {
+      "word": "oo",
+      "respelling": "OOH-ooh",
+      "audio_file": "tl_yes_audio.mp3"
+    },
+    "hi": {
+      "word": "हाँ",
+      "respelling": "Hahn",
+      "audio_file": "hi_yes_audio.mp3"
+    },
+    "id": {
+      "word": "Ya",
+      "respelling": "Yah",
+      "audio_file": "id_yes_audio.mp3"
+    },
+    "fi": {
+      "word": "kyllä",
+      "respelling": "KYOO-lah",
+      "audio_file": "fi_yes_audio.mp3"
+    },
+    "vi": {
+      "word": "Đúng",
+      "respelling": "doong",
+      "audio_file": "vi_yes_audio.mp3"
+    },
+    "th": {
+      "word": "ใช่",
+      "respelling": "Chai",
+      "audio_file": "th_yes_audio.mp3"
+    },
+    "el": {
+      "word": "Ναί",
+      "respelling": "NAY",
+      "audio_file": "el_yes_audio.mp3"
     }
   },
   {
     "original": "no",
     "en": {
-      "word": "no",
-      "IPA": "nˈoʊ",
-      "text": "no",
-      "audio": "no_en_no.mp3"
+      "word": null,
+      "respelling": null,
+      "audio_file": null,
+      "error": "400 Target language can't be equal to source language. [field_violations {\n  field: \"source_language_code\"\n  description: \"Source language: en\"\n}\nfield_violations {\n  field: \"target_language_code\"\n  description: \"Target language: en\"\n}\n]"
     },
     "es": {
-      "word": "no",
-      "IPA": "nˈo",
-      "text": "No",
-      "audio": "no_es_No.mp3"
+      "word": "No",
+      "respelling": "Noh",
+      "audio_file": "es_no_audio.mp3"
     },
     "fr": {
-      "word": "non",
-      "IPA": "nˈɔ̃",
-      "text": "Non",
-      "audio": "no_fr_Non.mp3"
-    },
-    "de": {
-      "word": "nein",
-      "IPA": "nˈaɪn",
-      "text": "NEIN",
-      "audio": "no_de_NEIN.mp3"
+      "word": "Non",
+      "respelling": "Nohn",
+      "audio_file": "fr_no_audio.mp3"
     },
     "it": {
-      "word": "no",
-      "IPA": "nˈɔ",
-      "text": "NO",
-      "audio": "no_it_NO.mp3"
-    },
-    "pt": {
-      "word": "não",
-      "IPA": "nˈɐ̃ʊ̃",
-      "text": "não",
-      "audio": "no_pt_não.mp3"
-    },
-    "ru": {
-      "word": "нет",
-      "IPA": "nʲˈet",
-      "text": "нет",
-      "google_pronunciation": "net",
-      "audio": "no_ru_нет.mp3"
+      "word": "NO",
+      "respelling": "NO",
+      "audio_file": "it_no_audio.mp3"
     },
     "ja": {
       "word": "いいえ",
-      "IPA": "ˈiːe̞",
-      "text": "いいえ",
-      "google_pronunciation": "Īe",
-      "audio": "no_ja_いいえ.mp3"
+      "respelling": "ee-eh",
+      "audio_file": "ja_no_audio.mp3"
     },
     "ko": {
       "word": "아니요",
-      "IPA": "ˈɐnijˌo",
-      "text": "아니요",
-      "google_pronunciation": "aniyo",
-      "audio": "no_ko_아니요.mp3"
+      "respelling": "ah-NEE-yoh",
+      "audio_file": "ko_no_audio.mp3"
+    },
+    "de": {
+      "word": "NEIN",
+      "respelling": "NINE",
+      "audio_file": "de_no_audio.mp3"
     },
     "zh-cn": {
       "word": "不",
-      "IPA": "pˈu5",
-      "text": "不",
-      "google_pronunciation": "Bù",
-      "audio": "no_zh-cn_不.mp3"
+      "respelling": "boo",
+      "audio_file": "zh-cn_no_audio.mp3"
     },
-    "th": {
-      "word": "ไม่",
-      "IPA": "mˈaj",
-      "text": "ไม่",
-      "google_pronunciation": "Mai",
-      "audio": "no_th_ไม่.mp3"
+    "pt": {
+      "word": "não",
+      "respelling": "NOWNG",
+      "audio_file": "pt_no_audio.mp3"
     },
-    "vi": {
-      "word": "không",
-      "IPA": "xˌoŋ",
-      "text": "KHÔNG",
-      "audio": "no_vi_KHÔNG.mp3"
-    },
-    "id": {
-      "word": "tidak",
-      "IPA": "tˈidak",
-      "text": "TIDAK",
-      "audio": "no_id_TIDAK.mp3"
-    },
-    "ms": {
-      "word": "tidak",
-      "IPA": "tˈidaʔ",
-      "text": "tidak",
-      "audio": "no_ms_tidak.mp3"
-    },
-    "tl": {
-      "word": "hindi",
-      "IPA": null,
-      "text": "hindi",
-      "audio": "no_tl_hindi.mp3"
-    },
-    "el": {
-      "word": "όχι",
-      "IPA": "ˈoçi",
-      "text": "Όχι",
-      "google_pronunciation": "Óchi",
-      "audio": "no_el_Όχι.mp3"
-    },
-    "sv": {
-      "word": "inga",
-      "IPA": "ˈɪŋa",
-      "text": "inga",
-      "audio": "no_sv_inga.mp3"
-    },
-    "fi": {
-      "word": "ei",
-      "IPA": "ei",
-      "text": "ei",
-      "audio": "no_fi_ei.mp3"
+    "ru": {
+      "word": "нет",
+      "respelling": "nyet",
+      "audio_file": "ru_no_audio.mp3"
     },
     "ar": {
       "word": "لا",
-      "IPA": "lˈaː",
-      "text": "لا",
-      "google_pronunciation": "la",
-      "audio": "no_ar_لا.mp3"
-    },
-    "tr": {
-      "word": "hayir",
-      "IPA": "hajˈɯr",
-      "text": "HAYIR",
-      "audio": "no_tr_HAYIR.mp3"
+      "respelling": "Lah",
+      "audio_file": "ar_no_audio.mp3"
     },
     "hi": {
       "word": "नहीं",
-      "IPA": "nˈʌhĩ",
-      "text": "नहीं",
-      "google_pronunciation": "nahin",
-      "audio": "no_hi_नह.mp3"
-    },
-    "nl": {
-      "word": "nee",
-      "IPA": "nˈeː",
-      "text": "Nee",
-      "audio": "no_nl_Nee.mp3"
+      "respelling": "nah-HEEN",
+      "audio_file": "hi_no_audio.mp3"
     },
     "pl": {
-      "word": "nie",
-      "IPA": "ɲʲɛ",
-      "text": "NIE",
-      "audio": "no_pl_NIE.mp3"
+      "word": "NIE",
+      "respelling": "NYEH",
+      "audio_file": "pl_no_audio.mp3"
+    },
+    "ha": {
+      "word": null,
+      "respelling": null,
+      "audio_file": null,
+      "error": "Language 'ha' not supported by TTS"
+    },
+    "nl": {
+      "word": "Nee",
+      "respelling": "Nay",
+      "audio_file": "nl_no_audio.mp3"
     },
     "hu": {
       "word": "nem",
-      "IPA": "nˈɛm",
-      "text": "nem",
-      "audio": "no_hu_nem.mp3"
+      "respelling": "nem",
+      "audio_file": "hu_no_audio.mp3"
     },
     "sw": {
       "word": "hapana",
-      "IPA": "hapˈana",
-      "text": "hapana",
-      "audio": "no_sw_hapana.mp3"
+      "respelling": "hah-PAH-nah",
+      "audio_file": "sw_no_audio.mp3"
     },
-    "ha": {
-      "word": "a'a",
-      "IPA": null,
-      "text": "a'a",
-      "audio": "no_ha_aa.mp3"
+    "ms": {
+      "word": "tidak",
+      "respelling": "tee-duck",
+      "audio_file": "ms_no_audio.mp3"
+    },
+    "fi": {
+      "word": "ei",
+      "respelling": "ay",
+      "audio_file": "fi_no_audio.mp3"
+    },
+    "th": {
+      "word": "เลขที่",
+      "respelling": "lek-TEE",
+      "audio_file": "th_no_audio.mp3"
+    },
+    "sv": {
+      "word": "inga",
+      "respelling": "ING-ah",
+      "audio_file": "sv_no_audio.mp3"
+    },
+    "tr": {
+      "word": "HAYIR",
+      "respelling": "HAH-yuhr",
+      "audio_file": "tr_no_audio.mp3"
+    },
+    "id": {
+      "word": "TIDAK",
+      "respelling": "TEE-dahk",
+      "audio_file": "id_no_audio.mp3"
+    },
+    "tl": {
+      "word": "hindi",
+      "respelling": "hin-DEE",
+      "audio_file": "tl_no_audio.mp3"
+    },
+    "el": {
+      "word": "Όχι",
+      "respelling": "OH-hee",
+      "audio_file": "el_no_audio.mp3"
+    },
+    "vi": {
+      "word": "KHÔNG",
+      "respelling": "KONG",
+      "audio_file": "vi_no_audio.mp3"
     }
   }
 ]

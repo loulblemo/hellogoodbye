@@ -19,6 +19,97 @@ PROJECT_ID = "my-free-personal-instance"
 LOCATION = "global"
 # ------------------------------------------
 
+# Voice mapping for optimal TTS quality
+# Maps language codes to (BCP-47 code, voice_name) tuples
+VOICE_MAPPING = {
+    "sw": ("sw-KE", "sw-KE-Chirp3-HD-Achernar"),  # Swahili -> Swahili (Kenya) with female voice
+    "ha": None,     # Hausa not supported by Google TTS
+    "en": "en-US",  # English -> English (US)
+    "es": "es-ES",  # Spanish -> Spanish (Spain)
+    "fr": "fr-FR",  # French -> French (France)
+    "de": "de-DE",  # German -> German (Germany)
+    "it": "it-IT",  # Italian -> Italian (Italy)
+    "pt": "pt-PT",  # Portuguese -> Portuguese (Portugal)
+    "ru": "ru-RU",  # Russian -> Russian (Russia)
+    "ja": "ja-JP",  # Japanese -> Japanese (Japan)
+    "ko": "ko-KR",  # Korean -> Korean (South Korea)
+    "zh-cn": "zh-CN",  # Chinese Simplified -> Chinese (China)
+    "zh-tw": "zh-TW",  # Chinese Traditional -> Chinese (Taiwan)
+    "ar": "ar-XA",  # Arabic -> Arabic (Gulf)
+    "hi": "hi-IN",  # Hindi -> Hindi (India)
+    "th": "th-TH",  # Thai -> Thai (Thailand)
+    "vi": "vi-VN",  # Vietnamese -> Vietnamese (Vietnam)
+    "id": "id-ID",  # Indonesian -> Indonesian (Indonesia)
+    "ms": "ms-MY",  # Malay -> Malay (Malaysia)
+    "tl": "fil-PH", # Filipino -> Filipino (Philippines)
+    "nl": "nl-NL",  # Dutch -> Dutch (Netherlands)
+    "sv": "sv-SE",  # Swedish -> Swedish (Sweden)
+    "da": "da-DK",  # Danish -> Danish (Denmark)
+    "no": "nb-NO",  # Norwegian -> Norwegian (Norway)
+    "fi": "fi-FI",  # Finnish -> Finnish (Finland)
+    "pl": "pl-PL",  # Polish -> Polish (Poland)
+    "tr": "tr-TR",  # Turkish -> Turkish (Turkey)
+    "el": "el-GR",  # Greek -> Greek (Greece)
+    "he": "he-IL",  # Hebrew -> Hebrew (Israel)
+    "hu": "hu-HU",  # Hungarian -> Hungarian (Hungary)
+    "cs": "cs-CZ",  # Czech -> Czech (Czech Republic)
+    "sk": "sk-SK",  # Slovak -> Slovak (Slovakia)
+    "ro": "ro-RO",  # Romanian -> Romanian (Romania)
+    "bg": "bg-BG",  # Bulgarian -> Bulgarian (Bulgaria)
+    "hr": "hr-HR",  # Croatian -> Croatian (Croatia)
+    "sl": "sl-SI",  # Slovenian -> Slovenian (Slovenia)
+    "et": "et-EE",  # Estonian -> Estonian (Estonia)
+    "lv": "lv-LV",  # Latvian -> Latvian (Latvia)
+    "lt": "lt-LT",  # Lithuanian -> Lithuanian (Lithuania)
+    "uk": "uk-UA",  # Ukrainian -> Ukrainian (Ukraine)
+    "be": "be-BY",  # Belarusian -> Belarusian (Belarus)
+    "ka": "ka-GE",  # Georgian -> Georgian (Georgia)
+    "hy": "hy-AM",  # Armenian -> Armenian (Armenia)
+    "az": "az-AZ",  # Azerbaijani -> Azerbaijani (Azerbaijan)
+    "kk": "kk-KZ",  # Kazakh -> Kazakh (Kazakhstan)
+    "ky": "ky-KG",  # Kyrgyz -> Kyrgyz (Kyrgyzstan)
+    "uz": "uz-UZ",  # Uzbek -> Uzbek (Uzbekistan)
+    "mn": "mn-MN",  # Mongolian -> Mongolian (Mongolia)
+    "ne": "ne-NP",  # Nepali -> Nepali (Nepal)
+    "si": "si-LK",  # Sinhala -> Sinhala (Sri Lanka)
+    "ta": "ta-IN",  # Tamil -> Tamil (India)
+    "te": "te-IN",  # Telugu -> Telugu (India)
+    "kn": "kn-IN",  # Kannada -> Kannada (India)
+    "ml": "ml-IN",  # Malayalam -> Malayalam (India)
+    "gu": "gu-IN",  # Gujarati -> Gujarati (India)
+    "pa": "pa-IN",  # Punjabi -> Punjabi (India)
+    "bn": "bn-IN",  # Bengali -> Bengali (India)
+    "or": "or-IN",  # Odia -> Odia (India)
+    "as": "as-IN",  # Assamese -> Assamese (India)
+    "mr": "mr-IN",  # Marathi -> Marathi (India)
+    "ur": "ur-PK",  # Urdu -> Urdu (Pakistan)
+    "fa": "fa-IR",  # Persian -> Persian (Iran)
+    "ps": "ps-AF",  # Pashto -> Pashto (Afghanistan)
+    "sd": "sd-PK",  # Sindhi -> Sindhi (Pakistan)
+    "bo": "bo-CN",  # Tibetan -> Tibetan (China)
+    "my": "my-MM",  # Burmese -> Burmese (Myanmar)
+    "km": "km-KH",  # Khmer -> Khmer (Cambodia)
+    "lo": "lo-LA",  # Lao -> Lao (Laos)
+    "ka": "ka-GE",  # Georgian -> Georgian (Georgia)
+    "am": "am-ET",  # Amharic -> Amharic (Ethiopia)
+    "ti": "ti-ET",  # Tigrinya -> Tigrinya (Ethiopia)
+    "om": "om-ET",  # Oromo -> Oromo (Ethiopia)
+    "so": "so-SO",  # Somali -> Somali (Somalia)
+    "yo": "yo-NG",  # Yoruba -> Yoruba (Nigeria)
+    "ig": "ig-NG",  # Igbo -> Igbo (Nigeria)
+    "zu": "zu-ZA",  # Zulu -> Zulu (South Africa)
+    "af": "af-ZA",  # Afrikaans -> Afrikaans (South Africa)
+    "xh": "xh-ZA",  # Xhosa -> Xhosa (South Africa)
+    "st": "st-ZA",  # Sesotho -> Sesotho (South Africa)
+    "tn": "tn-BW",  # Tswana -> Tswana (Botswana)
+    "ss": "ss-ZA",  # Swati -> Swati (South Africa)
+    "ve": "ve-ZA",  # Venda -> Venda (South Africa)
+    "ts": "ts-ZA",  # Tsonga -> Tsonga (South Africa)
+    "nr": "nr-ZA",  # Southern Ndebele -> Southern Ndebele (South Africa)
+    "nso": "nso-ZA", # Northern Sotho -> Northern Sotho (South Africa)
+    "zu": "zu-ZA",  # Zulu -> Zulu (South Africa)
+}
+
 
 def generate_respelling(text: str, target_language_code: str):
     
@@ -90,16 +181,33 @@ def process_word_and_generate_audio(project_id: str, text: str, target_language_
 
 
     # 3. Synthesize Audio (Fails if API call encounters an error)
-    output_file = f"{target_language_code}_{text.replace(' ', '_')}_audio.mp3"
+    # Create audio_files directory if it doesn't exist
+    audio_dir = "audio_files"
+    os.makedirs(audio_dir, exist_ok=True)
+    
+    output_file = os.path.join(audio_dir, f"{target_language_code}_{text.replace(' ', '_')}_audio.mp3")
     
     synthesis_input = texttospeech.SynthesisInput(text=translated_text)
     
-    # Text-to-Speech uses BCP-47 codes (e.g., 'zh-CN', 'fr-FR'), but often handles 
-    # two-letter codes by selecting a standard voice for that region.
-    voice = texttospeech.VoiceSelectionParams(
-        language_code=target_language_code,
-        ssml_gender=texttospeech.SsmlVoiceGender.NEUTRAL
-    )
+    # Check if the language is supported for TTS
+    voice_info = VOICE_MAPPING.get(target_language_code)
+    if voice_info is None:
+        raise ValueError(f"Language '{target_language_code}' is not supported by Google Text-to-Speech API")
+    
+    # Handle both tuple (BCP-47, voice_name) and string (BCP-47 only) formats
+    if isinstance(voice_info, tuple):
+        bcp47_code, voice_name = voice_info
+        voice = texttospeech.VoiceSelectionParams(
+            language_code=bcp47_code,
+            name=voice_name,
+            ssml_gender=texttospeech.SsmlVoiceGender.NEUTRAL
+        )
+    else:
+        # Fallback for languages that only have BCP-47 code
+        voice = texttospeech.VoiceSelectionParams(
+            language_code=voice_info,
+            ssml_gender=texttospeech.SsmlVoiceGender.NEUTRAL
+        )
 
     audio_config = texttospeech.AudioConfig(
         audio_encoding=texttospeech.AudioEncoding.MP3
@@ -124,6 +232,35 @@ def process_word_and_generate_audio(project_id: str, text: str, target_language_
     }
 
 
+def list_supported_translation_languages(project_id: str):
+    """Lists supported languages for the Translation API."""
+    client = translate.TranslationServiceClient()
+    parent = f"projects/{project_id}/locations/{LOCATION}"
+
+    response = client.get_supported_languages(parent=parent, display_language_code="en")
+
+    languages_dict = {}
+    for language in response.languages:
+        languages_dict[language.language_code] = language.display_name
+    return languages_dict
+
+
+def list_supported_tts_voices():
+    """Lists supported voices for the Text-to-Speech API."""
+    client = texttospeech.TextToSpeechClient()
+    response = client.list_voices()
+
+    voices_list = []
+    for voice in response.voices:
+        voices_list.append({
+            "language_codes": list(voice.language_codes),
+            "name": voice.name,
+            "ssml_gender": texttospeech.SsmlVoiceGender(voice.ssml_gender).name,
+            "natural_sample_rate_hertz": voice.natural_sample_rate_hertz,
+        })
+    return voices_list
+
+
 def main():
     """Main function to parse arguments and call the core processing function."""
     # Ensure the PROJECT_ID is set correctly
@@ -139,11 +276,30 @@ def main():
         
     # Set up command-line arguments
     parser = argparse.ArgumentParser(description="Translate an English word and generate pronunciation audio using Google Cloud APIs.")
-    parser.add_argument("word", type=str, help="The English word or phrase to process.")
-    parser.add_argument("target_lang", type=str, help="The target language ISO 639-1 code (e.g., 'zh', 'ja', 'es', 'fr').")
+    parser.add_argument("--list-translation-languages", action="store_true", help="List all supported languages for the Translation API.")
+    parser.add_argument("--list-tts-voices", action="store_true", help="List all supported voices for the Text-to-Speech API.")
+    parser.add_argument("word", type=str, nargs="?", help="The English word or phrase to process.")
+    parser.add_argument("target_lang", type=str, nargs="?", help="The target language ISO 639-1 code (e.g., 'zh', 'ja', 'es', 'fr').")
     
     args = parser.parse_args()
     
+    if args.list_translation_languages:
+        translation_languages = list_supported_translation_languages(PROJECT_ID)
+        with open("supported_translation_languages.json", "w") as f:
+            json.dump(translation_languages, f, indent=4)
+        print("Supported translation languages saved to supported_translation_languages.json")
+        return
+
+    if args.list_tts_voices:
+        voices_list = list_supported_tts_voices()
+        with open("supported_tts_voices.json", "w") as f:
+            json.dump(voices_list, f, indent=4)
+        print("Supported TTS voices saved to supported_tts_voices.json")
+        return
+
+    if not args.word or not args.target_lang:
+        parser.error("'word' and 'target_lang' are required unless --list-translation-languages or --list-tts-voices is used.")
+
     # Call the single unified function
     results = process_word_and_generate_audio(
         project_id=PROJECT_ID,
