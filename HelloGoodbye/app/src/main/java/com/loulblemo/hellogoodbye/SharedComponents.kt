@@ -1643,7 +1643,13 @@ fun FlashcardsExercise(
                         modifier = Modifier
                             .fillMaxWidth(0.9f)
                             .aspectRatio(1.2f)
-                            .clickable { isFlipped = !isFlipped }
+                            .clickable { 
+                                isFlipped = !isFlipped
+                                // Play audio when flipping back to pronunciation (front of card)
+                                if (!isFlipped && audioFile != null) {
+                                    playAssetAudio(context, audioFile)
+                                }
+                            }
                             .border(
                                 width = 8.dp,
                                 color = colorResource(id = R.color.primary_purple).copy(alpha = 0.6f),
