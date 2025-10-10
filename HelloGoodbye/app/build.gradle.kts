@@ -13,8 +13,8 @@ android {
         applicationId = "com.loulblemo.hellogoodbye"
         minSdk = 24
         targetSdk = 36
-        versionCode = 121
-        versionName = "1.2.1"
+        versionCode = 123
+        versionName = "1.2.3"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }

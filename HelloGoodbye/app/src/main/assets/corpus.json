@@ -2,10 +2,9 @@
   {
     "original": "hello",
     "en": {
-      "word": null,
+      "word": "hello",
       "respelling": null,
-      "audio_file": null,
-      "error": "400 Target language can't be equal to source language. [field_violations {\n  field: \"source_language_code\"\n  description: \"Source language: en\"\n}\nfield_violations {\n  field: \"target_language_code\"\n  description: \"Target language: en\"\n}\n]"
+      "audio_file": null
     },
     "ru": {
       "word": "привет",
@@ -87,12 +86,6 @@
       "respelling": "HAH-loh",
       "audio_file": "nl_hello_audio.mp3"
     },
-    "ha": {
-      "word": null,
-      "respelling": null,
-      "audio_file": null,
-      "error": "Language 'ha' not supported by TTS"
-    },
     "el": {
       "word": "Γειά σου",
       "respelling": "YEE-ah soo",
@@ -142,10 +135,9 @@
       "audio_file": "es_goodbye_audio.mp3"
     },
     "en": {
-      "word": null,
+      "word": "goodbye",
       "respelling": null,
-      "audio_file": null,
-      "error": "400 Target language can't be equal to source language. [field_violations {\n  field: \"source_language_code\"\n  description: \"Source language: en\"\n}\nfield_violations {\n  field: \"target_language_code\"\n  description: \"Target language: en\"\n}\n]"
+      "audio_file": null
     },
     "fr": {
       "word": "au revoir",
@@ -191,12 +183,6 @@
       "word": "अलविदा",
       "respelling": "Ahl-vi-DAH",
       "audio_file": "hi_goodbye_audio.mp3"
-    },
-    "ha": {
-      "word": null,
-      "respelling": null,
-      "audio_file": null,
-      "error": "Language 'ha' not supported by TTS"
     },
     "hu": {
       "word": "búcsú",
@@ -272,10 +258,9 @@
   {
     "original": "please",
     "en": {
-      "word": null,
+      "word": "please",
       "respelling": null,
-      "audio_file": null,
-      "error": "400 Target language can't be equal to source language. [field_violations {\n  field: \"source_language_code\"\n  description: \"Source language: en\"\n}\nfield_violations {\n  field: \"target_language_code\"\n  description: \"Target language: en\"\n}\n]"
+      "audio_file": null
     },
     "de": {
       "word": "Bitte",
@@ -336,12 +321,6 @@
       "word": "Proszę",
       "respelling": "PROH-sheh",
       "audio_file": "pl_please_audio.mp3"
-    },
-    "ha": {
-      "word": null,
-      "respelling": null,
-      "audio_file": null,
-      "error": "Language 'ha' not supported by TTS"
     },
     "hi": {
       "word": "कृपया",
@@ -407,10 +386,9 @@
   {
     "original": "thank you",
     "en": {
-      "word": null,
+      "word": "thank you",
       "respelling": null,
-      "audio_file": null,
-      "error": "400 Target language can't be equal to source language. [field_violations {\n  field: \"source_language_code\"\n  description: \"Source language: en\"\n}\nfield_violations {\n  field: \"target_language_code\"\n  description: \"Target language: en\"\n}\n]"
+      "audio_file": null
     },
     "de": {
       "word": "Danke",
@@ -476,12 +454,6 @@
       "word": "Dziękuję",
       "respelling": "Jen-KOO-yeh",
       "audio_file": "pl_thank_you_audio.mp3"
-    },
-    "ha": {
-      "word": null,
-      "respelling": null,
-      "audio_file": null,
-      "error": "Language 'ha' not supported by TTS"
     },
     "hi": {
       "word": "धन्यवाद",
@@ -557,10 +529,9 @@
       "audio_file": "it_excuse_me_audio.mp3"
     },
     "en": {
-      "word": null,
+      "word": "excuse me",
       "respelling": null,
-      "audio_file": null,
-      "error": "400 Target language can't be equal to source language. [field_violations {\n  field: \"source_language_code\"\n  description: \"Source language: en\"\n}\nfield_violations {\n  field: \"target_language_code\"\n  description: \"Target language: en\"\n}\n]"
+      "audio_file": null
     },
     "ja": {
       "word": "すみません",
@@ -611,12 +582,6 @@
       "word": "Affedersin",
       "respelling": "AH-feh-DAIR-sin",
       "audio_file": "tr_excuse_me_audio.mp3"
-    },
-    "ha": {
-      "word": null,
-      "respelling": null,
-      "audio_file": null,
-      "error": "Language 'ha' not supported by TTS"
     },
     "sw": {
       "word": "samahani",
@@ -677,10 +642,9 @@
   {
     "original": "help",
     "en": {
-      "word": null,
+      "word": "help",
       "respelling": null,
-      "audio_file": null,
-      "error": "400 Target language can't be equal to source language. [field_violations {\n  field: \"source_language_code\"\n  description: \"Source language: en\"\n}\nfield_violations {\n  field: \"target_language_code\"\n  description: \"Target language: en\"\n}\n]"
+      "audio_file": null
     },
     "es": {
       "word": "ayuda",
@@ -747,12 +711,6 @@
       "respelling": "YELP",
       "audio_file": "sv_help_audio.mp3"
     },
-    "ha": {
-      "word": null,
-      "respelling": null,
-      "audio_file": null,
-      "error": "Language 'ha' not supported by TTS"
-    },
     "tr": {
       "word": "yardım",
       "respelling": "YAR-duhm",
@@ -812,10 +770,9 @@
   {
     "original": "sorry",
     "en": {
-      "word": null,
+      "word": "sorry",
       "respelling": null,
-      "audio_file": null,
-      "error": "400 Target language can't be equal to source language. [field_violations {\n  field: \"source_language_code\"\n  description: \"Source language: en\"\n}\nfield_violations {\n  field: \"target_language_code\"\n  description: \"Target language: en\"\n}\n]"
+      "audio_file": null
     },
     "es": {
       "word": "Lo siento",
@@ -871,12 +828,6 @@
       "word": "क्षमा मांगना",
       "respelling": "kshuh-MAH MAHNG-guh-nah",
       "audio_file": "hi_sorry_audio.mp3"
-    },
-    "ha": {
-      "word": null,
-      "respelling": null,
-      "audio_file": null,
-      "error": "Language 'ha' not supported by TTS"
     },
     "pl": {
       "word": "Przepraszam",
@@ -947,10 +898,9 @@
   {
     "original": "water",
     "en": {
-      "word": null,
+      "word": "water",
       "respelling": null,
-      "audio_file": null,
-      "error": "400 Target language can't be equal to source language. [field_violations {\n  field: \"source_language_code\"\n  description: \"Source language: en\"\n}\nfield_violations {\n  field: \"target_language_code\"\n  description: \"Target language: en\"\n}\n]"
+      "audio_file": null
     },
     "fr": {
       "word": "eau",
@@ -1011,12 +961,6 @@
       "word": "su",
       "respelling": "soo",
       "audio_file": "tr_water_audio.mp3"
-    },
-    "ha": {
-      "word": null,
-      "respelling": null,
-      "audio_file": null,
-      "error": "Language 'ha' not supported by TTS"
     },
     "ar": {
       "word": "ماء",
@@ -1082,10 +1026,9 @@
   {
     "original": "yes",
     "en": {
-      "word": null,
+      "word": "yes",
       "respelling": null,
-      "audio_file": null,
-      "error": "400 Target language can't be equal to source language. [field_violations {\n  field: \"source_language_code\"\n  description: \"Source language: en\"\n}\nfield_violations {\n  field: \"target_language_code\"\n  description: \"Target language: en\"\n}\n]"
+      "audio_file": null
     },
     "es": {
       "word": "Sí",
@@ -1141,12 +1084,6 @@
       "word": "Ja",
       "respelling": "yah",
       "audio_file": "nl_yes_audio.mp3"
-    },
-    "ha": {
-      "word": null,
-      "respelling": null,
-      "audio_file": null,
-      "error": "Language 'ha' not supported by TTS"
     },
     "sv": {
       "word": "ja",
@@ -1217,10 +1154,9 @@
   {
     "original": "no",
     "en": {
-      "word": null,
+      "word": "no",
       "respelling": null,
-      "audio_file": null,
-      "error": "400 Target language can't be equal to source language. [field_violations {\n  field: \"source_language_code\"\n  description: \"Source language: en\"\n}\nfield_violations {\n  field: \"target_language_code\"\n  description: \"Target language: en\"\n}\n]"
+      "audio_file": null
     },
     "es": {
       "word": "No",
@@ -1281,12 +1217,6 @@
       "word": "NIE",
       "respelling": "NYEH",
       "audio_file": "pl_no_audio.mp3"
-    },
-    "ha": {
-      "word": null,
-      "respelling": null,
-      "audio_file": null,
-      "error": "Language 'ha' not supported by TTS"
     },
     "nl": {
       "word": "Nee",

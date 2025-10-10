@@ -97,8 +97,8 @@ fun loadCorpusFromAssets(context: Context): List<WordEntry> {
                     word = langObj.optString("word", null),
                     ipa = langObj.optString("IPA", null),
                     text = langObj.optString("text", null),
-                    googlePronunciation = langObj.optString("google_pronunciation", null),
-                    audio = langObj.optString("audio", null)
+                    googlePronunciation = langObj.optString("respelling", null).takeIf { it != "None" && it.isNotEmpty() },
+                    audio = langObj.optString("audio_file", null)
                 )
                 map[key] = variant
             }
@@ -153,7 +153,6 @@ fun languageNameToCode(name: String): String? {
         "polish" -> "pl"
         "hungarian" -> "hu"
         "swahili" -> "sw"
-        "hausa" -> "ha"
 
         else -> null
     }
@@ -189,7 +188,6 @@ fun languageCodeToFlag(code: String): String? {
         "pl" -> "🇵🇱"
         "hu" -> "🇭🇺"
         "sw" -> "🇹🇿"
-        "ha" -> "🇳🇪"
         else -> null
     }
 }
@@ -224,7 +222,6 @@ fun languageCodeToName(code: String): String? {
         "pl" -> "Polish"
         "hu" -> "Hungarian"
         "sw" -> "Swahili"
-        "ha" -> "Hausa"
         else -> null
     }
 }
@@ -949,6 +946,23 @@ fun saveDebugMode(context: Context, enabled: Boolean) {
 fun loadDebugMode(context: Context): Boolean {
     val prefs = context.getSharedPreferences("hg_progress", Context.MODE_PRIVATE)
     return prefs.getBoolean("debug_mode_enabled", false)
+}
+
+// Respelling explanation screen functions
+fun shouldShowRespellingExplanation(context: Context): Boolean {
+    val prefs = context.getSharedPreferences("hg_progress", Context.MODE_PRIVATE)
+    val dontShowAgain = prefs.getBoolean("respelling_dont_show_again", false)
+    return !dontShowAgain
+}
+
+fun markRespellingExplanationSeen(context: Context) {
+    val prefs = context.getSharedPreferences("hg_progress", Context.MODE_PRIVATE)
+    prefs.edit().putBoolean("respelling_explanation_seen", true).apply()
+}
+
+fun setRespellingDontShowAgain(context: Context, dontShow: Boolean) {
+    val prefs = context.getSharedPreferences("hg_progress", Context.MODE_PRIVATE)
+    prefs.edit().putBoolean("respelling_dont_show_again", dontShow).apply()
 }
 
 // Welcome screen functions

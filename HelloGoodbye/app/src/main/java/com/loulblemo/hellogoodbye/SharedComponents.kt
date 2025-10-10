@@ -27,6 +27,7 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.googlefonts.Font
 import androidx.compose.ui.text.googlefonts.GoogleFont
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.graphics.Shadow
 import androidx.compose.ui.unit.dp
@@ -63,6 +64,8 @@ import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.geometry.CornerRadius
 import com.google.firebase.auth.FirebaseAuth
 import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.text.rememberTextMeasurer
+import androidx.compose.ui.text.TextMeasurer
 
 // Helper function to determine if text contains Thai or Vietnamese characters
 fun needsLilitaFont(text: String): Boolean {
@@ -751,24 +754,28 @@ fun MatchingExercise(
     useFlagAssets: Boolean = false
 ) {
     val context = LocalContext.current
-    var mistakes by remember(pairs) { mutableStateOf(0) }
-    var remaining by remember(pairs) { mutableStateOf(pairs.size) }
-    var leftSelection by remember(pairs) { mutableStateOf<String?>(null) }
-    var rightSelection by remember(pairs) { mutableStateOf<String?>(null) }
-    var completed by remember(pairs) { mutableStateOf(false) }
-    var wrongLeftId by remember(pairs) { mutableStateOf<String?>(null) }
-    var wrongRightId by remember(pairs) { mutableStateOf<String?>(null) }
-    var isFlashingWrong by remember(pairs) { mutableStateOf(false) }
+    // Create a unique key that includes both pairs content and a timestamp to ensure state resets
+    val exerciseKey = remember(pairs) { 
+        pairs.map { "${it.left.id}-${it.right.id}" }.joinToString("-") + "-${System.currentTimeMillis()}"
+    }
+    var mistakes by remember(exerciseKey) { mutableStateOf(0) }
+    var remaining by remember(exerciseKey) { mutableStateOf(pairs.size) }
+    var leftSelection by remember(exerciseKey) { mutableStateOf<String?>(null) }
+    var rightSelection by remember(exerciseKey) { mutableStateOf<String?>(null) }
+    var completed by remember(exerciseKey) { mutableStateOf(false) }
+    var wrongLeftId by remember(exerciseKey) { mutableStateOf<String?>(null) }
+    var wrongRightId by remember(exerciseKey) { mutableStateOf<String?>(null) }
+    var isFlashingWrong by remember(exerciseKey) { mutableStateOf(false) }
 
     val scope = rememberCoroutineScope()
 
     // Build lookup maps and shuffled lists
-    val leftItems = remember(pairs) { pairs.map { it.left }.shuffled() }
-    val rightItems = remember(pairs) { pairs.map { it.right }.shuffled() }
-    val leftById = remember(pairs) { pairs.associate { it.left.id to it.left } }
-    val rightById = remember(pairs) { pairs.associate { it.right.id to it.right } }
-    val solvedLeftIds = remember(pairs) { mutableStateListOf<String>() }
-    val solvedRightIds = remember(pairs) { mutableStateListOf<String>() }
+    val leftItems = remember(exerciseKey) { pairs.map { it.left }.shuffled() }
+    val rightItems = remember(exerciseKey) { pairs.map { it.right }.shuffled() }
+    val leftById = remember(exerciseKey) { pairs.associate { it.left.id to it.left } }
+    val rightById = remember(exerciseKey) { pairs.associate { it.right.id to it.right } }
+    val solvedLeftIds = remember(exerciseKey) { mutableStateListOf<String>() }
+    val solvedRightIds = remember(exerciseKey) { mutableStateListOf<String>() }
 
     fun tryMatch() {
         val l = leftSelection
@@ -805,7 +812,7 @@ fun MatchingExercise(
     }
 
     // Handle edge-case: zero pairs — complete immediately
-    LaunchedEffect(pairs) {
+    LaunchedEffect(exerciseKey) {
         if (pairs.isEmpty() && !completed) {
             completed = true
             onDone(true)
@@ -1603,7 +1610,7 @@ fun FlashcardsExercise(
                         moveToNextCard(true) // Got it - show green feedback
                     }
                 ) { swipeDirection, dragProgress, currentDragDirection ->
-                    var isFlipped by remember { mutableStateOf(false) }
+                    var isFlipped by remember(currentCard) { mutableStateOf(false) }
                     
                     Card(
                         modifier = Modifier
@@ -1664,8 +1671,8 @@ fun FlashcardsExercise(
                                 verticalArrangement = Arrangement.Center
                             ) {
                                 if (isFlipped) {
-                                    // Translation (back of card)
-                                    val translation = currentWord?.byLang?.values?.firstOrNull()?.word ?: "Translation not available"
+                                    // Translation (back of card) - always use English translation
+                                    val translation = currentWord?.byLang?.get("en")?.word ?: currentWord?.original ?: "Translation not available"
                                     Text(
                                         text = translation,
                                         fontSize = 40.sp,
@@ -1686,7 +1693,8 @@ fun FlashcardsExercise(
                                     // Pronunciation (front of card)
                                     Text(
                                         text = pronunciation,
-                                        fontSize = 48.sp,
+                                        fontSize = 36.sp,
+                                        lineHeight = 44.sp,
                                         fontFamily = getAppropriateFontFamily(pronunciation),
                                         color = if (textColor == Color.Unspecified) colorResource(id = R.color.purple_black) else textColor,
                                         textAlign = androidx.compose.ui.text.style.TextAlign.Center,

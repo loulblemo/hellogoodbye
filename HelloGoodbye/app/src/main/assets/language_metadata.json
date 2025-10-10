@@ -124,11 +124,6 @@
       "name": "Swahili",
       "flag": "🇹🇿",
       "flagAsset": "flags/4x3/tz.svg"
-    },
-    "ha": {
-      "name": "Hausa",
-      "flag": "🇳🇪",
-      "flagAsset": "flags/4x3/ne.svg"
     }
   }
 }

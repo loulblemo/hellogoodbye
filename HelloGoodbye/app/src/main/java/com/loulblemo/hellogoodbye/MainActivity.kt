@@ -25,6 +25,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.googlefonts.Font
 import androidx.compose.ui.text.googlefonts.GoogleFont
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.airbnb.lottie.compose.*
@@ -38,6 +39,10 @@ import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.foundation.layout.BoxWithConstraints
+import androidx.compose.ui.platform.LocalDensity
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -49,14 +54,20 @@ class MainActivity : ComponentActivity() {
                         .fillMaxSize()
                         .windowInsetsPadding(WindowInsets.systemBars)
                 ) {
+                    val context = LocalContext.current
                     var showSplash by remember { mutableStateOf(true) }
+                    var showRespellingExplanation by remember { mutableStateOf(false) }
                     var showAuthChoice by remember { mutableStateOf(false) }
                     var useAnonymousMode by remember { mutableStateOf(false) }
                     
                     LaunchedEffect(Unit) {
                         delay(2750) // Wait for animation to complete (~1.75s) + 1s pause on last frame
                         showSplash = false
-                        if (BuildConfig.ENABLE_SIGN_IN) {
+                        
+                        // Check if we should show respelling explanation
+                        if (shouldShowRespellingExplanation(context)) {
+                            showRespellingExplanation = true
+                        } else if (BuildConfig.ENABLE_SIGN_IN) {
                             showAuthChoice = true
                         } else {
                             useAnonymousMode = true
@@ -65,6 +76,27 @@ class MainActivity : ComponentActivity() {
                     
                     when {
                         showSplash -> SplashScreen()
+                        showRespellingExplanation -> RespellingExplanationScreen(
+                            onOk = {
+                                markRespellingExplanationSeen(context)
+                                showRespellingExplanation = false
+                                if (BuildConfig.ENABLE_SIGN_IN) {
+                                    showAuthChoice = true
+                                } else {
+                                    useAnonymousMode = true
+                                }
+                            },
+                            onDontShowAgain = {
+                                markRespellingExplanationSeen(context)
+                                setRespellingDontShowAgain(context, true)
+                                showRespellingExplanation = false
+                                if (BuildConfig.ENABLE_SIGN_IN) {
+                                    showAuthChoice = true
+                                } else {
+                                    useAnonymousMode = true
+                                }
+                            }
+                        )
                         showAuthChoice && BuildConfig.ENABLE_SIGN_IN -> AuthChoiceScreen(
                             onSignIn = { 
                                 showAuthChoice = false
@@ -838,6 +870,217 @@ fun WelcomeScreen(onComplete: (List<Country>) -> Unit) {
             }
             
             Spacer(modifier = Modifier.height(40.dp))
+        }
+    }
+}
+
+@Composable
+fun RespellingExplanationScreen(
+    onOk: () -> Unit,
+    onDontShowAgain: () -> Unit
+) {
+    val titanOneFont = remember {
+        val provider = GoogleFont.Provider(
+            providerAuthority = "com.google.android.gms.fonts",
+            providerPackage = "com.google.android.gms",
+            certificates = R.array.com_google_android_gms_fonts_certs
+        )
+        val googleFont = GoogleFont("Titan One")
+        FontFamily(Font(googleFont = googleFont, fontProvider = provider))
+    }
+    
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(colorResource(id = R.color.background_light_purple)),
+        contentAlignment = Alignment.Center
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(horizontal = 24.dp, vertical = 32.dp)
+                .verticalScroll(rememberScrollState()), // Make content scrollable
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Top // Align content to top, letting scroll handle overflow
+        ) {
+            // App Icon
+            Image(
+                painter = painterResource(id = R.drawable.ic_launcher_foreground),
+                contentDescription = "HelloGoodbye App Icon",
+                modifier = Modifier.size(100.dp) // Slightly smaller icon
+            )
+            
+            Spacer(modifier = Modifier.height(32.dp))
+            
+            // Title with darker text for contrast
+            Text(
+                text = "Understanding Pronunciation",
+                fontSize = 24.sp, // Slightly smaller title
+                fontWeight = FontWeight.Bold,
+                color = colorResource(id = R.color.dark_purple_background),
+                fontFamily = titanOneFont,
+                textAlign = androidx.compose.ui.text.style.TextAlign.Center
+            )
+            
+            Spacer(modifier = Modifier.height(20.dp))
+            
+            // Main explanation text with darker text for contrast
+            Text(
+                text = "This app uses \"respelling\" for foreign words to help you understand pronunciation through English sounds.",
+                fontSize = 16.sp, // Slightly smaller body text
+                color = colorResource(id = R.color.purple_black),
+                textAlign = androidx.compose.ui.text.style.TextAlign.Center,
+                lineHeight = 22.sp,
+                modifier = Modifier.padding(horizontal = 8.dp) // Reduced horizontal padding
+            )
+            
+            Spacer(modifier = Modifier.height(28.dp))
+            
+            // Examples section with darker text for contrast
+            Text(
+                text = "Examples:",
+                fontSize = 18.sp,
+                fontWeight = FontWeight.Bold,
+                color = colorResource(id = R.color.dark_purple_background),
+                fontFamily = titanOneFont
+            )
+            
+            Spacer(modifier = Modifier.height(16.dp))
+            
+            // Example 1 with lighter, minimalist styling
+            Card(
+                modifier = Modifier.fillMaxWidth(),
+                colors = CardDefaults.cardColors(
+                    containerColor = colorResource(id = R.color.primary_container_purple)
+                ),
+                shape = RoundedCornerShape(12.dp)
+            ) {
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(12.dp),
+                    horizontalAlignment = Alignment.Start
+                ) {
+                    Text(
+                        text = "Spanish: Hola",
+                        fontSize = 17.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = colorResource(id = R.color.dark_purple_background),
+                        fontFamily = titanOneFont
+                    )
+                    Spacer(modifier = Modifier.height(4.dp))
+                    Text(
+                        text = "Pronounced: OH-lah",
+                        fontSize = 15.sp,
+                        color = colorResource(id = R.color.purple_black)
+                    )
+                }
+            }
+            
+            Spacer(modifier = Modifier.height(12.dp))
+            
+            // Example 2 with lighter, minimalist styling
+            Card(
+                modifier = Modifier.fillMaxWidth(),
+                colors = CardDefaults.cardColors(
+                    containerColor = colorResource(id = R.color.primary_container_purple)
+                ),
+                shape = RoundedCornerShape(12.dp)
+            ) {
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(12.dp),
+                    horizontalAlignment = Alignment.Start
+                ) {
+                    Text(
+                        text = "French: Bonjour",
+                        fontSize = 17.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = colorResource(id = R.color.dark_purple_background),
+                        fontFamily = titanOneFont
+                    )
+                    Spacer(modifier = Modifier.height(4.dp))
+                    Text(
+                        text = "Pronounced: bohn-ZHOOR",
+                        fontSize = 15.sp,
+                        color = colorResource(id = R.color.purple_black)
+                    )
+                }
+            }
+            
+            Spacer(modifier = Modifier.height(32.dp))
+            
+            // Buttons with pastel colors and good contrast
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(12.dp) // Reduced spacing between buttons
+            ) {
+                // OK Button with a pastel purple and white text
+                Button(
+                    onClick = onOk,
+                    modifier = Modifier
+                        .weight(1f)
+                        .height(50.dp), // Slightly smaller button height
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = colorResource(id = R.color.medium_purple),
+                        contentColor = colorResource(id = R.color.white)
+                    ),
+                    shape = RoundedCornerShape(10.dp) // Slightly smaller corner radius
+                ) {
+                    Text(
+                        text = "OK",
+                        fontSize = 16.sp, // Slightly smaller button text
+                        fontWeight = FontWeight.Bold,
+                        fontFamily = titanOneFont
+                    )
+                }
+                
+                // Don't Show Again Button with a pastel purple and white text
+                Button(
+                    onClick = onDontShowAgain,
+                    modifier = Modifier
+                        .weight(1f)
+                        .height(50.dp), // Slightly smaller button height
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = colorResource(id = R.color.primary_purple),
+                        contentColor = colorResource(id = R.color.white)
+                    ),
+                    shape = RoundedCornerShape(10.dp), // Slightly smaller corner radius
+                    contentPadding = PaddingValues(horizontal = 6.dp, vertical = 8.dp)
+                ) {
+                    BoxWithConstraints {
+                        val buttonText = "Don't show again"
+                        val density = LocalDensity.current
+                        val availableWidthPx = with(density) { maxWidth.toPx() }
+                        
+                        // Auto-size text based on available width
+                        // Base font size is 14sp, scale down if needed
+                        val baseFontSize = 14f
+                        val estimatedCharWidth = with(density) { 8.dp.toPx() } // Approximate width per char at 14sp
+                        val estimatedTextWidth = buttonText.length * estimatedCharWidth
+                        
+                        val fontSize = if (estimatedTextWidth > availableWidthPx) {
+                            // Scale down proportionally
+                            val scale = (availableWidthPx / estimatedTextWidth).coerceIn(0.65f, 1.0f)
+                            (baseFontSize * scale).sp
+                        } else {
+                            baseFontSize.sp
+                        }
+                        
+                        Text(
+                            text = buttonText,
+                            fontSize = fontSize,
+                            fontWeight = FontWeight.Bold,
+                            fontFamily = titanOneFont,
+                            textAlign = androidx.compose.ui.text.style.TextAlign.Center,
+                            maxLines = 1,
+                            overflow = TextOverflow.Visible,
+                            softWrap = false
+                        )
+                    }
+                }
+            }
         }
     }
 }
