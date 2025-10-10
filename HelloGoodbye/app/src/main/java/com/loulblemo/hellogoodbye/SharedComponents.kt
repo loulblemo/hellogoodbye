@@ -66,6 +66,8 @@ import com.google.firebase.auth.FirebaseAuth
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.text.TextMeasurer
+import androidx.compose.foundation.text.BasicText
+import androidx.compose.foundation.text.TextAutoSize
 
 // Helper function to determine if text contains Thai or Vietnamese characters
 fun needsLilitaFont(text: String): Boolean {
@@ -522,36 +524,35 @@ fun PronunciationWordBubble(
     // Button-like bubble styled like Practice: primary background, appropriate font, white text
     val appropriateFont = getAppropriateFontFamily(text)
 
-    BoxWithConstraints(
+    Box(
         modifier = modifier
             .fillMaxWidth()
             .padding(horizontal = 16.dp),
         contentAlignment = Alignment.Center
     ) {
-        // Heuristic auto-sizing: shrink font for longer words
-        val length = text.length
-        val fontSp = when {
-            length <= 8 -> 40.sp
-            length <= 12 -> 34.sp
-            length <= 18 -> 28.sp
-            else -> 22.sp
-        }
         Box(
             modifier = Modifier
-                .wrapContentWidth()
+                .fillMaxWidth()
                 .clip(RoundedCornerShape(12.dp))
                 .background(containerColor)
                 .clickable { onClick() }
                 .padding(horizontal = 20.dp, vertical = 12.dp),
             contentAlignment = Alignment.Center
         ) {
-            Text(
+            BasicText(
                 text = text,
-                fontSize = fontSp,
-                fontWeight = FontWeight.Bold,
-                color = textColor,
-                textAlign = TextAlign.Center,
-                fontFamily = appropriateFont
+                style = TextStyle(
+                    fontWeight = FontWeight.Bold,
+                    color = textColor,
+                    textAlign = TextAlign.Center,
+                    fontFamily = appropriateFont
+                ),
+                autoSize = TextAutoSize.StepBased(
+                    minFontSize = 20.sp,
+                    maxFontSize = 40.sp,
+                    stepSize = 1.sp
+                ),
+                modifier = Modifier.fillMaxWidth()
             )
         }
     }
@@ -985,8 +986,25 @@ fun PracticeBubble(
         colors = CardDefaults.cardColors(containerColor = containerColor),
         shape = RoundedCornerShape(24.dp)
     ) {
-        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-            Text(label, color = textColor)
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(horizontal = 12.dp),
+            contentAlignment = Alignment.Center
+        ) {
+            BasicText(
+                text = label,
+                style = TextStyle(
+                    color = textColor,
+                    textAlign = TextAlign.Center
+                ),
+                autoSize = TextAutoSize.StepBased(
+                    minFontSize = 10.sp,
+                    maxFontSize = 16.sp,
+                    stepSize = 1.sp
+                ),
+                modifier = Modifier.fillMaxWidth()
+            )
         }
     }
 }

@@ -84,7 +84,7 @@ dependencies {
     // Firebase Auth (for login)
     implementation("com.google.firebase:firebase-auth")
     
-    // Compose dependencies
+    // Compose dependencies - versions managed by BOM
     implementation(platform(libs.androidx.compose.bom))
     implementation("androidx.compose.ui:ui")
     implementation("androidx.compose.ui:ui-graphics")
@@ -93,6 +93,7 @@ dependencies {
     implementation("androidx.compose.material:material-ripple")
     implementation("androidx.compose.ui:ui-tooling-preview")
     implementation("androidx.compose.material3:material3")
+    implementation("androidx.compose.foundation:foundation")
     implementation("androidx.activity:activity-compose:1.8.2")
     // Google Fonts for Compose
     implementation("androidx.compose.ui:ui-text-google-fonts")
