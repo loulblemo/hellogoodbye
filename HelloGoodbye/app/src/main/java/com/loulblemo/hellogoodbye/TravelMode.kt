@@ -19,6 +19,7 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
+import kotlinx.coroutines.delay
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.alpha
@@ -269,6 +270,28 @@ fun TravelScreen(
         }
     }
 
+    // Flash animation for currency box
+    var shouldFlash by remember { mutableStateOf(false) }
+    val previousCurrency = remember { mutableStateOf(currency) }
+    
+    LaunchedEffect(currency) {
+        android.util.Log.d("TRAVEL_FLASH", "Currency changed: $currency, previous: ${previousCurrency.value}")
+        if (currency > previousCurrency.value) {
+            android.util.Log.d("TRAVEL_FLASH", "Triggering flash!")
+            shouldFlash = true
+            delay(2000)
+            shouldFlash = false
+            android.util.Log.d("TRAVEL_FLASH", "Flash ended")
+        }
+        previousCurrency.value = currency
+    }
+    
+    val currencyBoxColor = if (shouldFlash) {
+        Color(0xFF4CAF50) // Green
+    } else {
+        MaterialTheme.colorScheme.primaryContainer
+    }
+    
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -291,7 +314,7 @@ fun TravelScreen(
                 Card(
                     modifier = Modifier.size(60.dp),
                     colors = CardDefaults.cardColors(
-                        containerColor = MaterialTheme.colorScheme.primaryContainer
+                        containerColor = currencyBoxColor
                     ),
                     shape = RoundedCornerShape(12.dp)
                 ) {

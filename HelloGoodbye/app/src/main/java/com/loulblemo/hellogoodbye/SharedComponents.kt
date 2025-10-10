@@ -127,19 +127,35 @@ fun TopBarSection(currency: Int, onSettingsClick: () -> Unit) {
     val context = LocalContext.current
     val debugModeEnabled = loadDebugMode(context)
     
+    android.util.Log.d("FLASH_DEBUG", "=== TopBarSection called with currency=$currency ===")
+    
     // Simple flash animation state
     val normalColor = colorResource(id = R.color.primary_container_purple)
-    var flashColor by remember { mutableStateOf(normalColor) }
-    var previousCurrency by remember { mutableStateOf(currency) }
+    var shouldFlash by remember { mutableStateOf(false) }
+    val previousCurrency = remember { mutableStateOf(currency) }
+    
+    android.util.Log.d("FLASH_DEBUG", "RENDER: currency=$currency, shouldFlash=$shouldFlash, previousCurrency=${previousCurrency.value}")
     
     // Flash green only when currency increases (point added)
     LaunchedEffect(currency) {
-        if (currency > previousCurrency) { // Only flash when points are added, not spent
-            flashColor = Color(0xFF4CAF50) // Green
+        println("DEBUG FLASH EFFECT: currency=$currency, previousCurrency=${previousCurrency.value}")
+        if (currency > previousCurrency.value) { // Only flash when points are added, not spent
+            println("DEBUG FLASH EFFECT: Triggering flash! Setting shouldFlash=true")
+            shouldFlash = true
+            println("DEBUG FLASH EFFECT: shouldFlash is now $shouldFlash")
             delay(2000) // Flash for 2 seconds
-            flashColor = normalColor // Back to normal
+            println("DEBUG FLASH EFFECT: Ending flash, setting shouldFlash=false")
+            shouldFlash = false
         }
-        previousCurrency = currency
+        previousCurrency.value = currency
+    }
+    
+    val flashColor = if (shouldFlash) {
+        println("DEBUG FLASH: Using GREEN color")
+        Color(0xFF4CAF50)
+    } else {
+        println("DEBUG FLASH: Using NORMAL color")
+        normalColor
     }
     
     Row(
