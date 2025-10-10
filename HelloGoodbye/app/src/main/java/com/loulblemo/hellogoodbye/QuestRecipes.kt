@@ -39,6 +39,7 @@ fun defaultQuestRecipes(): List<QuestRecipe> {
         type = QuestType.SINGLE,
         languageCount = 1,
         exerciseOrder = listOf(
+            "flashcards",
             "pronunciation_audio_to_english",
             "pronunciation_audio_to_english",
             "pronunciation_audio_to_english",
@@ -106,6 +107,7 @@ fun defaultQuestRecipes(): List<QuestRecipe> {
         type = QuestType.SINGLE,
         languageCount = 1,
         exerciseOrder = listOf(
+            "flashcards",
             "pronunciation_audio_to_english",
             "pronunciation_audio_to_english",
             "pronunciation_audio_to_english",
@@ -122,6 +124,7 @@ fun defaultQuestRecipes(): List<QuestRecipe> {
         type = QuestType.SINGLE,
         languageCount = 1,
         exerciseOrder = listOf(
+            "flashcards",
             "pronunciation_audio_to_english",
             "pronunciation_audio_to_english",
             "pronunciation_audio_to_english",

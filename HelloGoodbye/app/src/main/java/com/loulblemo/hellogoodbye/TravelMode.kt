@@ -378,7 +378,7 @@ fun TravelScreen(
                     basicTravelSections = basicTravelSections,
                     supportedLangCodes = supportedLangCodes,
                     questRecipes = questRecipes,
-                    onExerciseComplete = { completedStepKey ->
+                    onExerciseComplete = { completedStepKey, isPerfect ->
                         // Track encountered words from this exercise
                         val languages = if (currentSection.isMixed) {
                             currentSection.languages
@@ -399,7 +399,10 @@ fun TravelScreen(
                             questExercises,
                             langCodes
                         )
-                        onAwardCoin()
+                        // Only award coin if perfect (no mistakes)
+                        if (isPerfect) {
+                            onAwardCoin()
+                        }
                         // Refresh local display from storage to avoid double-counting
                         currency = loadCurrency(context)
                         
@@ -1282,7 +1285,7 @@ fun QuestPracticeScreen(
     basicTravelSections: List<TravelSection>,
     supportedLangCodes: List<String>,
     questRecipes: List<QuestRecipe>,
-    onExerciseComplete: (String) -> Unit,
+    onExerciseComplete: (String, Boolean) -> Unit,
     onDebugCompleteQuest: () -> Unit
 ) {
     val context = LocalContext.current
@@ -1294,6 +1297,9 @@ fun QuestPracticeScreen(
     // State for showing completion animation
     var showCompletionAnimation by remember { mutableStateOf(false) }
     var pendingCompletionStepKey by remember { mutableStateOf<String?>(null) }
+    
+    // Track if any mistakes were made in current exercise
+    var hadMistakes by remember(currentExerciseIndex) { mutableStateOf(false) }
     
     // Helper function to trigger completion animation
     val triggerCompletion = { stepKey: String ->
@@ -1434,7 +1440,8 @@ fun QuestPracticeScreen(
                     showCompletionAnimation = false
                     // Process the pending completion: advance exercise
                     pendingCompletionStepKey?.let { stepKey ->
-                        onExerciseComplete(stepKey)
+                        val isPerfect = !hadMistakes
+                        onExerciseComplete(stepKey, isPerfect)
                         pendingCompletionStepKey = null
                     }
                 }
@@ -1469,6 +1476,7 @@ fun QuestPracticeScreen(
                             pairs = pairs,
                             useFlagAssets = true,
                             onDone = { perfect ->
+                                if (!perfect) hadMistakes = true
                                 triggerCompletion(stepKey)
                             }
                         )
@@ -1603,9 +1611,11 @@ fun QuestPracticeScreen(
                             audioFile = variant?.audio,
                             options = options,
                             correctOption = correctAnswer,
-                            onDone = { _ ->
+                            onDone = { isCorrect ->
                                 // Inline continue inside the exercise: advance without animation
-                                onExerciseComplete(stepKey)
+                                if (!isCorrect) hadMistakes = true
+                                val isPerfect = !hadMistakes
+                                onExerciseComplete(stepKey, isPerfect)
                             }
                         )
                     }
@@ -1630,7 +1640,9 @@ fun QuestPracticeScreen(
                                     triggerCompletion(stepKey)
                                 } else {
                                     // Wrong: advance inline without animation
-                                    onExerciseComplete(stepKey)
+                                    hadMistakes = true
+                                    val isPerfect = !hadMistakes
+                                    onExerciseComplete(stepKey, isPerfect)
                                 }
                             }
                         )
@@ -1651,7 +1663,9 @@ fun QuestPracticeScreen(
                                     triggerCompletion(stepKey)
                                 } else {
                                     // Not perfect: advance inline without animation
-                                    onExerciseComplete(stepKey)
+                                    hadMistakes = true
+                                    val isPerfect = !hadMistakes
+                                    onExerciseComplete(stepKey, isPerfect)
                                 }
                             }
                         )

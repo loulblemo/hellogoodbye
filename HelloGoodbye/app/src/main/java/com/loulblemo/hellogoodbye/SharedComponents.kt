@@ -48,9 +48,9 @@ import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.runtime.snapshotFlow
+import kotlinx.coroutines.delay
 import androidx.compose.ui.draw.scale
 import androidx.compose.animation.animateContentSize
-import kotlinx.coroutines.delay
 import androidx.compose.runtime.rememberCoroutineScope
 import kotlinx.coroutines.launch
 import com.airbnb.lottie.compose.*
@@ -127,6 +127,21 @@ fun TopBarSection(currency: Int, onSettingsClick: () -> Unit) {
     val context = LocalContext.current
     val debugModeEnabled = loadDebugMode(context)
     
+    // Simple flash animation state
+    val normalColor = colorResource(id = R.color.primary_container_purple)
+    var flashColor by remember { mutableStateOf(normalColor) }
+    var previousCurrency by remember { mutableStateOf(currency) }
+    
+    // Flash green only when currency increases (point added)
+    LaunchedEffect(currency) {
+        if (currency > previousCurrency) { // Only flash when points are added, not spent
+            flashColor = Color(0xFF4CAF50) // Green
+            delay(2000) // Flash for 2 seconds
+            flashColor = normalColor // Back to normal
+        }
+        previousCurrency = currency
+    }
+    
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -143,7 +158,7 @@ fun TopBarSection(currency: Int, onSettingsClick: () -> Unit) {
             Card(
                 modifier = Modifier.size(60.dp),
                 colors = CardDefaults.cardColors(
-                    containerColor = colorResource(id = R.color.primary_container_purple)
+                    containerColor = flashColor
                 ),
                 shape = RoundedCornerShape(12.dp)
             ) {
