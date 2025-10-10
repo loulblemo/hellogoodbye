@@ -523,6 +523,13 @@ fun PronunciationWordBubble(
 ) {
     // Button-like bubble styled like Practice: primary background, appropriate font, white text
     val appropriateFont = getAppropriateFontFamily(text)
+    
+    // Adjust font size range based on text length
+    val (minFontSize, maxFontSize) = if (text.length > 20) {
+        18.sp to 32.sp // Smaller range for longer words
+    } else {
+        20.sp to 40.sp // Normal range for shorter words
+    }
 
     Box(
         modifier = modifier
@@ -548,11 +555,13 @@ fun PronunciationWordBubble(
                     fontFamily = appropriateFont
                 ),
                 autoSize = TextAutoSize.StepBased(
-                    minFontSize = 20.sp,
-                    maxFontSize = 40.sp,
+                    minFontSize = minFontSize,
+                    maxFontSize = maxFontSize,
                     stepSize = 1.sp
                 ),
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth(),
+                maxLines = 2, // Allow wrapping to 2 lines
+                overflow = TextOverflow.Clip
             )
         }
     }
