@@ -673,6 +673,62 @@ fun addEncounteredWord(context: Context, languageCode: String, word: String) {
     val key = "word_count_${languageCode}_$word"
     val currentCount = prefs.getInt(key, 0)
     prefs.edit().putInt(key, currentCount + 1).apply()
+    
+    // Check if this unlocks any mixed exercises
+    checkAndUnlockMixedExercises(context)
+}
+
+// Check and unlock mixed exercises when encountered words change
+fun checkAndUnlockMixedExercises(context: Context) {
+    val allProgress = loadQuestProgress(context, getAllQuestIds(context))
+    val updatedProgresses = allProgress.toMutableMap()
+    val supportedLangCodes = getSupportedLanguageCodesFromMetadata(context)
+    
+    // Check all mixed exercises for unlock conditions
+    val allQuestIds = getAllQuestIds(context)
+    allQuestIds.forEach { questId ->
+        if (questId.endsWith("level2_exercise3")) {
+            val progress = updatedProgresses[questId]
+            if (progress != null && !progress.isUnlocked) {
+                // Check if this mixed exercise should be unlocked
+                val currentLanguageCode = startLangCodeFromQuestId(questId)
+                val canUnlock = hasEncounteredWordsInAtLeast3Languages(context)
+                
+                if (canUnlock) {
+                    updatedProgresses[questId] = progress.copy(isUnlocked = true)
+                }
+            }
+        }
+    }
+    
+    // Save updated progress
+    saveQuestProgress(context, updatedProgresses)
+}
+
+// Helper function to get all quest IDs
+fun getAllQuestIds(context: Context): List<String> {
+    val supportedLangCodes = getSupportedLanguageCodesFromMetadata(context)
+    val questIds = mutableListOf<String>()
+    
+    supportedLangCodes.forEach { langCode ->
+        // Add all quest IDs for this language
+        questIds.addAll(listOf(
+            "${langCode}_level1_exercise1",
+            "${langCode}_level1_exercise2", 
+            "${langCode}_level1_exercise3",
+            "${langCode}_level1_exercise4",
+            "${langCode}_level1_exercise5",
+            "${langCode}_complete",
+            "${langCode}_level2_exercise1",
+            "${langCode}_level2_exercise2",
+            "${langCode}_level2_exercise3",
+            "${langCode}_level2_exercise4",
+            "${langCode}_level2_exercise5",
+            "${langCode}_level2_complete"
+        ))
+    }
+    
+    return questIds
 }
 
 fun getEncounteredWords(context: Context, languageCode: String): Set<String> {
