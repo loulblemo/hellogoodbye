@@ -493,8 +493,8 @@ fun initializeTravelState(context: Context, travelSections: List<TravelSection>,
             // Check language requirements based on quest type
             val canUnlockMixed = when {
                 section.id.endsWith("level2_exercise3") -> {
-                    // Level 2 Exercise 3 requires 3 languages
-                    hasCompletedQuestsInAtLeast3Languages(context)
+                    // Level 2 Exercise 3 uses same strategy as Level 1 Exercise 3 - encountered words
+                    currentLanguageCode == null || hasEqualOrHigherEncounteredWordsInOtherLanguage(context, currentLanguageCode)
                 }
                 else -> {
                     // Other mixed quests require equal or higher encountered words in another language
@@ -571,8 +571,8 @@ fun updateQuestProgress(
                     val currentLanguageCode = startLangCodeFromQuestId(questId)
                     val canUnlockMixed = when {
                         nextSection.id.endsWith("level2_exercise3") -> {
-                            // Level 2 Exercise 3 requires 3 languages
-                            hasCompletedQuestsInAtLeast3Languages(context)
+                            // Level 2 Exercise 3 uses same strategy as Level 1 Exercise 3 - encountered words
+                            currentLanguageCode == null || hasEqualOrHigherEncounteredWordsInOtherLanguage(context, currentLanguageCode)
                         }
                         else -> {
                             // Other mixed quests require equal or higher encountered words in another language
@@ -778,6 +778,35 @@ fun hasCompletedQuestsInAtLeast3Languages(context: Context): Boolean {
     val languagesWithCompletedQuests = getSupportedLanguageCodesFromMetadata(context)
         .count { langCode -> getLanguageQuestCount(context, langCode) > 0 }
     return languagesWithCompletedQuests >= 3
+}
+
+// Check if user has encountered 10+ words in at least 2 different languages
+fun hasEncounteredWordsInAtLeast2Languages(context: Context): Boolean {
+    val languagesWithEnoughWords = getSupportedLanguageCodesFromMetadata(context)
+        .count { langCode -> getEncounteredWordsCount(context, langCode) >= 10 }
+    return languagesWithEnoughWords >= 2
+}
+
+// Check if user has completed Level 2 Exercise 2 in at least 2 different languages
+fun hasCompletedLevel2Exercise2InAtLeast2Languages(context: Context): Boolean {
+    val languagesWithLevel2Exercise2 = getSupportedLanguageCodesFromMetadata(context)
+        .count { langCode -> 
+            val questId = "${langCode}_level2_exercise2"
+            val progress = loadQuestProgress(context, listOf(questId))[questId]
+            progress?.isCompleted == true
+        }
+    return languagesWithLevel2Exercise2 >= 2
+}
+
+// Check if user has completed Level 2 Exercise 2 in another language (similar to hasEqualOrHigherEncounteredWordsInOtherLanguage)
+fun hasCompletedLevel2Exercise2InOtherLanguage(context: Context, currentLanguageCode: String): Boolean {
+    return getSupportedLanguageCodesFromMetadata(context)
+        .filter { it != currentLanguageCode }
+        .any { langCode -> 
+            val questId = "${langCode}_level2_exercise2"
+            val progress = loadQuestProgress(context, listOf(questId))[questId]
+            progress?.isCompleted == true
+        }
 }
 
 fun getBadgeLevel(context: Context, languageCode: String): BadgeLevel {
