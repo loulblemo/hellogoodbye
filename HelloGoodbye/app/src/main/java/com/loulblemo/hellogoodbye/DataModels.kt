@@ -856,8 +856,20 @@ fun hasCompletedQuestsInAtLeast3Languages(context: Context): Boolean {
 
 // Check if user has encountered 10+ words in at least 3 different languages
 fun hasEncounteredWordsInAtLeast3Languages(context: Context): Boolean {
-    val languagesWithEnoughWords = getSupportedLanguageCodesFromMetadata(context)
+    val supportedLangCodes = getSupportedLanguageCodesFromMetadata(context)
+    
+    android.util.Log.d("WORD_COUNT", "=== Checking encountered words across all languages ===")
+    supportedLangCodes.forEach { langCode ->
+        val count = getEncounteredWordsCount(context, langCode)
+        if (count > 0) {
+            android.util.Log.d("WORD_COUNT", "  $langCode: $count words")
+        }
+    }
+    
+    val languagesWithEnoughWords = supportedLangCodes
         .count { langCode -> getEncounteredWordsCount(context, langCode) >= 10 }
+    
+    android.util.Log.d("WORD_COUNT", "Languages with 10+ words: $languagesWithEnoughWords")
     return languagesWithEnoughWords >= 3
 }
 

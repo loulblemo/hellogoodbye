@@ -242,7 +242,15 @@ fun TravelScreen(
     
     // Update travel sections when quest progress changes
     LaunchedEffect(travelState.questProgresses) {
+        android.util.Log.d("TRAVEL_UI", "=== LaunchedEffect triggered ===")
+        android.util.Log.d("TRAVEL_UI", "Quest progresses changed, updating travel sections...")
+        travelState.questProgresses.forEach { (id, progress) ->
+            if (id.contains("level2_exercise3")) {
+                android.util.Log.d("TRAVEL_UI", "  LaunchedEffect sees $id: unlocked=${progress.isUnlocked}")
+            }
+        }
         travelSections = updateTravelSectionsWithMixedLanguages(context, basicTravelSections, travelState.questProgresses, supportedLangCodes)
+        android.util.Log.d("TRAVEL_UI", "LaunchedEffect completed, travel sections updated")
     }
     
     val questExercises = remember(travelSections) {
@@ -413,6 +421,9 @@ fun TravelScreen(
                     supportedLangCodes = supportedLangCodes,
                     questRecipes = questRecipes,
                     onExerciseComplete = { completedStepKey, isPerfect ->
+                        android.util.Log.d("TRAVEL_UI", "=== onExerciseComplete CALLED ===")
+                        android.util.Log.d("TRAVEL_UI", "Completed step: $completedStepKey, perfect: $isPerfect")
+                        
                         // Track encountered words from this exercise
                         val languages = if (currentSection.isMixed) {
                             currentSection.languages
@@ -425,6 +436,17 @@ fun TravelScreen(
                         
                         // Badge progress is tracked when quest is completed, not per exercise
                         
+                        android.util.Log.d("TRAVEL_UI", "=== Words tracked, now checking unlock ===")
+                        android.util.Log.d("TRAVEL_UI", "Word count check: ${hasEncounteredWordsInAtLeast3Languages(context)}")
+                        
+                        android.util.Log.d("TRAVEL_UI", "=== BEFORE updateQuestProgress ===")
+                        android.util.Log.d("TRAVEL_UI", "Current travel state quests: ${travelState.questProgresses.keys}")
+                        travelState.questProgresses.forEach { (id, progress) ->
+                            if (id.contains("level2_exercise3")) {
+                                android.util.Log.d("TRAVEL_UI", "  $id: unlocked=${progress.isUnlocked}")
+                            }
+                        }
+                        
                         travelState = updateQuestProgress(
                             context,
                             travelState,
@@ -434,6 +456,14 @@ fun TravelScreen(
                             questExercises,
                             langCodes
                         )
+                        
+                        android.util.Log.d("TRAVEL_UI", "=== AFTER updateQuestProgress ===")
+                        android.util.Log.d("TRAVEL_UI", "Updated travel state quests: ${travelState.questProgresses.keys}")
+                        travelState.questProgresses.forEach { (id, progress) ->
+                            if (id.contains("level2_exercise3")) {
+                                android.util.Log.d("TRAVEL_UI", "  $id: unlocked=${progress.isUnlocked}")
+                            }
+                        }
                         // Only award coin if perfect (no mistakes)
                         if (isPerfect) {
                             onAwardCoin()
@@ -442,7 +472,11 @@ fun TravelScreen(
                         currency = loadCurrency(context)
                         
                         val currentProgress = travelState.questProgresses[currentSection.id]
+                        android.util.Log.d("TRAVEL_UI", "=== Checking if quest is completed ===")
+                        android.util.Log.d("TRAVEL_UI", "Current quest: ${currentSection.id}, completed: ${currentProgress?.isCompleted}")
+                        
                         if (currentProgress?.isCompleted == true) {
+                            android.util.Log.d("TRAVEL_UI", "✅ Quest IS completed, processing completion...")
                             if (currentSection.id.endsWith("_1")) {
                                 markFirstQuestCompleted(context, startLanguageCode)
                             }
@@ -454,16 +488,32 @@ fun TravelScreen(
                             
                             // Reload quest progress from SharedPreferences to pick up any newly unlocked quests
                             // (Important for Level 2 Exercise 3 which uses a global unlock condition)
+                            android.util.Log.d("TRAVEL_UI", "=== RELOADING from SharedPreferences ===")
                             val reloadedProgresses = loadQuestProgress(context, travelState.questProgresses.keys.toList())
+                            android.util.Log.d("TRAVEL_UI", "Reloaded quest count: ${reloadedProgresses.size}")
+                            reloadedProgresses.forEach { (id, progress) ->
+                                if (id.contains("level2_exercise3")) {
+                                    android.util.Log.d("TRAVEL_UI", "  Reloaded $id: unlocked=${progress.isUnlocked}")
+                                }
+                            }
                             travelState = travelState.copy(questProgresses = reloadedProgresses)
                             
+                            android.util.Log.d("TRAVEL_UI", "=== AFTER reload travelState ===")
+                            travelState.questProgresses.forEach { (id, progress) ->
+                                if (id.contains("level2_exercise3")) {
+                                    android.util.Log.d("TRAVEL_UI", "  Final $id: unlocked=${progress.isUnlocked}")
+                                }
+                            }
+                            
                             // Update travel sections to reflect new progress (important for mixed quests)
+                            android.util.Log.d("TRAVEL_UI", "=== Updating travelSections ===")
                             travelSections = updateTravelSectionsWithMixedLanguages(
                                 context,
                                 basicTravelSections,
                                 travelState.questProgresses,
                                 supportedLangCodes
                             )
+                            android.util.Log.d("TRAVEL_UI", "Travel sections count: ${travelSections.size}")
                             
                             // Quest completed, return to list
                             travelState = travelState.copy(currentQuestId = null)
@@ -492,6 +542,10 @@ fun TravelScreen(
                         }
                         val langCodes = languages.filterNotNull()
                         
+                        // Track encountered words FIRST, before marking exercises complete (critical for unlock logic!)
+                        val recipe = recipeForQuestId(questRecipes, currentSection.id)
+                        trackWordsFromExercise(context, currentSection, corpus, langCodes, recipe)
+                        
                         // Mark all exercises as completed
                         allExerciseIds.forEach { exerciseId ->
                             travelState = updateQuestProgress(
@@ -509,10 +563,6 @@ fun TravelScreen(
                         repeat(allExerciseIds.size) { onAwardCoin() }
                         // Refresh local display from storage to avoid double-counting
                         currency = loadCurrency(context)
-                        
-                        // Track encountered words from this quest (same as real completion)
-                        val recipe = recipeForQuestId(questRecipes, currentSection.id)
-                        trackWordsFromExercise(context, currentSection, corpus, langCodes, recipe)
                         
                         // Track badge progress for debug completion (quest completed) - same as real completion
                         langCodes.forEach { languageCode ->
