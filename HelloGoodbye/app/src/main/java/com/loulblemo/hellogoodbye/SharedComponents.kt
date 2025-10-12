@@ -1049,7 +1049,29 @@ fun PracticeBubble(
     }
 }
 
+// Global state to track last audio playback time
+private var lastAudioPlayTime = 0L
+private const val AUDIO_THROTTLE_DELAY = 500L // 500ms delay between audio plays
+
 fun playAssetAudio(context: Context, fileName: String) {
+    val currentTime = System.currentTimeMillis()
+    val timeSinceLastPlay = currentTime - lastAudioPlayTime
+    
+    // If this is the first play or enough time has passed, play immediately
+    if (lastAudioPlayTime == 0L || timeSinceLastPlay >= AUDIO_THROTTLE_DELAY) {
+        playAudioImmediately(context, fileName)
+        lastAudioPlayTime = currentTime
+    } else {
+        // Schedule delayed playback
+        val delayNeeded = AUDIO_THROTTLE_DELAY - timeSinceLastPlay
+        android.os.Handler(android.os.Looper.getMainLooper()).postDelayed({
+            playAudioImmediately(context, fileName)
+            lastAudioPlayTime = System.currentTimeMillis()
+        }, delayNeeded)
+    }
+}
+
+private fun playAudioImmediately(context: Context, fileName: String) {
     runCatching {
         val afd = context.assets.openFd("audio_files/$fileName")
         val mediaPlayer = MediaPlayer()
