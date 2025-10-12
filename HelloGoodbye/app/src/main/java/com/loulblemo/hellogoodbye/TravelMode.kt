@@ -522,28 +522,6 @@ fun TravelScreen(
         }
     }
 
-    // Track words encountered during exercises for mixed exercises and practice mode
-    LaunchedEffect(travelState.currentQuestId) {
-        val questId = travelState.currentQuestId
-        if (questId != null) {
-            // Mark words as encountered when starting a quest
-            val recipe = recipeForQuestId(questRecipes, questId)
-            if (recipe?.wordRange != null) {
-                val mainLang = startLangCodeFromQuestId(questId) ?: startLanguageCode
-                val wordsToTrack = corpus.subList(
-                    recipe.wordRange.first.coerceAtLeast(0),
-                    (recipe.wordRange.last + 1).coerceAtMost(corpus.size)
-                )
-                wordsToTrack.forEach { wordEntry ->
-                    val variant = wordEntry.byLang[mainLang]
-                    if (variant != null) {
-                        val word = variant.word ?: variant.text ?: wordEntry.original
-                        addEncounteredWord(context, mainLang, word)
-                    }
-                }
-            }
-        }
-    }
 }
 
 @Composable
@@ -1627,7 +1605,9 @@ fun QuestPracticeScreen(
                             .mapNotNull { it.byLang["en"]?.text ?: it.byLang["en"]?.word ?: it.original }
                             .distinct()
                             .take(4)
-                        val options = (distractors + correctAnswer).shuffled()
+                        val options = remember(stepKey) { 
+                            (distractors + correctAnswer).shuffled() 
+                        }
                         PronunciationAudioToEnglishExercise(
                             title = currentExercise.title,
                             pronunciation = pronunciation,

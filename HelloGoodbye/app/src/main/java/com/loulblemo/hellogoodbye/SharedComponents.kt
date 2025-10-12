@@ -1551,12 +1551,12 @@ fun FlashcardsExercise(
     val context = LocalContext.current
     val wordIndices = remember(words) { words.indices.toList() }
     var cardPile by remember(words) { mutableStateOf(words.zip(wordIndices).shuffled()) }
-    var doneWords by remember { mutableStateOf(setOf<Int>()) }
-    var showCompletion by remember { mutableStateOf(false) }
-    var isProcessingSwipe by remember { mutableStateOf(false) }
-    var textColor by remember { mutableStateOf(Color.Unspecified) }
-    var swipeDirection by remember { mutableStateOf<String?>(null) }
-    var showTutorial by remember { mutableStateOf(!hasSeenFlashcardTutorial(context) && !getSessionTutorialSeen()) }
+    var doneWords by remember(words, languageCode) { mutableStateOf(setOf<Int>()) }
+    var showCompletion by remember(words, languageCode) { mutableStateOf(false) }
+    var isProcessingSwipe by remember(words, languageCode) { mutableStateOf(false) }
+    var textColor by remember(words, languageCode) { mutableStateOf(Color.Unspecified) }
+    var swipeDirection by remember(words, languageCode) { mutableStateOf<String?>(null) }
+    var showTutorial by remember(words, languageCode) { mutableStateOf(!hasSeenFlashcardTutorial(context) && !getSessionTutorialSeen()) }
     
     val currentCard = cardPile.firstOrNull()
     val currentWord = currentCard?.first
@@ -2025,8 +2025,8 @@ fun PronunciationAudioToEnglishExercise(
     onDone: (Boolean) -> Unit
 ) {
     val context = LocalContext.current
-    var selected by remember(options) { mutableStateOf<String?>(null) }
-    var completed by remember(options) { mutableStateOf(false) }
+    var selected by remember(options, correctOption, pronunciation) { mutableStateOf<String?>(null) }
+    var completed by remember(options, correctOption, pronunciation) { mutableStateOf(false) }
 
     // Auto-play audio once when the exercise appears
     LaunchedEffect(audioFile) {
@@ -2102,9 +2102,9 @@ fun PronunciationAudioToTypeEnglishExercise(
     onDone: (Boolean) -> Unit
 ) {
     val context = LocalContext.current
-    var input by remember(correctAnswer) { mutableStateOf("") }
-    var completed by remember(correctAnswer) { mutableStateOf(false) }
-    var isCorrect by remember(correctAnswer) { mutableStateOf<Boolean?>(null) }
+    var input by remember(correctAnswer, pronunciation) { mutableStateOf("") }
+    var completed by remember(correctAnswer, pronunciation) { mutableStateOf(false) }
+    var isCorrect by remember(correctAnswer, pronunciation) { mutableStateOf<Boolean?>(null) }
 
     LaunchedEffect(audioFile) {
         if (audioFile != null) {
