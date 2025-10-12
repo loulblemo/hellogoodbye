@@ -493,8 +493,8 @@ fun initializeTravelState(context: Context, travelSections: List<TravelSection>,
             // Check language requirements based on quest type
             val canUnlockMixed = when {
                 section.id.endsWith("level2_exercise3") -> {
-                    // Level 2 Exercise 3 uses same strategy as Level 1 Exercise 3 - encountered words
-                    currentLanguageCode == null || hasEqualOrHigherEncounteredWordsInOtherLanguage(context, currentLanguageCode)
+                    // Level 2 Exercise 3 requires 3+ languages with 10+ encountered words each
+                    hasEncounteredWordsInAtLeast3Languages(context)
                 }
                 else -> {
                     // Other mixed quests require equal or higher encountered words in another language
@@ -571,8 +571,8 @@ fun updateQuestProgress(
                     val currentLanguageCode = startLangCodeFromQuestId(questId)
                     val canUnlockMixed = when {
                         nextSection.id.endsWith("level2_exercise3") -> {
-                            // Level 2 Exercise 3 uses same strategy as Level 1 Exercise 3 - encountered words
-                            currentLanguageCode == null || hasEqualOrHigherEncounteredWordsInOtherLanguage(context, currentLanguageCode)
+                            // Level 2 Exercise 3 requires 3+ languages with 10+ encountered words each
+                            hasEncounteredWordsInAtLeast3Languages(context)
                         }
                         else -> {
                             // Other mixed quests require equal or higher encountered words in another language
@@ -780,11 +780,11 @@ fun hasCompletedQuestsInAtLeast3Languages(context: Context): Boolean {
     return languagesWithCompletedQuests >= 3
 }
 
-// Check if user has encountered 10+ words in at least 2 different languages
-fun hasEncounteredWordsInAtLeast2Languages(context: Context): Boolean {
+// Check if user has encountered 10+ words in at least 3 different languages
+fun hasEncounteredWordsInAtLeast3Languages(context: Context): Boolean {
     val languagesWithEnoughWords = getSupportedLanguageCodesFromMetadata(context)
         .count { langCode -> getEncounteredWordsCount(context, langCode) >= 10 }
-    return languagesWithEnoughWords >= 2
+    return languagesWithEnoughWords >= 3
 }
 
 // Check if user has completed Level 2 Exercise 2 in at least 2 different languages

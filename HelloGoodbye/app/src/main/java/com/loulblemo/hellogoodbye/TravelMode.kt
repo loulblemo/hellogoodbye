@@ -150,20 +150,16 @@ private fun updateTravelSectionsWithMixedLanguages(
                 availableLanguagesForMixed.add(startLangCode)
                 
                 if (isLevel2Exercise3) {
-                    // Level 2 Exercise 3 needs 3 languages total - find languages with Level 2 Exercise 2 completed
-                    val languagesWithLevel2Exercise2 = allLangCodes.filter { langCode ->
+                    // Level 2 Exercise 3 needs 3 languages total - find languages with 10+ encountered words
+                    val languagesWithEnoughWords = allLangCodes.filter { langCode ->
                         langCode != startLangCode && 
                         langCode != "en" && 
-                        run {
-                            val questId = "${langCode}_level2_exercise2"
-                            val progress = loadQuestProgress(context, listOf(questId))[questId]
-                            progress?.isCompleted == true
-                        }
+                        getEncounteredWordsCount(context, langCode) >= 10
                     }
                     
-                    if (languagesWithLevel2Exercise2.size >= 2) {
+                    if (languagesWithEnoughWords.size >= 2) {
                         // Randomly select 2 additional languages
-                        availableLanguagesForMixed.addAll(languagesWithLevel2Exercise2.shuffled().take(2))
+                        availableLanguagesForMixed.addAll(languagesWithEnoughWords.shuffled().take(2))
                     }
                 } else {
                     // Other mixed quests need 2 languages total - find languages with bronze medal (completed at least 1 quest)
@@ -1168,8 +1164,7 @@ fun LockedMixedQuestBubble(
         
         // Explanatory text
         val explanationText = if (isLevel2Exercise3) {
-            val currentWordCount = getEncounteredWordsCount(context, currentLanguageCode)
-            "Mixed mode requires:\n• Previous quest completed\n• $currentWordCount words encountered in two languages"
+            "Mixed mode requires:\n• Previous quest completed\n• 10+ words encountered in 3 different languages"
         } else {
             val currentWordCount = getEncounteredWordsCount(context, currentLanguageCode)
             "Mixed mode requires:\n• Previous quest completed\n• $currentWordCount words encountered in two languages"
