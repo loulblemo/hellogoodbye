@@ -597,7 +597,12 @@ fun updateQuestProgress(
     // Save quest progress to persistence
     saveQuestProgress(context, updatedProgresses)
     
-    return newTravelState
+    // Check if this quest completion unlocks any Level 2 Exercise 3 quests across ALL languages
+    // This is needed because Level 2 Exercise 3 uses a global condition (3+ languages with 10+ words)
+    android.util.Log.d("QUEST_PROGRESS", "Quest completed: $questId, checking all Level 2 Exercise 3 unlocks...")
+    val finalProgresses = checkAndUnlockAllLevel2Exercise3(context, updatedProgresses)
+    
+    return travelState.copy(questProgresses = finalProgresses)
 }
 
 // Reset in-progress quest state (not marking it completed) — clears any partially completed exercises for the quest
@@ -673,29 +678,40 @@ fun addEncounteredWord(context: Context, languageCode: String, word: String) {
     val key = "word_count_${languageCode}_$word"
     val currentCount = prefs.getInt(key, 0)
     prefs.edit().putInt(key, currentCount + 1).apply()
-    
-    // Check if this unlocks any mixed exercises
-    checkAndUnlockMixedExercises(context)
 }
 
-// Check and unlock mixed exercises when encountered words change
-fun checkAndUnlockMixedExercises(context: Context) {
-    val allProgress = loadQuestProgress(context, getAllQuestIds(context))
-    val updatedProgresses = allProgress.toMutableMap()
-    val supportedLangCodes = getSupportedLanguageCodesFromMetadata(context)
+// Check and unlock all Level 2 Exercise 3 quests across ALL languages when the global condition is met
+fun checkAndUnlockAllLevel2Exercise3(context: Context, currentProgresses: Map<String, QuestProgress>): Map<String, QuestProgress> {
+    val updatedProgresses = currentProgresses.toMutableMap()
     
-    // Check all mixed exercises for unlock conditions
+    // Debug logging
+    android.util.Log.d("MIXED_UNLOCK", "Checking Level 2 Exercise 3 unlocks across all languages...")
+    android.util.Log.d("MIXED_UNLOCK", "Has 3+ languages with 10+ words: ${hasEncounteredWordsInAtLeast3Languages(context)}")
+    
+    // Check all Level 2 Exercise 3 quests across all languages
     val allQuestIds = getAllQuestIds(context)
     allQuestIds.forEach { questId ->
         if (questId.endsWith("level2_exercise3")) {
             val progress = updatedProgresses[questId]
+            android.util.Log.d("MIXED_UNLOCK", "Checking quest: $questId, currently unlocked: ${progress?.isUnlocked}")
+            
             if (progress != null && !progress.isUnlocked) {
-                // Check if this mixed exercise should be unlocked
+                // Check if the previous quest is completed
                 val currentLanguageCode = startLangCodeFromQuestId(questId)
-                val canUnlock = hasEncounteredWordsInAtLeast3Languages(context)
+                val previousQuestId = "${currentLanguageCode}_level2_exercise2"
+                val previousProgress = updatedProgresses[previousQuestId]
+                val isPreviousCompleted = previousProgress?.isCompleted == true
+                
+                android.util.Log.d("MIXED_UNLOCK", "  Previous quest ($previousQuestId) completed: $isPreviousCompleted")
+                
+                // Check if the global condition is met
+                val canUnlock = isPreviousCompleted && hasEncounteredWordsInAtLeast3Languages(context)
                 
                 if (canUnlock) {
+                    android.util.Log.d("MIXED_UNLOCK", "  ✅ Unlocking quest: $questId")
                     updatedProgresses[questId] = progress.copy(isUnlocked = true)
+                } else {
+                    android.util.Log.d("MIXED_UNLOCK", "  ❌ Cannot unlock yet")
                 }
             }
         }
@@ -703,6 +719,8 @@ fun checkAndUnlockMixedExercises(context: Context) {
     
     // Save updated progress
     saveQuestProgress(context, updatedProgresses)
+    
+    return updatedProgresses
 }
 
 // Helper function to get all quest IDs

@@ -236,8 +236,13 @@ fun TravelScreen(
     }
     
     // Phase 2: Update travel sections with dynamic mixed language selection based on quest progress
-    var travelSections = remember(basicTravelSections, travelState.questProgresses) {
-        updateTravelSectionsWithMixedLanguages(context, basicTravelSections, travelState.questProgresses, supportedLangCodes)
+    var travelSections by remember { 
+        mutableStateOf(updateTravelSectionsWithMixedLanguages(context, basicTravelSections, travelState.questProgresses, supportedLangCodes))
+    }
+    
+    // Update travel sections when quest progress changes
+    LaunchedEffect(travelState.questProgresses) {
+        travelSections = updateTravelSectionsWithMixedLanguages(context, basicTravelSections, travelState.questProgresses, supportedLangCodes)
     }
     
     val questExercises = remember(travelSections) {
@@ -446,6 +451,11 @@ fun TravelScreen(
                             langCodes.forEach { languageCode ->
                                 incrementLanguageQuestCount(context, languageCode)
                             }
+                            
+                            // Reload quest progress from SharedPreferences to pick up any newly unlocked quests
+                            // (Important for Level 2 Exercise 3 which uses a global unlock condition)
+                            val reloadedProgresses = loadQuestProgress(context, travelState.questProgresses.keys.toList())
+                            travelState = travelState.copy(questProgresses = reloadedProgresses)
                             
                             // Update travel sections to reflect new progress (important for mixed quests)
                             travelSections = updateTravelSectionsWithMixedLanguages(
