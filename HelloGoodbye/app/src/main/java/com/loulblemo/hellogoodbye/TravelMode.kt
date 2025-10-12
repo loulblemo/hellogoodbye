@@ -617,6 +617,11 @@ fun TravelQuestListScreen(
                 DebugWordTrackingDisplay(context = context)
             }
         }
+        
+        // Add padding at the end of the list
+        item {
+            Spacer(modifier = Modifier.height(32.dp))
+        }
 
     }
 }
