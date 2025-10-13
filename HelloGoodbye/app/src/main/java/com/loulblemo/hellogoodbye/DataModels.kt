@@ -1012,14 +1012,22 @@ fun hasCompletedLevel2Exercise2InOtherLanguage(context: Context, currentLanguage
 }
 
 fun getBadgeLevel(context: Context, languageCode: String): BadgeLevel {
-    val count = getLanguageQuestCount(context, languageCode)
+    // Check specific quest completions instead of using count
+    val level1Exercise5QuestId = "${languageCode}_level1_exercise5"
+    val level2Exercise5QuestId = "${languageCode}_level2_exercise5"
+    
+    val progress = loadQuestProgress(context, listOf(level1Exercise5QuestId, level2Exercise5QuestId))
+    
+    val isLevel1Exercise5Complete = progress[level1Exercise5QuestId]?.isCompleted == true
+    val isLevel2Exercise5Complete = progress[level2Exercise5QuestId]?.isCompleted == true
+    
     return when {
-        // 10+ exercises = silver badge (Level 2 Complete)
-        count >= 10 -> BadgeLevel.SILVER
-        // 5+ exercises = bronze badge (Level 1 Complete)
-        count >= 5 -> BadgeLevel.BRONZE
+        // Level 2 Exercise 5 complete = silver badge (Level 2 Complete)
+        isLevel2Exercise5Complete -> BadgeLevel.SILVER
+        // Level 1 Exercise 5 complete = bronze badge (Level 1 Complete)
+        isLevel1Exercise5Complete -> BadgeLevel.BRONZE
         // 1+ exercises = green badge (starting)
-        count >= 1 -> BadgeLevel.GREEN
+        getLanguageQuestCount(context, languageCode) >= 1 -> BadgeLevel.GREEN
         else -> BadgeLevel.NONE
     }
 }
