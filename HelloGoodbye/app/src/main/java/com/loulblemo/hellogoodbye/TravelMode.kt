@@ -1436,18 +1436,18 @@ fun QuestPracticeScreen(
             }
         }
         
-        val threeWords = remember(corpus, section.isMixed, languageCodes, recipe) {
-            getWordsForQuest(corpus).take(3)
+        val threeWords = remember(corpus, section.isMixed, languageCodes.joinToString(","), recipe, currentExerciseIndex) {
+            getWordsForQuest(corpus).shuffled().take(3)
         }
-        val eligibleAudioWords = remember(corpus, section.isMixed, languageCodes, recipe) {
-            getWordsForQuest(corpus).filter { entry -> languageCodes.any { code -> entry.byLang[code]?.audio != null } }
+        val eligibleAudioWords = remember(corpus, section.isMixed, languageCodes.joinToString(","), recipe, currentExerciseIndex) {
+            getWordsForQuest(corpus).filter { entry -> languageCodes.any { code -> entry.byLang[code]?.audio != null } }.shuffled()
         }
-        val eligiblePronunciationWords = remember(corpus, section.isMixed, languageCodes, recipe) {
+        val eligiblePronunciationWords = remember(corpus, section.isMixed, languageCodes.joinToString(","), recipe, currentExerciseIndex) {
             getWordsForQuest(corpus).filter { entry -> languageCodes.any { code ->
                 val v = entry.byLang[code]
                 // Require audio, and accept Google pronunciation or fallback to main word
                 v?.audio != null && ((v.googlePronunciation != null) || (v.word != null))
-            } }
+            } }.shuffled()
         }
 
         // Shuffled looping selector for single-word exercises so we don't repeat until pool is exhausted

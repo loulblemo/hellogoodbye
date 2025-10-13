@@ -17,52 +17,27 @@ private fun pickFivePairs(
         languageCodes
     }
     
-    val shuffledLangs = effectiveLanguageCodes.shuffled()
-    // Desired total pairs: up to 5, or fewer if there are fewer available words
-    val desiredTotalPairs = if (threeWords.size < 5) threeWords.size else 5
-    val targets = shuffledLangs.take(if (shuffledLangs.size >= desiredTotalPairs) desiredTotalPairs else shuffledLangs.size)
+    // Always aim for 5 pairs
+    val desiredTotalPairs = 5
     
-    // Distribute words across target languages with balanced distribution
-    // Calculate how many matches each language should get
-    val totalPairs = desiredTotalPairs
-    val numLanguages = targets.size
-    val basePairsPerLang = totalPairs / numLanguages
-    val extraPairs = totalPairs % numLanguages
-    
-    var pairCount = 0
-    var wordIdx = 0
-    
-    for ((langIndex, lang) in targets.withIndex()) {
-        // Calculate how many pairs this language should get
-        val pairsForThisLang = basePairsPerLang + if (langIndex < extraPairs) 1 else 0
-        
-        // Generate pairs for this language
-        for (i in 0 until pairsForThisLang) {
-            if (pairCount >= totalPairs) break
-            
-            val word = threeWords[wordIdx % threeWords.size]
+    // Build a pool of all possible valid pairs
+    val pool = mutableListOf<MatchingPair>()
+    for (lang in effectiveLanguageCodes) {
+        threeWords.forEach { word ->
             val variant = word.byLang[lang]
             if (variant != null) {
                 val left = buildLeft(word, lang, variant)
                 val right = buildRight(word, lang, variant)
                 if (left != null && right != null) {
-                    combos.add(MatchingPair(left, right))
-                    pairCount++
+                    pool.add(MatchingPair(left, right))
                 }
             }
-            wordIdx++
         }
     }
     
-    // If fewer than desired pairs (e.g., not enough languages), try to fill with additional random combos
-    if (combos.size < totalPairs) {
-        val fallbackLangs = if (restrictToEncounteredLanguages && availableLanguages.isNotEmpty()) {
-            availableLanguages
-        } else {
-            effectiveLanguageCodes.ifEmpty { listOf("es", "fr", "de", "it", "pt", "ru", "ja", "ko", "zh-cn") }
-        }
-        
-        val pool = mutableListOf<MatchingPair>()
+    // If pool is empty, try fallback languages
+    if (pool.isEmpty()) {
+        val fallbackLangs = effectiveLanguageCodes.ifEmpty { listOf("es", "fr", "de", "it", "pt", "ru", "ja", "ko", "zh-cn") }
         for (lang in fallbackLangs) {
             threeWords.forEach { word ->
                 val variant = word.byLang[lang]
@@ -73,16 +48,38 @@ private fun pickFivePairs(
                 }
             }
         }
-        val existingRightIds = combos.map { it.right.id }.toMutableSet()
-        pool.shuffled().forEach {
-            if (combos.size >= totalPairs) return@forEach
-            if (!existingRightIds.contains(it.right.id)) {
-                combos.add(it)
-                existingRightIds.add(it.right.id)
-            }
+    }
+    
+    // Shuffle the pool to get random selection
+    val shuffledPool = pool.shuffled()
+    
+    // Select up to 5 pairs, allowing duplicates if necessary
+    val selectedPairs = mutableListOf<MatchingPair>()
+    val usedRightIds = mutableSetOf<String>()
+    
+    // First pass: try to get unique pairs
+    for (pair in shuffledPool) {
+        if (selectedPairs.size >= desiredTotalPairs) break
+        if (!usedRightIds.contains(pair.right.id)) {
+            selectedPairs.add(pair)
+            usedRightIds.add(pair.right.id)
         }
     }
-    return combos.take(totalPairs)
+    
+    // Second pass: if we still don't have 5 pairs, allow reusing words (cycle through pool)
+    var poolIndex = 0
+    while (selectedPairs.size < desiredTotalPairs && shuffledPool.isNotEmpty()) {
+        val pair = shuffledPool[poolIndex % shuffledPool.size]
+        if (!usedRightIds.contains(pair.right.id)) {
+            selectedPairs.add(pair)
+            usedRightIds.add(pair.right.id)
+        }
+        poolIndex++
+        // Prevent infinite loop
+        if (poolIndex > shuffledPool.size * 3) break
+    }
+    
+    return selectedPairs.take(desiredTotalPairs)
 }
 
 fun buildAudioToFlagPairs(
