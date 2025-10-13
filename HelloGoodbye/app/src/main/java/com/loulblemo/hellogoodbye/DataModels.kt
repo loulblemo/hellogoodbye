@@ -485,27 +485,40 @@ fun initializeTravelState(context: Context, travelSections: List<TravelSection>,
                 }
             }
         } else if (section.isMixed && index > 0) {
-            // Check if mixed quest should be unlocked
-            val previousQuest = travelSections[index - 1]
-            val isPreviousCompleted = updatedProgresses[previousQuest.id]?.isCompleted == true
-            val currentLanguageCode = startLangCodeFromQuestId(section.id)
+            val currentProgress = updatedProgresses[section.id]
             
-            // Check language requirements based on quest type
-            val canUnlockMixed = when {
-                section.id.endsWith("level2_exercise3") -> {
-                    // Level 2 Exercise 3 requires 3+ languages with 10+ encountered words each
-                    hasEncounteredWordsInAtLeast3Languages(context)
+            // CRITICAL: If mixed quest is already unlocked, NEVER touch it - languages are locked forever!
+            if (currentProgress != null && currentProgress.isUnlocked) {
+                android.util.Log.d("MIXED_UNLOCK", "🔒 ${section.id} already unlocked, skipping (languages preserved: ${currentProgress.languagesUsed})")
+                // Don't modify anything - languages are frozen
+            } else {
+                // Check if mixed quest should be unlocked
+                val previousQuest = travelSections[index - 1]
+                val isPreviousCompleted = updatedProgresses[previousQuest.id]?.isCompleted == true
+                val currentLanguageCode = startLangCodeFromQuestId(section.id)
+                
+                // Check language requirements based on quest type
+                val canUnlockMixed = when {
+                    section.id.endsWith("level2_exercise3") -> {
+                        // Level 2 Exercise 3 requires 3+ languages with 10+ encountered words each
+                        hasEncounteredWordsInAtLeast3Languages(context)
+                    }
+                    else -> {
+                        // Other mixed quests require equal or higher encountered words in another language
+                        currentLanguageCode == null || hasEqualOrHigherEncounteredWordsInOtherLanguage(context, currentLanguageCode)
+                    }
                 }
-                else -> {
-                    // Other mixed quests require equal or higher encountered words in another language
-                    currentLanguageCode == null || hasEqualOrHigherEncounteredWordsInOtherLanguage(context, currentLanguageCode)
-                }
-            }
-            
-            if (isPreviousCompleted && canUnlockMixed) {
-                val currentProgress = updatedProgresses[section.id]
-                if (currentProgress != null && !currentProgress.isUnlocked) {
-                    updatedProgresses[section.id] = currentProgress.copy(isUnlocked = true)
+                
+                if (isPreviousCompleted && canUnlockMixed && currentProgress != null) {
+                    // Select languages for mixed quest NOW when first unlocking
+                    val selectedLanguages = selectLanguagesForMixedQuest(context, section.id)
+                    updatedProgresses[section.id] = currentProgress.copy(
+                        isUnlocked = true,
+                        languagesUsed = selectedLanguages
+                    )
+                    // Save immediately so languages are locked in
+                    saveQuestProgress(context, updatedProgresses)
+                    android.util.Log.d("MIXED_UNLOCK", "🔓 ${section.id} NEWLY unlocked with languages: $selectedLanguages")
                 }
             }
         }
@@ -525,8 +538,7 @@ fun updateQuestProgress(
     questId: String,
     completedExerciseId: String,
     travelSections: List<TravelSection>,
-    questExercises: Map<String, List<ExerciseType>>,
-    languagesUsed: List<String> = emptyList()
+    questExercises: Map<String, List<ExerciseType>>
 ): TravelState {
     val currentProgress = travelState.questProgresses[questId] ?: return travelState
     
@@ -537,7 +549,8 @@ fun updateQuestProgress(
     val updatedProgress = currentProgress.copy(
         completedExercises = newCompletedExercises,
         isCompleted = isQuestCompleted,
-        languagesUsed = if (isQuestCompleted && languagesUsed.isNotEmpty()) languagesUsed else currentProgress.languagesUsed
+        // NEVER overwrite languagesUsed - they are set ONCE when quest unlocks and locked forever
+        languagesUsed = currentProgress.languagesUsed
     )
     
     // Unlock next quest if current one is completed
@@ -567,23 +580,35 @@ fun updateQuestProgress(
                         }
                     }
                 } else if (nextSection.isMixed) {
-                    // Mixed quest - check language requirements based on quest type
-                    val currentLanguageCode = startLangCodeFromQuestId(questId)
-                    val canUnlockMixed = when {
-                        nextSection.id.endsWith("level2_exercise3") -> {
-                            // Level 2 Exercise 3 requires 3+ languages with 10+ encountered words each
-                            hasEncounteredWordsInAtLeast3Languages(context)
+                    // CRITICAL: If mixed quest is already unlocked, NEVER touch it!
+                    if (nextProgress.isUnlocked) {
+                        android.util.Log.d("MIXED_UNLOCK", "🔒 $nextQuestId already unlocked in updateQuestProgress, skipping (languages preserved: ${nextProgress.languagesUsed})")
+                        // Don't modify - languages are frozen
+                    } else {
+                        // Mixed quest - check language requirements based on quest type
+                        val currentLanguageCode = startLangCodeFromQuestId(questId)
+                        val canUnlockMixed = when {
+                            nextSection.id.endsWith("level2_exercise3") -> {
+                                // Level 2 Exercise 3 requires 3+ languages with 10+ encountered words each
+                                hasEncounteredWordsInAtLeast3Languages(context)
+                            }
+                            else -> {
+                                // Other mixed quests require equal or higher encountered words in another language
+                                currentLanguageCode == null || hasEqualOrHigherEncounteredWordsInOtherLanguage(context, currentLanguageCode)
+                            }
                         }
-                        else -> {
-                            // Other mixed quests require equal or higher encountered words in another language
-                            currentLanguageCode == null || hasEqualOrHigherEncounteredWordsInOtherLanguage(context, currentLanguageCode)
+                        
+                        if (canUnlockMixed) {
+                            // Select languages for mixed quest NOW when first unlocking
+                            val selectedLanguages = selectLanguagesForMixedQuest(context, nextQuestId)
+                            updatedProgresses[nextQuestId] = nextProgress.copy(
+                                isUnlocked = true,
+                                languagesUsed = selectedLanguages
+                            )
+                            android.util.Log.d("MIXED_UNLOCK", "🔓 $nextQuestId NEWLY unlocked in updateQuestProgress with languages: $selectedLanguages")
                         }
+                        // If can't unlock mixed, leave it locked (no change to progress)
                     }
-                    
-                    if (canUnlockMixed) {
-                        updatedProgresses[nextQuestId] = nextProgress.copy(isUnlocked = true)
-                    }
-                    // If can't unlock mixed, leave it locked (no change to progress)
                 } else {
                     // Regular quest - just unlock
                     updatedProgresses[nextQuestId] = nextProgress.copy(isUnlocked = true)
@@ -695,7 +720,11 @@ fun checkAndUnlockAllLevel2Exercise3(context: Context, currentProgresses: Map<St
             val progress = updatedProgresses[questId]
             android.util.Log.d("MIXED_UNLOCK", "Checking quest: $questId, currently unlocked: ${progress?.isUnlocked}")
             
-            if (progress != null && !progress.isUnlocked) {
+            // CRITICAL: If mixed quest is already unlocked, NEVER touch it!
+            if (progress != null && progress.isUnlocked) {
+                android.util.Log.d("MIXED_UNLOCK", "🔒 $questId already unlocked in checkAndUnlockAllLevel2Exercise3, skipping (languages preserved: ${progress.languagesUsed})")
+                // Don't modify - languages are frozen
+            } else if (progress != null && !progress.isUnlocked) {
                 // Check if the previous quest is completed
                 val currentLanguageCode = startLangCodeFromQuestId(questId)
                 val previousQuestId = "${currentLanguageCode}_level2_exercise2"
@@ -708,8 +737,14 @@ fun checkAndUnlockAllLevel2Exercise3(context: Context, currentProgresses: Map<St
                 val canUnlock = isPreviousCompleted && hasEncounteredWordsInAtLeast3Languages(context)
                 
                 if (canUnlock) {
-                    android.util.Log.d("MIXED_UNLOCK", "  ✅ Unlocking quest: $questId")
-                    updatedProgresses[questId] = progress.copy(isUnlocked = true)
+                    android.util.Log.d("MIXED_UNLOCK", "  🔓 Unlocking quest: $questId")
+                    // Select languages for mixed quest NOW when first unlocking
+                    val selectedLanguages = selectLanguagesForMixedQuest(context, questId)
+                    updatedProgresses[questId] = progress.copy(
+                        isUnlocked = true,
+                        languagesUsed = selectedLanguages
+                    )
+                    android.util.Log.d("MIXED_UNLOCK", "  ✅ $questId NEWLY unlocked in checkAndUnlockAllLevel2Exercise3 with languages: $selectedLanguages")
                 } else {
                     android.util.Log.d("MIXED_UNLOCK", "  ❌ Cannot unlock yet")
                 }
@@ -787,6 +822,11 @@ fun saveQuestProgress(context: Context, questProgress: Map<String, QuestProgress
         editor.putBoolean("quest_${questId}_completed_flag", progress.isCompleted)
         // Save languages used as a string set
         editor.putStringSet("quest_${questId}_languages", progress.languagesUsed.toSet())
+        
+        // Log when saving mixed quest languages
+        if (questId.contains("mixed") || questId.contains("level2_exercise3")) {
+            android.util.Log.d("MIXED_PERSIST", "💾 SAVING $questId: languagesUsed=${progress.languagesUsed}, isUnlocked=${progress.isUnlocked}, isCompleted=${progress.isCompleted}")
+        }
     }
     
     editor.apply()
@@ -809,6 +849,11 @@ fun loadQuestProgress(context: Context, questIds: List<String>): Map<String, Que
             isCompleted = isCompleted,
             languagesUsed = languagesUsed
         )
+        
+        // Log when loading mixed quest languages
+        if (questId.contains("mixed") || questId.contains("level2_exercise3")) {
+            android.util.Log.d("MIXED_PERSIST", "📖 LOADED $questId: languagesUsed=$languagesUsed, isUnlocked=$isUnlocked, isCompleted=$isCompleted")
+        }
     }
     
     return progressMap
@@ -830,6 +875,77 @@ fun getLanguageQuestCount(context: Context, languageCode: String): Int {
 // Extract language code from quest ID (e.g. "de_1" -> "de", "de_mixed" -> "de")
 fun startLangCodeFromQuestId(questId: String): String? {
     return questId.split("_").firstOrNull()
+}
+
+// Select languages for a mixed quest (called ONCE when quest first unlocks)
+// This function should ONLY be called if languagesUsed is empty!
+fun selectLanguagesForMixedQuest(context: Context, questId: String): List<String> {
+    android.util.Log.d("MIXED_LANGUAGES", "🔴 selectLanguagesForMixedQuest CALLED for $questId")
+    
+    val startLangCode = startLangCodeFromQuestId(questId) ?: return emptyList()
+    val allLangCodes = getSupportedLanguageCodesFromMetadata(context)
+    val isLevel2Exercise3 = questId.endsWith("level2_exercise3")
+    
+    val availableLanguagesForMixed = mutableListOf<String>()
+    availableLanguagesForMixed.add(startLangCode)
+    
+    if (isLevel2Exercise3) {
+        // Level 2 Exercise 3 needs 3 languages total - find languages with 10+ encountered words
+        val languagesWithEnoughWords = allLangCodes.filter { langCode ->
+            langCode != startLangCode && 
+            langCode != "en" && 
+            getEncounteredWordsCount(context, langCode) >= 10
+        }
+        
+        android.util.Log.d("MIXED_LANGUAGES", "  Level 2 Ex 3: Languages with 10+ words: $languagesWithEnoughWords")
+        
+        if (languagesWithEnoughWords.size >= 2) {
+            // Randomly select 2 additional languages
+            val selected = languagesWithEnoughWords.shuffled().take(2)
+            availableLanguagesForMixed.addAll(selected)
+            android.util.Log.d("MIXED_LANGUAGES", "  Selected 2 additional: $selected")
+        }
+    } else {
+        // Other mixed quests need 2 languages total - find languages with bronze medal (completed at least 1 quest)
+        val languagesWithBronzeMedal = allLangCodes.filter { langCode ->
+            langCode != startLangCode && 
+            langCode != "en" && 
+            getLanguageQuestCount(context, langCode) >= 1
+        }
+        
+        android.util.Log.d("MIXED_LANGUAGES", "  Regular mixed: Start language is: $startLangCode")
+        android.util.Log.d("MIXED_LANGUAGES", "  Regular mixed: All language codes: $allLangCodes")
+        android.util.Log.d("MIXED_LANGUAGES", "  Regular mixed: Languages with bronze medal: $languagesWithBronzeMedal")
+        
+        if (languagesWithBronzeMedal.isNotEmpty()) {
+            val selected = languagesWithBronzeMedal.random()
+            // DOUBLE CHECK: Never add the start language again!
+            if (selected != startLangCode) {
+                availableLanguagesForMixed.add(selected)
+                android.util.Log.d("MIXED_LANGUAGES", "  ✅ Selected 1 additional: $selected")
+            } else {
+                android.util.Log.e("MIXED_LANGUAGES", "  ❌❌❌ CRITICAL ERROR: Tried to select start language ($selected) as second language!")
+            }
+        } else {
+            android.util.Log.w("MIXED_LANGUAGES", "  ⚠️ No languages with bronze medal available!")
+        }
+    }
+    
+    // Remove any duplicates (defensive) and ensure we have at least the start language
+    val finalLanguages = availableLanguagesForMixed.distinct()
+    
+    if (finalLanguages.size < availableLanguagesForMixed.size) {
+        android.util.Log.e("MIXED_LANGUAGES", "❌❌❌ CRITICAL: Found duplicate languages! Before: $availableLanguagesForMixed, After: $finalLanguages")
+    }
+    
+    // FINAL CHECK: Ensure start language appears exactly once
+    val startLangCount = finalLanguages.count { it == startLangCode }
+    if (startLangCount != 1) {
+        android.util.Log.e("MIXED_LANGUAGES", "❌❌❌ CRITICAL: Start language appears $startLangCount times in final list: $finalLanguages")
+    }
+    
+    android.util.Log.d("MIXED_LANGUAGES", "✅ FINAL selection for $questId: $finalLanguages (LOCKED FOREVER)")
+    return finalLanguages
 }
 
 // Check if user has completed at least one quest in any other language
