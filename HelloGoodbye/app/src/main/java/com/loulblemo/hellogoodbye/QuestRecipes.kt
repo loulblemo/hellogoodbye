@@ -169,7 +169,7 @@ fun defaultQuestRecipes(): List<QuestRecipe> {
             "audio_to_english_multi",
             "audio_to_flag_multi",
             "pronunciation_to_flag_multi",
-            "pronunciation_audio_to_type_english"
+            "pronunciation_audio_to_type_english",
             "audio_to_flag_multi"
         ),
         randomOrder = true,
