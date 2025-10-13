@@ -27,6 +27,8 @@ fun defaultQuestRecipes(): List<QuestRecipe> {
             "pronunciation_audio_to_english",
             "audio_to_english_multi",
             "audio_to_english_multi",
+            "audio_to_english_multi",
+            "pronunciation_to_english_multi",
             "pronunciation_to_english_multi",
             "pronunciation_to_english_multi",
         ),
@@ -66,7 +68,9 @@ fun defaultQuestRecipes(): List<QuestRecipe> {
             "pronunciation_to_flag_multi",
             "audio_to_english_multi",
             "audio_to_flag_multi",
-            "pronunciation_to_flag_multi"
+            "pronunciation_to_flag_multi",
+            "audio_to_english_multi",
+            "pronunciation_to_english_multi"
         ),
         randomOrder = true,
         useEncounteredWords = true // Mixed exercises use encountered words
@@ -78,9 +82,17 @@ fun defaultQuestRecipes(): List<QuestRecipe> {
         languageCount = 1,
         exerciseOrder = listOf(
             "audio_to_english_multi",
+            "audio_to_english_multi",
+            "audio_to_english_multi",
+            "pronunciation_audio_to_english",
             "pronunciation_audio_to_english",
             "audio_to_english_multi",
+            "audio_to_english_multi",
+            "audio_to_english_multi",
             "pronunciation_audio_to_type_english",
+            "pronunciation_audio_to_type_english",
+            "pronunciation_audio_to_type_english",
+            "pronunciation_audio_to_english",
             "pronunciation_audio_to_english",
         ),
         randomOrder = true,
@@ -97,6 +109,11 @@ fun defaultQuestRecipes(): List<QuestRecipe> {
             "audio_to_english_multi",
             "pronunciation_audio_to_type_english",
             "pronunciation_audio_to_english",
+            "audio_to_english_multi",
+            "pronunciation_audio_to_english",
+            "audio_to_english_multi",
+            "pronunciation_audio_to_type_english",
+            "pronunciation_audio_to_english",
         ),
         randomOrder = true,
         wordRange = 0..4 // Same 5 words as other Level 1 exercises
@@ -108,6 +125,8 @@ fun defaultQuestRecipes(): List<QuestRecipe> {
         languageCount = 1,
         exerciseOrder = listOf(
             "flashcards",
+            "pronunciation_audio_to_english",
+            "pronunciation_audio_to_english",
             "pronunciation_audio_to_english",
             "pronunciation_audio_to_english",
             "pronunciation_audio_to_english",
@@ -151,6 +170,7 @@ fun defaultQuestRecipes(): List<QuestRecipe> {
             "audio_to_flag_multi",
             "pronunciation_to_flag_multi",
             "pronunciation_audio_to_type_english"
+            "audio_to_flag_multi"
         ),
         randomOrder = true,
         useEncounteredWords = true, // Mixed exercises use encountered words
@@ -178,7 +198,7 @@ fun defaultQuestRecipes(): List<QuestRecipe> {
     val level2_exercise5 = QuestRecipe(
         type = QuestType.SINGLE,
         languageCount = 1,
-        exerciseOrder = List(10) { if (it % 2 == 0) "audio_to_english_multi" else "pronunciation_audio_to_english" },
+        exerciseOrder = List(12) { if (it % 2 == 0) "audio_to_english_multi" else "pronunciation_audio_to_english" },
         randomOrder = true,
         wordRange = 0..9 // Same 5 words as other Level 1 exercises
     )
