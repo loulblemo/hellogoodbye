@@ -35,6 +35,7 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.toSize
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalConfiguration
 import kotlin.math.PI
 import kotlin.math.sin
 import androidx.compose.ui.graphics.StrokeCap
@@ -862,10 +863,11 @@ fun MatchingExercise(
     
     Column(modifier = Modifier.fillMaxSize()) {
         // Removed title for cleaner UI
+        Spacer(modifier = Modifier.height(24.dp)) // Small padding below purple button
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(16.dp),
+                .padding(horizontal = 16.dp),
             horizontalArrangement = Arrangement.spacedBy(16.dp)
         ) {
             Column(
@@ -956,6 +958,16 @@ fun PracticeBubbleFlag(
     error: Boolean = false,
     onClick: () -> Unit
 ) {
+    val screenWidth = LocalConfiguration.current.screenWidthDp.dp
+    
+    // Calculate responsive bubble size based on screen width
+    val bubbleHeight = when {
+        screenWidth < 360.dp -> 56.dp // Small phones
+        screenWidth < 400.dp -> 60.dp // Medium phones
+        else -> 64.dp // Large phones/tablets
+    }
+    val cornerRadius = bubbleHeight / 2 // Keep it perfectly rounded
+    
     val containerColor = when {
         error -> colorResource(id = R.color.primary_container_purple)
         solved -> GreenLight
@@ -971,15 +983,15 @@ fun PracticeBubbleFlag(
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .height(48.dp)
+            .height(bubbleHeight)
             .clickable { onClick() }
             .border(
                 width = if (borderColor == Color.Transparent) 0.dp else 2.dp,
                 color = borderColor,
-                shape = RoundedCornerShape(24.dp)
+                shape = RoundedCornerShape(cornerRadius)
             ),
         colors = CardDefaults.cardColors(containerColor = containerColor),
-        shape = RoundedCornerShape(24.dp)
+        shape = RoundedCornerShape(cornerRadius)
     ) {
         Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
             BottomFlagBadge(languageCode = languageCode, modifier = Modifier)
@@ -995,6 +1007,18 @@ fun PracticeBubble(
     error: Boolean = false,
     onClick: () -> Unit
 ) {
+    val density = LocalDensity.current
+    val screenWidth = LocalConfiguration.current.screenWidthDp.dp
+    
+    // Calculate responsive bubble size based on screen width
+    val bubbleHeight = when {
+        screenWidth < 360.dp -> 56.dp // Small phones
+        screenWidth < 400.dp -> 60.dp // Medium phones
+        else -> 64.dp // Large phones/tablets
+    }
+    val cornerRadius = bubbleHeight / 2 // Keep it perfectly rounded
+    val horizontalPadding = bubbleHeight / 4 // Proportional padding
+    
     val containerColor = when {
         error -> colorResource(id = R.color.primary_container_purple)
         solved -> GreenLight // light green
@@ -1013,23 +1037,31 @@ fun PracticeBubble(
         selected -> colorResource(id = R.color.purple_black)
         else -> colorResource(id = R.color.purple_black)
     }
+    
+    // Calculate responsive font sizes
+    val baseFontSizeDp = bubbleHeight / 4 // Base font size proportional to bubble height
+    val playIconMinSize = if ((baseFontSizeDp.value * 1.4f) < 16f) 16.sp else (baseFontSizeDp.value * 1.4f).sp
+    val playIconMaxSize = if ((baseFontSizeDp.value * 2.0f) > 32f) 32.sp else (baseFontSizeDp.value * 2.0f).sp
+    val textMinSize = if ((baseFontSizeDp.value * 0.9f) < 12f) 12.sp else (baseFontSizeDp.value * 0.9f).sp
+    val textMaxSize = if ((baseFontSizeDp.value * 1.3f) > 24f) 24.sp else (baseFontSizeDp.value * 1.3f).sp
+    
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .height(48.dp)
+            .height(bubbleHeight)
             .clickable { onClick() }
             .border(
                 width = if (borderColor == Color.Transparent) 0.dp else 2.dp,
                 color = borderColor,
-                shape = RoundedCornerShape(24.dp)
+                shape = RoundedCornerShape(cornerRadius)
             ),
         colors = CardDefaults.cardColors(containerColor = containerColor),
-        shape = RoundedCornerShape(24.dp)
+        shape = RoundedCornerShape(cornerRadius)
     ) {
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(horizontal = 12.dp),
+                .padding(horizontal = horizontalPadding),
             contentAlignment = Alignment.Center
         ) {
             BasicText(
@@ -1039,8 +1071,8 @@ fun PracticeBubble(
                     textAlign = TextAlign.Center
                 ),
                 autoSize = TextAutoSize.StepBased(
-                    minFontSize = 10.sp,
-                    maxFontSize = 16.sp,
+                    minFontSize = if (label == "▶︎") playIconMinSize else textMinSize,
+                    maxFontSize = if (label == "▶︎") playIconMaxSize else textMaxSize,
                     stepSize = 1.sp
                 ),
                 modifier = Modifier.fillMaxWidth()
@@ -2068,7 +2100,7 @@ fun PronunciationAudioToEnglishExercise(
             textColor = colorResource(id = R.color.white)
         )
 
-        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(24.dp)) // Increased padding below purple bubble
 
         Column(
             modifier = Modifier

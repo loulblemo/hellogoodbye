@@ -1168,9 +1168,9 @@ fun loadCurrency(context: Context): Int {
     val prefs = context.getSharedPreferences("hg_progress", Context.MODE_PRIVATE)
     val baseCurrency = prefs.getInt("user_currency", 10) // Default to 10 points
     
-    // In debug mode, start with 500 credits but allow growth beyond that
+    // In debug mode, start with 100 credits but allow growth beyond that
     return if (loadDebugMode(context)) {
-        if (baseCurrency < 500) 500 else baseCurrency
+        if (baseCurrency < 100) 100 else baseCurrency
     } else {
         baseCurrency
     }
