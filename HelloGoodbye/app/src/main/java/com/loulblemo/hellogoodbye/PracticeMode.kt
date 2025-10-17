@@ -83,32 +83,17 @@ fun PracticeScreen(
             ResponsiveRedCross(onClick = onExit)
         }
         
-        // Progress bar similar to quest exercises
-        Row(
+        // Progress bar only (no flag in practice mode)
+        LinearProgressIndicator(
+            progress = (currentExerciseIndex + 1).toFloat() / practiceExercises.size,
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 16.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            // Show a flag badge for the first selected language
-            val firstLanguageCode = languageCodes.firstOrNull()
-            if (firstLanguageCode != null) {
-                BottomFlagBadge(
-                    languageCode = firstLanguageCode,
-                    modifier = Modifier
-                        .padding(end = 10.dp)
-                )
-            }
-            LinearProgressIndicator(
-                progress = (currentExerciseIndex + 1).toFloat() / practiceExercises.size,
-                modifier = Modifier
-                    .weight(1f)
-                    .height(12.dp),
-                color = MaterialTheme.colorScheme.primary, // Dark purple brand color
-                trackColor = MaterialTheme.colorScheme.surfaceVariant,
-                strokeCap = androidx.compose.ui.graphics.StrokeCap.Round
-            )
-        }
+                .padding(horizontal = 16.dp)
+                .height(12.dp),
+            color = MaterialTheme.colorScheme.primary, // Dark purple brand color
+            trackColor = MaterialTheme.colorScheme.surfaceVariant,
+            strokeCap = androidx.compose.ui.graphics.StrokeCap.Round
+        )
         
         Spacer(modifier = Modifier.height(16.dp))
 
